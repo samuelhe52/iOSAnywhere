@@ -36,7 +36,7 @@ enum ChinaCoordinateTransform {
         let latitude = coordinate.latitude
         let longitude = coordinate.longitude
 
-        guard (18.0 ... 54.5).contains(latitude), (73.5 ... 135.1).contains(longitude) else {
+        guard (18.0...54.5).contains(latitude), (73.5...135.1).contains(longitude) else {
             return false
         }
 

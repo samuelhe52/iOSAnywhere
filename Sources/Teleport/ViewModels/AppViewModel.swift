@@ -260,7 +260,8 @@ final class AppViewModel {
         if let guide = PythonDependencyInstallGuide.parse(from: message) {
             showsPythonDependencyGuide = guide
             simulationState = .failed("Missing Python dependency")
-            statusMessage = "Install pymobiledevice3 for the selected Python interpreter to continue USB location simulation."
+            statusMessage =
+                "Install pymobiledevice3 for the selected Python interpreter to continue USB location simulation."
             return
         }
 

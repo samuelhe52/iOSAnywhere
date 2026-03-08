@@ -435,7 +435,8 @@ actor USBDeviceLocationService: LocationSimulationService {
         }
     }
 
-    private static let pythonResolutionCommand = #"python3 -c 'import os, sys; print(os.path.realpath(sys.executable))'"#
+    private static let pythonResolutionCommand =
+        #"python3 -c 'import os, sys; print(os.path.realpath(sys.executable))'"#
 
     private static let pythonHelperScript = #"""
         import asyncio
