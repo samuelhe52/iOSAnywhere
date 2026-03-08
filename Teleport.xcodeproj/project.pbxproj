@@ -20,6 +20,10 @@
 		9FF151FB2F5D80350025CED2 /* SimulationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151E12F5D80350025CED2 /* SimulationState.swift */; };
 		9FF151FC2F5D80350025CED2 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151ED2F5D80350025CED2 /* AppViewModel.swift */; };
 		9FF151FD2F5D80350025CED2 /* LocationSimulationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151E62F5D80350025CED2 /* LocationSimulationService.swift */; };
+		9FF152002F5D80350025CED2 /* MapWorkspaceComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151FE2F5D80350025CED2 /* MapWorkspaceComponents.swift */; };
+		9FF152012F5D80350025CED2 /* MapWorkspaceSearchSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151FF2F5D80350025CED2 /* MapWorkspaceSearchSupport.swift */; };
+		9FF152042F5D80350025CED2 /* InspectorPanelSections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF152022F5D80350025CED2 /* InspectorPanelSections.swift */; };
+		9FF152052F5D80350025CED2 /* InspectorPanelSupportViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF152032F5D80350025CED2 /* InspectorPanelSupportViews.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +41,10 @@
 		9FF151E92F5D80350025CED2 /* InspectorPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorPanelView.swift; sourceTree = "<group>"; };
 		9FF151EA2F5D80350025CED2 /* MapWorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapWorkspaceView.swift; sourceTree = "<group>"; };
 		9FF151ED2F5D80350025CED2 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
+		9FF151FE2F5D80350025CED2 /* MapWorkspaceComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapWorkspaceComponents.swift; sourceTree = "<group>"; };
+		9FF151FF2F5D80350025CED2 /* MapWorkspaceSearchSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapWorkspaceSearchSupport.swift; sourceTree = "<group>"; };
+		9FF152022F5D80350025CED2 /* InspectorPanelSections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorPanelSections.swift; sourceTree = "<group>"; };
+		9FF152032F5D80350025CED2 /* InspectorPanelSupportViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorPanelSupportViews.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -153,7 +161,11 @@
 			isa = PBXGroup;
 			children = (
 				9FF151E82F5D80350025CED2 /* DeviceSidebarView.swift */,
+				9FF152022F5D80350025CED2 /* InspectorPanelSections.swift */,
 				9FF151E92F5D80350025CED2 /* InspectorPanelView.swift */,
+				9FF152032F5D80350025CED2 /* InspectorPanelSupportViews.swift */,
+				9FF151FE2F5D80350025CED2 /* MapWorkspaceComponents.swift */,
+				9FF151FF2F5D80350025CED2 /* MapWorkspaceSearchSupport.swift */,
 				9FF151EA2F5D80350025CED2 /* MapWorkspaceView.swift */,
 			);
 			path = Views;
@@ -274,12 +286,16 @@
 				9FF151F52F5D80350025CED2 /* CommandRunner.swift in Sources */,
 				9FF151F62F5D80350025CED2 /* TeleportApp.swift in Sources */,
 				9FF151F72F5D80350025CED2 /* SimulatorLocationService.swift in Sources */,
+				9FF152042F5D80350025CED2 /* InspectorPanelSections.swift in Sources */,
 				9FF151F82F5D80350025CED2 /* MapWorkspaceView.swift in Sources */,
 				9FF151F92F5D80350025CED2 /* InspectorPanelView.swift in Sources */,
+				9FF152052F5D80350025CED2 /* InspectorPanelSupportViews.swift in Sources */,
 				9FF151FA2F5D80350025CED2 /* Device.swift in Sources */,
 				9FF151FB2F5D80350025CED2 /* SimulationState.swift in Sources */,
 				9FF151FC2F5D80350025CED2 /* AppViewModel.swift in Sources */,
 				9FF151FD2F5D80350025CED2 /* LocationSimulationService.swift in Sources */,
+				9FF152002F5D80350025CED2 /* MapWorkspaceComponents.swift in Sources */,
+				9FF152012F5D80350025CED2 /* MapWorkspaceSearchSupport.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

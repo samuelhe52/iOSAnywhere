@@ -32,50 +32,26 @@ struct MapWorkspaceView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             ZStack(alignment: .top) {
-                MapReader { proxy in
-                    Map(position: $cameraPosition) {
-                        if case .simulating(let coordinate) = viewModel.simulationState {
-                            Marker(
-                                "Simulated Location",
-                                coordinate: CLLocationCoordinate2D(
-                                    latitude: coordinate.latitude,
-                                    longitude: coordinate.longitude
-                                ))
-                        }
-
-                        if let highlightedCoordinate {
-                            Marker(
-                                highlightedTitle ?? "Selected Place",
-                                coordinate: CLLocationCoordinate2D(
-                                    latitude: highlightedCoordinate.latitude,
-                                    longitude: highlightedCoordinate.longitude
-                                )
-                            )
-                            .tint(.blue)
-                        }
-                    }
-                    .simultaneousGesture(
-                        SpatialTapGesture()
-                            .onEnded { value in
-                                guard let coordinate = proxy.convert(value.location, from: .local) else {
-                                    return
-                                }
-
-                                setPickedLocation(
-                                    LocationCoordinate(
-                                        latitude: coordinate.latitude,
-                                        longitude: coordinate.longitude
-                                    ),
-                                    title: "Picked Location",
-                                    source: .appleMapDisplay,
-                                    recenterMap: true,
-                                    debounceNanoseconds: 140_000_000,
-                                    preferredSpan: currentCameraSpan
-                                )
-                            }
-                    )
-                    .onMapCameraChange(frequency: .continuous) { context in
-                        currentCameraSpan = context.region.span
+                MapWorkspaceMapCanvasView(
+                    cameraPosition: $cameraPosition,
+                    simulationState: viewModel.simulationState,
+                    highlightedCoordinate: highlightedCoordinate,
+                    highlightedTitle: highlightedTitle,
+                    onTapCoordinate: { coordinate in
+                        setPickedLocation(
+                            LocationCoordinate(
+                                latitude: coordinate.latitude,
+                                longitude: coordinate.longitude
+                            ),
+                            title: "Picked Location",
+                            source: .appleMapDisplay,
+                            recenterMap: true,
+                            debounceNanoseconds: 140_000_000,
+                            preferredSpan: currentCameraSpan
+                        )
+                    },
+                    onCameraChange: { region in
+                        currentCameraSpan = region.span
 
                         if searchModel.showsOverlay || shouldShowHistoryOverlay {
                             withAnimation(.easeInOut(duration: 0.18)) {
@@ -84,179 +60,19 @@ struct MapWorkspaceView: View {
                             }
                         }
                     }
-                    .mapStyle(.standard(elevation: .realistic))
-                    .clipShape(RoundedRectangle(cornerRadius: 18))
-                    .frame(minHeight: 420)
-                }
+                )
 
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(spacing: 10) {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundStyle(.secondary)
-
-                        TextField("Search for a place or address", text: $searchModel.query)
-                            .textFieldStyle(.plain)
-                            .focused($isSearchFieldFocused)
-
-                        if !searchModel.query.isEmpty {
-                            Button {
-                                withAnimation(.easeInOut(duration: 0.18)) {
-                                    searchModel.clear()
-                                }
-                            } label: {
-                                Image(systemName: "xmark.circle.fill")
-                                    .foregroundStyle(.tertiary)
-                            }
-                            .buttonStyle(.plain)
+                MapWorkspaceSearchOverlayView(
+                    searchModel: searchModel,
+                    isSearchFieldFocused: $isSearchFieldFocused,
+                    shouldShowHistoryOverlay: shouldShowHistoryOverlay,
+                    onSelectCompletion: { completion in
+                        Task {
+                            await selectCompletion(completion)
                         }
-                    }
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .fill(Color(NSColor.controlBackgroundColor))
-                            .shadow(color: .black.opacity(0.16), radius: 12, y: 8)
-                    )
-
-                    if let errorMessage = searchModel.errorMessage {
-                        Label(errorMessage, systemImage: "exclamationmark.triangle.fill")
-                            .font(.footnote)
-                            .foregroundStyle(.orange)
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 10)
-                            .background(
-                                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                    .fill(Color(NSColor.controlBackgroundColor))
-                                    .shadow(color: .black.opacity(0.12), radius: 10, y: 6)
-                            )
-                            .transition(.opacity)
-                    } else if !searchModel.completions.isEmpty {
-                        ScrollView {
-                            VStack(alignment: .leading, spacing: 0) {
-                                ForEach(searchModel.completions) { completion in
-                                    Button {
-                                        Task {
-                                            await selectCompletion(completion)
-                                        }
-                                    } label: {
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(completion.title)
-                                                .foregroundStyle(.primary)
-                                            if !completion.subtitle.isEmpty {
-                                                Text(completion.subtitle)
-                                                    .font(.caption)
-                                                    .foregroundStyle(.secondary)
-                                            }
-                                        }
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .padding(.horizontal, 14)
-                                        .padding(.vertical, 10)
-                                        .contentShape(Rectangle())
-                                    }
-                                    .buttonStyle(.plain)
-
-                                    if completion.id != searchModel.completions.last?.id {
-                                        Divider()
-                                            .padding(.leading, 14)
-                                    }
-                                }
-                            }
-                        }
-                        .frame(maxHeight: 280)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                .fill(Color(NSColor.controlBackgroundColor))
-                                .shadow(color: .black.opacity(0.18), radius: 16, y: 10)
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                .strokeBorder(Color.white.opacity(0.06))
-                        )
-                        .transition(.opacity)
-                    } else if shouldShowHistoryOverlay {
-                        VStack(alignment: .leading, spacing: 0) {
-                            HStack {
-                                Label("Recent Searches", systemImage: "clock.arrow.circlepath")
-                                    .font(.footnote.weight(.semibold))
-                                    .foregroundStyle(.secondary)
-
-                                Spacer(minLength: 12)
-
-                                Button("Clear") {
-                                    withAnimation(.easeInOut(duration: 0.18)) {
-                                        searchModel.clearHistory()
-                                    }
-                                }
-                                .buttonStyle(.plain)
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(.secondary)
-                            }
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 12)
-
-                            Divider()
-
-                            ScrollView {
-                                VStack(alignment: .leading, spacing: 0) {
-                                    ForEach(searchModel.history) { entry in
-                                        HStack(spacing: 10) {
-                                            Button {
-                                                selectHistoryEntry(entry)
-                                            } label: {
-                                                VStack(alignment: .leading, spacing: 4) {
-                                                    Text(entry.title)
-                                                        .foregroundStyle(.primary)
-
-                                                    if !entry.subtitle.isEmpty {
-                                                        Text(entry.subtitle)
-                                                            .font(.caption)
-                                                            .foregroundStyle(.secondary)
-                                                    }
-
-                                                    Text(entry.coordinate.formatted)
-                                                        .font(.caption2)
-                                                        .foregroundStyle(.tertiary)
-                                                }
-                                                .frame(maxWidth: .infinity, alignment: .leading)
-                                                .padding(.vertical, 10)
-                                                .contentShape(Rectangle())
-                                            }
-                                            .buttonStyle(.plain)
-
-                                            Button {
-                                                withAnimation(.easeInOut(duration: 0.18)) {
-                                                    searchModel.removeHistoryEntry(entry)
-                                                }
-                                            } label: {
-                                                Image(systemName: "xmark.circle.fill")
-                                                    .foregroundStyle(.tertiary)
-                                            }
-                                            .buttonStyle(.plain)
-                                            .help("Remove from recent searches")
-                                        }
-                                        .padding(.horizontal, 14)
-
-                                        if entry.id != searchModel.history.last?.id {
-                                            Divider()
-                                                .padding(.leading, 14)
-                                        }
-                                    }
-                                }
-                            }
-                            .frame(maxHeight: 280)
-                        }
-                        .background(
-                            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                .fill(Color(NSColor.controlBackgroundColor))
-                                .shadow(color: .black.opacity(0.18), radius: 16, y: 10)
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                .strokeBorder(Color.white.opacity(0.06))
-                        )
-                        .transition(.opacity)
-                    }
-                }
+                    },
+                    onSelectHistoryEntry: selectHistoryEntry
+                )
                 .padding(16)
                 .frame(maxWidth: .infinity, alignment: .topLeading)
             }
@@ -359,8 +175,8 @@ struct MapWorkspaceView: View {
         guard
             let latitude = Double(viewModel.latitudeText),
             let longitude = Double(viewModel.longitudeText),
-            (-90.0 ... 90.0).contains(latitude),
-            (-180.0 ... 180.0).contains(longitude)
+            (-90.0...90.0).contains(latitude),
+            (-180.0...180.0).contains(longitude)
         else {
             return nil
         }
@@ -485,231 +301,4 @@ struct MapWorkspaceView: View {
         }
     }
 
-}
-
-fileprivate struct LocationSearchCompletion: Identifiable, Equatable {
-    let id: String
-    let title: String
-    let subtitle: String
-    let rawValue: MKLocalSearchCompletion
-}
-
-fileprivate struct LocationSearchHistoryEntry: Identifiable, Equatable, Codable {
-    let title: String
-    let subtitle: String
-    let coordinate: LocationCoordinate
-
-    var id: String {
-        let latitude = String(format: "%.6f", coordinate.latitude)
-        let longitude = String(format: "%.6f", coordinate.longitude)
-        return [title, subtitle, latitude, longitude].joined(separator: "|")
-    }
-}
-
-@MainActor
-fileprivate final class StartupLocationModel: NSObject, ObservableObject, CLLocationManagerDelegate {
-    @Published var startupCoordinate: CLLocationCoordinate2D?
-
-    private let locationManager = CLLocationManager()
-    private var hasRequestedLocation = false
-
-    override init() {
-        super.init()
-        locationManager.delegate = self
-    }
-
-    func requestLocationIfNeeded() {
-        guard !hasRequestedLocation, CLLocationManager.locationServicesEnabled() else {
-            return
-        }
-
-        hasRequestedLocation = true
-
-        switch locationManager.authorizationStatus {
-        case .authorizedAlways, .authorizedWhenInUse:
-            locationManager.requestLocation()
-        case .notDetermined:
-            locationManager.requestWhenInUseAuthorization()
-        case .denied, .restricted:
-            break
-        @unknown default:
-            break
-        }
-    }
-
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        switch manager.authorizationStatus {
-        case .authorizedAlways, .authorizedWhenInUse:
-            manager.requestLocation()
-        case .denied, .restricted:
-            startupCoordinate = nil
-        case .notDetermined:
-            break
-        @unknown default:
-            break
-        }
-    }
-
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard startupCoordinate == nil, let location = locations.last else {
-            return
-        }
-
-        startupCoordinate = location.coordinate
-    }
-
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        startupCoordinate = nil
-    }
-}
-
-@MainActor
-fileprivate final class LocationSearchModel: NSObject, ObservableObject, MKLocalSearchCompleterDelegate {
-    private enum Preferences {
-        static let searchHistory = "locationSearchHistory"
-    }
-
-    private static let maxHistoryEntries = 10
-
-    @Published var query: String = "" {
-        didSet {
-            errorMessage = nil
-            if query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                completions = []
-            }
-
-            if suppressNextQueryFragmentUpdate {
-                suppressNextQueryFragmentUpdate = false
-                return
-            }
-
-            completer.queryFragment = query
-        }
-    }
-    @Published var completions: [LocationSearchCompletion] = []
-    @Published private(set) var history: [LocationSearchHistoryEntry] = []
-    @Published var errorMessage: String?
-
-    private let completer = MKLocalSearchCompleter()
-    private let defaults: UserDefaults
-    private var suppressNextQueryFragmentUpdate = false
-
-    init(defaults: UserDefaults = .standard) {
-        self.defaults = defaults
-        super.init()
-        completer.delegate = self
-        completer.resultTypes = [.address, .pointOfInterest]
-        loadHistory()
-    }
-
-    func clear() {
-        query = ""
-        completions = []
-        errorMessage = nil
-    }
-
-    func acceptSelection(named name: String?) {
-        suppressNextQueryFragmentUpdate = true
-        query = name ?? query
-        completions = []
-        errorMessage = nil
-        completer.queryFragment = ""
-    }
-
-    func recordSelection(title: String, subtitle: String, coordinate: LocationCoordinate) {
-        let entry = LocationSearchHistoryEntry(
-            title: title,
-            subtitle: subtitle,
-            coordinate: coordinate
-        )
-
-        history.removeAll { $0.id == entry.id }
-        history.insert(entry, at: 0)
-
-        if history.count > Self.maxHistoryEntries {
-            history = Array(history.prefix(Self.maxHistoryEntries))
-        }
-
-        saveHistory()
-    }
-
-    func removeHistoryEntry(_ entry: LocationSearchHistoryEntry) {
-        history.removeAll { $0.id == entry.id }
-        saveHistory()
-    }
-
-    func clearHistory() {
-        history = []
-        saveHistory()
-    }
-
-    func dismissOverlay() {
-        completions = []
-        errorMessage = nil
-    }
-
-    var showsOverlay: Bool {
-        !completions.isEmpty || errorMessage != nil
-    }
-
-    func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
-        completions = completer.results.map {
-            LocationSearchCompletion(
-                id: $0.title + "|" + $0.subtitle,
-                title: $0.title,
-                subtitle: $0.subtitle,
-                rawValue: $0
-            )
-        }
-    }
-
-    func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
-        completions = []
-        errorMessage = "Apple location search is temporarily unavailable."
-    }
-
-    func resolve(_ completion: LocationSearchCompletion) async -> MKMapItem? {
-        do {
-            let request = MKLocalSearch.Request(completion: completion.rawValue)
-            let response = try await MKLocalSearch(request: request).start()
-
-            guard let first = response.mapItems.first else {
-                errorMessage = "No map result was returned for that place."
-                return nil
-            }
-
-            errorMessage = nil
-            return first
-        } catch {
-            errorMessage = "Unable to load that location from Apple Maps right now."
-            return nil
-        }
-    }
-
-    private func loadHistory() {
-        guard let data = defaults.data(forKey: Preferences.searchHistory) else {
-            history = []
-            return
-        }
-
-        do {
-            history = try JSONDecoder().decode([LocationSearchHistoryEntry].self, from: data)
-        } catch {
-            history = []
-        }
-    }
-
-    private func saveHistory() {
-        if history.isEmpty {
-            defaults.removeObject(forKey: Preferences.searchHistory)
-            return
-        }
-
-        do {
-            let data = try JSONEncoder().encode(history)
-            defaults.set(data, forKey: Preferences.searchHistory)
-        } catch {
-            defaults.removeObject(forKey: Preferences.searchHistory)
-        }
-    }
 }
