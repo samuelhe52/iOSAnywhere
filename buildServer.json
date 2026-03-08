@@ -12,8 +12,8 @@
 	"argv": [
 		"/opt/homebrew/bin/xcode-build-server"
 	],
-	"workspace": "/Users/samuelhe/Projects/iOSAnywhere/Teleport.xcodeproj/project.xcworkspace",
-	"build_root": "/Users/samuelhe/Library/Developer/Xcode/DerivedData/Teleport-bqafnkezxgizscfucgnqydglegkg",
+	"workspace": "/Users/samuelhe/Projects/Teleport/Teleport.xcodeproj/project.xcworkspace",
+	"build_root": "/Users/samuelhe/Library/Developer/Xcode/DerivedData/Teleport-fkbrtteubdfsigbcjebxdbbskcdv",
 	"scheme": "Teleport",
 	"kind": "xcode"
 }
