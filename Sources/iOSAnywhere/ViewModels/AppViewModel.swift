@@ -4,8 +4,13 @@ import Observation
 @Observable
 @MainActor
 final class AppViewModel {
+    private enum Preferences {
+        static let suppressUSBPrivilegeNotice = "suppressUSBPrivilegeNotice"
+    }
+
     private let registry: DeviceRegistry
     private var acknowledgedUSBPrivilegeDeviceID: String?
+    private let defaults: UserDefaults
 
     var discoveryState: DiscoveryState = .idle
     var connectionState: DeviceConnectionState = .disconnected
@@ -16,9 +21,12 @@ final class AppViewModel {
     var latitudeText: String = "37.3346"
     var longitudeText: String = "-122.0090"
     var statusMessage: String = "Ready to discover simulators and USB devices."
+    var suppressUSBPrivilegeNotice: Bool
 
-    init(registry: DeviceRegistry) {
+    init(registry: DeviceRegistry, defaults: UserDefaults = .standard) {
         self.registry = registry
+        self.defaults = defaults
+        self.suppressUSBPrivilegeNotice = defaults.bool(forKey: Preferences.suppressUSBPrivilegeNotice)
     }
 
     var selectedDevice: Device? {
@@ -31,6 +39,10 @@ final class AppViewModel {
 
     var showsUSBApprovalReminder: Bool {
         guard selectedDeviceRequiresAdministratorApproval else {
+            return false
+        }
+
+        if suppressUSBPrivilegeNotice {
             return false
         }
 
@@ -115,13 +127,14 @@ final class AppViewModel {
         }
 
         let coordinate = LocationCoordinate(latitude: latitude, longitude: longitude)
+        let simulationCoordinate = ChinaCoordinateTransform.simulationCoordinate(fromDisplayed: coordinate)
         do {
             if device.kind == .physicalUSB {
                 simulationState = .authorizing
                 statusMessage =
                     "Waiting for macOS administrator approval. Your password is entered in a separate system dialog and is never stored by iOSAnywhere."
             }
-            try await service.setLocation(coordinate)
+            try await service.setLocation(simulationCoordinate)
             simulationState = .simulating(coordinate)
             statusMessage = "Simulating \(coordinate.formatted) on \(device.name)."
         } catch {
@@ -130,7 +143,11 @@ final class AppViewModel {
         }
     }
 
-    func confirmUSBPrivilegeNotice() async {
+    func confirmUSBPrivilegeNotice(suppressFuturePrompts: Bool) async {
+        if suppressFuturePrompts {
+            suppressUSBPrivilegeNotice = true
+            defaults.set(true, forKey: Preferences.suppressUSBPrivilegeNotice)
+        }
         acknowledgedUSBPrivilegeDeviceID = selectedDeviceID
         showsUSBPrivilegeNotice = false
         await simulateSelectedLocation()

@@ -17,7 +17,7 @@ struct MapWorkspaceView: View {
             span: MKCoordinateSpan(latitudeDelta: 0.15, longitudeDelta: 0.15)
         )
     )
-    @State private var highlightedCoordinate: CLLocationCoordinate2D?
+    @State private var highlightedCoordinate: LocationCoordinate?
     @State private var highlightedTitle: String?
 
     var body: some View {
@@ -29,13 +29,18 @@ struct MapWorkspaceView: View {
                             Marker(
                                 "Simulated Location",
                                 coordinate: CLLocationCoordinate2D(
-                                    latitude: coordinate.latitude, longitude: coordinate.longitude))
+                                    latitude: coordinate.latitude,
+                                    longitude: coordinate.longitude
+                                ))
                         }
 
                         if let highlightedCoordinate {
                             Marker(
                                 highlightedTitle ?? "Selected Place",
-                                coordinate: highlightedCoordinate
+                                coordinate: CLLocationCoordinate2D(
+                                    latitude: highlightedCoordinate.latitude,
+                                    longitude: highlightedCoordinate.longitude
+                                )
                             )
                             .tint(.blue)
                         }
@@ -237,14 +242,16 @@ struct MapWorkspaceView: View {
     }
 
     private func syncMap(to coordinate: LocationCoordinate, title: String, recenterMap: Bool = true) {
-        let center = CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
-        highlightedCoordinate = center
+        highlightedCoordinate = coordinate
         highlightedTitle = title
         lastSyncedManualCoordinate = coordinate
         if recenterMap {
             updateCameraPosition(
                 MKCoordinateRegion(
-                    center: center,
+                    center: CLLocationCoordinate2D(
+                        latitude: coordinate.latitude,
+                        longitude: coordinate.longitude
+                    ),
                     span: currentCameraSpan
                 ),
                 debounceNanoseconds: 0
@@ -268,7 +275,10 @@ struct MapWorkspaceView: View {
         if recenterMap {
             updateCameraPosition(
                 MKCoordinateRegion(
-                    center: CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude),
+                    center: CLLocationCoordinate2D(
+                        latitude: coordinate.latitude,
+                        longitude: coordinate.longitude
+                    ),
                     span: preferredSpan
                 ),
                 debounceNanoseconds: debounceNanoseconds
@@ -307,6 +317,7 @@ struct MapWorkspaceView: View {
             }
         }
     }
+
 }
 
 fileprivate struct LocationSearchCompletion: Identifiable, Equatable {

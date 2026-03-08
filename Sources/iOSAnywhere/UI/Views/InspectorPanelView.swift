@@ -29,8 +29,8 @@ struct InspectorPanelView: View {
         .frame(minWidth: 280, maxHeight: .infinity, alignment: .top)
         .sheet(isPresented: $viewModel.showsUSBPrivilegeNotice) {
             USBAuthorizationSheet(
-                continueAction: {
-                    Task { await viewModel.confirmUSBPrivilegeNotice() }
+                continueAction: { suppressFuturePrompts in
+                    Task { await viewModel.confirmUSBPrivilegeNotice(suppressFuturePrompts: suppressFuturePrompts) }
                 },
                 cancelAction: {
                     viewModel.dismissUSBPrivilegeNotice()
@@ -519,7 +519,9 @@ fileprivate struct CopiedPopup: View {
 }
 
 fileprivate struct USBAuthorizationSheet: View {
-    let continueAction: () -> Void
+    @State private var suppressFuturePrompts = false
+
+    let continueAction: (Bool) -> Void
     let cancelAction: () -> Void
 
     var body: some View {
@@ -569,6 +571,9 @@ fileprivate struct USBAuthorizationSheet: View {
                     .fill(Color(NSColor.controlBackgroundColor))
             )
 
+            Toggle("Don't show this again", isOn: $suppressFuturePrompts)
+                .toggleStyle(.checkbox)
+
             HStack {
                 Button("Cancel", role: .cancel) {
                     cancelAction()
@@ -577,7 +582,7 @@ fileprivate struct USBAuthorizationSheet: View {
                 Spacer()
 
                 Button("Continue") {
-                    continueAction()
+                    continueAction(suppressFuturePrompts)
                 }
                 .keyboardShortcut(.defaultAction)
                 .buttonStyle(.borderedProminent)
