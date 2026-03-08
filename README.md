@@ -4,6 +4,8 @@ Teleport is a native macOS app for simulating iPhone location on iOS Simulators 
 
 Built with SwiftUI and MapKit, it gives you a desktop workflow for picking a point on a map, searching for a place, and pushing that location to your test target.
 
+![Teleport app screenshot](Resources/screenshot-main.jpg)
+
 ## Features
 
 - Native macOS three-pane UI for device selection, map interaction, and session controls
