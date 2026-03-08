@@ -72,16 +72,14 @@ struct InspectorPanelView: View {
         }
         .padding(20)
         .frame(minWidth: 260)
-        .alert("Administrator Approval", isPresented: $viewModel.showsUSBPrivilegeNotice) {
-            Button("Continue") {
-                Task { await viewModel.confirmUSBPrivilegeNotice() }
-            }
-            Button("Cancel", role: .cancel) {
-                viewModel.dismissUSBPrivilegeNotice()
-            }
-        } message: {
-            Text(
-                "USB device simulation needs administrator approval to create the device tunnel. Your password will be entered in a separate macOS dialog, and iOSAnywhere does not store it."
+        .sheet(isPresented: $viewModel.showsUSBPrivilegeNotice) {
+            USBAuthorizationSheet(
+                continueAction: {
+                    Task { await viewModel.confirmUSBPrivilegeNotice() }
+                },
+                cancelAction: {
+                    viewModel.dismissUSBPrivilegeNotice()
+                }
             )
         }
     }
@@ -113,5 +111,93 @@ struct InspectorPanelView: View {
         case .stopping: return "Stopping"
         case .failed(let message): return message
         }
+    }
+}
+
+private struct USBAuthorizationSheet: View {
+    let continueAction: () -> Void
+    let cancelAction: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            HStack(alignment: .top, spacing: 14) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [Color.blue.opacity(0.9), Color.cyan.opacity(0.7)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 52, height: 52)
+
+                    Image(systemName: "lock.shield.fill")
+                        .font(.system(size: 22, weight: .semibold))
+                        .foregroundStyle(.white)
+                }
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Administrator Approval Required")
+                        .font(.title3.weight(.semibold))
+                    Text("To simulate location on a USB device, macOS will ask for your administrator password in a separate system dialog.")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+
+            VStack(alignment: .leading, spacing: 10) {
+                SimpleSecurityRow(
+                    icon: "checkmark.shield",
+                    text: "iOSAnywhere does not capture or store your password."
+                )
+                SimpleSecurityRow(
+                    icon: "cable.connector",
+                    text: "The approval is used only to create the USB device tunnel."
+                )
+            }
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Color(NSColor.controlBackgroundColor))
+            )
+
+            HStack {
+                Button("Cancel", role: .cancel) {
+                    cancelAction()
+                }
+
+                Spacer()
+
+                Button("Continue") {
+                    continueAction()
+                }
+                .keyboardShortcut(.defaultAction)
+                .buttonStyle(.borderedProminent)
+            }
+        }
+        .padding(24)
+        .frame(width: 440)
+    }
+}
+
+private struct SimpleSecurityRow: View {
+    let icon: String
+    let text: String
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 10) {
+            Image(systemName: icon)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(.blue)
+                .frame(width: 18)
+
+            Text(text)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

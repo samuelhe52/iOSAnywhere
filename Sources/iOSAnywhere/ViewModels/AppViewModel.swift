@@ -129,6 +129,8 @@ final class AppViewModel {
 
     func dismissUSBPrivilegeNotice() {
         showsUSBPrivilegeNotice = false
+        simulationState = .failed("Administrator approval was canceled before the macOS password prompt.")
+        statusMessage = "Administrator approval was canceled before the macOS password prompt."
     }
 
     func clearSimulatedLocation() async {

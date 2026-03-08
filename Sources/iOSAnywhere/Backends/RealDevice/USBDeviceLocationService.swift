@@ -195,10 +195,20 @@ actor USBDeviceLocationService: LocationSimulationService {
     private func createAskpassScript(at url: URL) throws {
         let script = #"""
 #!/bin/sh
-/usr/bin/osascript \
-  -e 'tell application "System Events" to activate' \
-  -e 'tell application "System Events" to display dialog "iOSAnywhere needs your administrator password to simulate location on a physical device." default answer "" with hidden answer buttons {"Cancel", "OK"} default button "OK" with title "iOSAnywhere"' \
-  -e 'text returned of result'
+password=$(
+    /usr/bin/osascript \
+        -e 'tell application "System Events" to activate' \
+        -e 'tell application "System Events" to display dialog "Authorize USB location simulation for your physical device. Your password is handled by macOS and is not stored by iOSAnywhere." default answer "" with hidden answer buttons {"Cancel", "Authorize"} default button "Authorize" with title "Administrator Password" with icon note' \
+        -e 'text returned of result' 2>/dev/null
+)
+status=$?
+
+if [ "$status" -ne 0 ]; then
+    echo "__IOSANYWHERE_AUTH_CANCELLED__" >&2
+    exit 1
+fi
+
+printf '%s\n' "$password"
 """#
 
         try script.write(to: url, atomically: true, encoding: .utf8)
@@ -286,14 +296,36 @@ actor USBDeviceLocationService: LocationSimulationService {
     }
 
     private func helperFailure(stdout: Data, stderr: Data, fallback: String) -> ServiceError {
-        let output = [
-            String(decoding: stderr, as: UTF8.self),
-            String(decoding: stdout, as: UTF8.self)
-        ]
-        .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-        .first(where: { !$0.isEmpty })
+        let stderrText = String(decoding: stderr, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines)
+        let stdoutText = String(decoding: stdout, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if let friendlyMessage = friendlyAuthorizationMessage(stderr: stderrText, stdout: stdoutText) {
+            return ServiceError.unavailable(friendlyMessage)
+        }
+
+        let output = [stderrText, stdoutText].first(where: { !$0.isEmpty })
 
         return ServiceError.unavailable(output ?? fallback)
+    }
+
+    private func friendlyAuthorizationMessage(stderr: String, stdout: String) -> String? {
+        let combined = [stderr, stdout]
+            .joined(separator: "\n")
+            .lowercased()
+
+        if combined.contains("__iosanywhere_auth_cancelled__") {
+            return "Administrator approval was canceled. Physical-device location simulation did not start."
+        }
+
+        if combined.contains("incorrect password") || combined.contains("try again") {
+            return "The administrator password was incorrect. Check the password and try again."
+        }
+
+        if combined.contains("no password was provided") || combined.contains("a password is required") {
+            return "Administrator approval was canceled. Physical-device location simulation did not start."
+        }
+
+        return nil
     }
 
     private struct SimulationHelper {
