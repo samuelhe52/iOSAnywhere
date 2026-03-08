@@ -5,7 +5,7 @@ import Observation
 @MainActor
 final class AppViewModel {
     private let registry: DeviceRegistry
-    private var hasAcknowledgedUSBPrivilegeNotice = false
+    private var acknowledgedUSBPrivilegeDeviceID: String?
 
     var discoveryState: DiscoveryState = .idle
     var connectionState: DeviceConnectionState = .disconnected
@@ -27,6 +27,14 @@ final class AppViewModel {
 
     var selectedDeviceRequiresAdministratorApproval: Bool {
         selectedDevice?.kind == .physicalUSB
+    }
+
+    var showsUSBApprovalReminder: Bool {
+        guard selectedDeviceRequiresAdministratorApproval else {
+            return false
+        }
+
+        return acknowledgedUSBPrivilegeDeviceID != selectedDeviceID
     }
 
     func refreshDevices() async {
@@ -100,7 +108,7 @@ final class AppViewModel {
             return
         }
 
-        if device.kind == .physicalUSB && !hasAcknowledgedUSBPrivilegeNotice {
+        if device.kind == .physicalUSB && showsUSBApprovalReminder {
             showsUSBPrivilegeNotice = true
             statusMessage = "Review the administrator approval note to continue with USB location simulation."
             return
@@ -123,7 +131,7 @@ final class AppViewModel {
     }
 
     func confirmUSBPrivilegeNotice() async {
-        hasAcknowledgedUSBPrivilegeNotice = true
+        acknowledgedUSBPrivilegeDeviceID = selectedDeviceID
         showsUSBPrivilegeNotice = false
         await simulateSelectedLocation()
     }

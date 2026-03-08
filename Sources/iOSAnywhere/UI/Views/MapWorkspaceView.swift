@@ -5,6 +5,8 @@ import SwiftUI
 struct MapWorkspaceView: View {
     @Bindable var viewModel: AppViewModel
     @StateObject private var searchModel = LocationSearchModel()
+    @State private var pendingCoordinateSyncTask: Task<Void, Never>?
+    @State private var lastSyncedManualCoordinate: LocationCoordinate?
 
     @State private var cameraPosition: MapCameraPosition = .region(
         MKCoordinateRegion(
@@ -143,6 +145,12 @@ struct MapWorkspaceView: View {
             .textFieldStyle(.roundedBorder)
         }
         .padding(20)
+        .onChange(of: viewModel.latitudeText) { _, _ in
+            scheduleManualCoordinateSync()
+        }
+        .onChange(of: viewModel.longitudeText) { _, _ in
+            scheduleManualCoordinateSync()
+        }
     }
 
     private func selectCompletion(_ completion: LocationSearchCompletion) async {
@@ -151,17 +159,62 @@ struct MapWorkspaceView: View {
         }
 
         let coordinate = result.placemark.coordinate
-        highlightedCoordinate = coordinate
-        highlightedTitle = result.name
         viewModel.latitudeText = String(format: "%.6f", coordinate.latitude)
         viewModel.longitudeText = String(format: "%.6f", coordinate.longitude)
+        syncMap(
+            to: LocationCoordinate(latitude: coordinate.latitude, longitude: coordinate.longitude),
+            title: result.name ?? "Selected Place"
+        )
+        searchModel.acceptSelection(named: result.name)
+    }
+
+    private func scheduleManualCoordinateSync() {
+        pendingCoordinateSyncTask?.cancel()
+
+        guard let coordinate = parsedManualCoordinate else {
+            return
+        }
+
+        if lastSyncedManualCoordinate == coordinate {
+            return
+        }
+
+        pendingCoordinateSyncTask = Task {
+            try? await Task.sleep(nanoseconds: 250_000_000)
+            guard !Task.isCancelled else {
+                return
+            }
+
+            await MainActor.run {
+                syncMap(to: coordinate, title: "Manual Coordinates")
+            }
+        }
+    }
+
+    private var parsedManualCoordinate: LocationCoordinate? {
+        guard
+            let latitude = Double(viewModel.latitudeText),
+            let longitude = Double(viewModel.longitudeText),
+            (-90.0 ... 90.0).contains(latitude),
+            (-180.0 ... 180.0).contains(longitude)
+        else {
+            return nil
+        }
+
+        return LocationCoordinate(latitude: latitude, longitude: longitude)
+    }
+
+    private func syncMap(to coordinate: LocationCoordinate, title: String) {
+        let center = CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        highlightedCoordinate = center
+        highlightedTitle = title
+        lastSyncedManualCoordinate = coordinate
         cameraPosition = .region(
             MKCoordinateRegion(
-                center: coordinate,
+                center: center,
                 span: MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
             )
         )
-        searchModel.acceptSelection(named: result.name)
     }
 }
 
