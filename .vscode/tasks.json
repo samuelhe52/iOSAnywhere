@@ -1,0 +1,20 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build Teleport",
+			"type": "shell",
+			"command": "xcodebuild",
+			"args": [
+				"-project",
+				"Teleport.xcodeproj",
+				"-scheme",
+				"Teleport",
+				"-destination",
+				"platform=macOS",
+				"build"
+			],
+			"isBackground": false
+		}
+	]
+}
