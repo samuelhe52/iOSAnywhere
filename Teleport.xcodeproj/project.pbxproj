@@ -24,6 +24,9 @@
 		9FF152012F5D80350025CED2 /* MapWorkspaceSearchSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151FF2F5D80350025CED2 /* MapWorkspaceSearchSupport.swift */; };
 		9FF152042F5D80350025CED2 /* InspectorPanelSections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF152022F5D80350025CED2 /* InspectorPanelSections.swift */; };
 		9FF152052F5D80350025CED2 /* InspectorPanelSupportViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF152032F5D80350025CED2 /* InspectorPanelSupportViews.swift */; };
+		A1B2C3D42F5E90010025CED2 /* USBDeviceLocationSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D32F5E90010025CED2 /* USBDeviceLocationSupport.swift */; };
+		B2C3D4E52F5EA0010025CED2 /* AppViewModelSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E32F5EA0010025CED2 /* AppViewModelSupport.swift */; };
+		B2C3D4E62F5EA0010025CED2 /* AppViewModel+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E42F5EA0010025CED2 /* AppViewModel+Operations.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +48,9 @@
 		9FF151FF2F5D80350025CED2 /* MapWorkspaceSearchSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapWorkspaceSearchSupport.swift; sourceTree = "<group>"; };
 		9FF152022F5D80350025CED2 /* InspectorPanelSections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorPanelSections.swift; sourceTree = "<group>"; };
 		9FF152032F5D80350025CED2 /* InspectorPanelSupportViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorPanelSupportViews.swift; sourceTree = "<group>"; };
+		A1B2C3D32F5E90010025CED2 /* USBDeviceLocationSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USBDeviceLocationSupport.swift; sourceTree = "<group>"; };
+		B2C3D4E32F5EA0010025CED2 /* AppViewModelSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelSupport.swift; sourceTree = "<group>"; };
+		B2C3D4E42F5EA0010025CED2 /* AppViewModel+Operations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppViewModel+Operations.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -60,8 +66,8 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		9FE2289D2F5DBDF9002B9B08 /* Resources */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-				exceptions = (
-					9FE2289F2F5DBF7D002B9B08 /* Exceptions for "Resources" folder in "Teleport" target */,
+			exceptions = (
+				9FE2289F2F5DBF7D002B9B08 /* Exceptions for "Resources" folder in "Teleport" target */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -108,6 +114,7 @@
 			isa = PBXGroup;
 			children = (
 				9FF151DA2F5D80350025CED2 /* USBDeviceLocationService.swift */,
+				A1B2C3D32F5E90010025CED2 /* USBDeviceLocationSupport.swift */,
 			);
 			path = RealDevice;
 			sourceTree = "<group>";
@@ -183,6 +190,8 @@
 			isa = PBXGroup;
 			children = (
 				9FF151ED2F5D80350025CED2 /* AppViewModel.swift */,
+				B2C3D4E32F5EA0010025CED2 /* AppViewModelSupport.swift */,
+				B2C3D4E42F5EA0010025CED2 /* AppViewModel+Operations.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -283,6 +292,7 @@
 				9FF151F22F5D80350025CED2 /* DeviceSidebarView.swift in Sources */,
 				9FF151F32F5D80350025CED2 /* LocationCoordinate.swift in Sources */,
 				9FF151F42F5D80350025CED2 /* USBDeviceLocationService.swift in Sources */,
+				A1B2C3D42F5E90010025CED2 /* USBDeviceLocationSupport.swift in Sources */,
 				9FF151F52F5D80350025CED2 /* CommandRunner.swift in Sources */,
 				9FF151F62F5D80350025CED2 /* TeleportApp.swift in Sources */,
 				9FF151F72F5D80350025CED2 /* SimulatorLocationService.swift in Sources */,
@@ -293,6 +303,8 @@
 				9FF151FA2F5D80350025CED2 /* Device.swift in Sources */,
 				9FF151FB2F5D80350025CED2 /* SimulationState.swift in Sources */,
 				9FF151FC2F5D80350025CED2 /* AppViewModel.swift in Sources */,
+				B2C3D4E52F5EA0010025CED2 /* AppViewModelSupport.swift in Sources */,
+				B2C3D4E62F5EA0010025CED2 /* AppViewModel+Operations.swift in Sources */,
 				9FF151FD2F5D80350025CED2 /* LocationSimulationService.swift in Sources */,
 				9FF152002F5D80350025CED2 /* MapWorkspaceComponents.swift in Sources */,
 				9FF152012F5D80350025CED2 /* MapWorkspaceSearchSupport.swift in Sources */,
@@ -432,7 +444,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = LB52UWA223;
+				DEVELOPMENT_TEAM = 768QBKMWKW;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -450,7 +462,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.samuelhe.Teleport;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -479,7 +491,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = LB52UWA223;
+				DEVELOPMENT_TEAM = 768QBKMWKW;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -497,7 +509,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.samuelhe.Teleport;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
