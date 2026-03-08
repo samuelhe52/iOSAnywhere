@@ -5,12 +5,14 @@ import Observation
 @MainActor
 final class AppViewModel {
     private let registry: DeviceRegistry
+    private var hasAcknowledgedUSBPrivilegeNotice = false
 
     var discoveryState: DiscoveryState = .idle
     var connectionState: DeviceConnectionState = .disconnected
     var simulationState: SimulationRunState = .idle
     var devices: [Device] = []
     var selectedDeviceID: String?
+    var showsUSBPrivilegeNotice: Bool = false
     var latitudeText: String = "37.3346"
     var longitudeText: String = "-122.0090"
     var statusMessage: String = "Ready to discover simulators and USB devices."
@@ -21,6 +23,10 @@ final class AppViewModel {
 
     var selectedDevice: Device? {
         devices.first(where: { $0.id == selectedDeviceID })
+    }
+
+    var selectedDeviceRequiresAdministratorApproval: Bool {
+        selectedDevice?.kind == .physicalUSB
     }
 
     func refreshDevices() async {
@@ -94,8 +100,18 @@ final class AppViewModel {
             return
         }
 
+        if device.kind == .physicalUSB && !hasAcknowledgedUSBPrivilegeNotice {
+            showsUSBPrivilegeNotice = true
+            statusMessage = "Review the administrator approval note to continue with USB location simulation."
+            return
+        }
+
         let coordinate = LocationCoordinate(latitude: latitude, longitude: longitude)
         do {
+            if device.kind == .physicalUSB {
+                simulationState = .authorizing
+                statusMessage = "Waiting for macOS administrator approval. Your password is entered in a separate system dialog and is never stored by iOSAnywhere."
+            }
             try await service.setLocation(coordinate)
             simulationState = .simulating(coordinate)
             statusMessage = "Simulating \(coordinate.formatted) on \(device.name)."
@@ -103,6 +119,16 @@ final class AppViewModel {
             simulationState = .failed(error.localizedDescription)
             statusMessage = error.localizedDescription
         }
+    }
+
+    func confirmUSBPrivilegeNotice() async {
+        hasAcknowledgedUSBPrivilegeNotice = true
+        showsUSBPrivilegeNotice = false
+        await simulateSelectedLocation()
+    }
+
+    func dismissUSBPrivilegeNotice() {
+        showsUSBPrivilegeNotice = false
     }
 
     func clearSimulatedLocation() async {
@@ -120,5 +146,12 @@ final class AppViewModel {
             simulationState = .failed(error.localizedDescription)
             statusMessage = error.localizedDescription
         }
+    }
+
+    func prepareForTermination() async {
+        await registry.shutdownAll()
+        connectionState = .disconnected
+        simulationState = .idle
+        statusMessage = "Disconnected and cleared simulated locations."
     }
 }

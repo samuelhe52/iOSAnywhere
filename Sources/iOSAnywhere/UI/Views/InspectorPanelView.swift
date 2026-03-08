@@ -18,6 +18,29 @@ struct InspectorPanelView: View {
                 Text(label(for: viewModel.simulationState))
             }
 
+            if viewModel.selectedDeviceRequiresAdministratorApproval {
+                GroupBox {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Label("Administrator approval is required for USB device simulation.", systemImage: "lock.shield")
+                            .font(.subheadline.weight(.semibold))
+                        Text("Your password is requested in a separate macOS dialog. iOSAnywhere does not store, display, or reuse that password.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+
+            if case .authorizing = viewModel.simulationState {
+                HStack(spacing: 10) {
+                    ProgressView()
+                        .controlSize(.small)
+                    Text("Waiting for administrator approval...")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
             VStack(alignment: .leading, spacing: 10) {
                 Button("Refresh Devices") {
                     Task { await viewModel.refreshDevices() }
@@ -49,6 +72,18 @@ struct InspectorPanelView: View {
         }
         .padding(20)
         .frame(minWidth: 260)
+        .alert("Administrator Approval", isPresented: $viewModel.showsUSBPrivilegeNotice) {
+            Button("Continue") {
+                Task { await viewModel.confirmUSBPrivilegeNotice() }
+            }
+            Button("Cancel", role: .cancel) {
+                viewModel.dismissUSBPrivilegeNotice()
+            }
+        } message: {
+            Text(
+                "USB device simulation needs administrator approval to create the device tunnel. Your password will be entered in a separate macOS dialog, and iOSAnywhere does not store it."
+            )
+        }
     }
 
     private func label(for state: DiscoveryState) -> String {
@@ -73,6 +108,7 @@ struct InspectorPanelView: View {
     private func label(for state: SimulationRunState) -> String {
         switch state {
         case .idle: return "Idle"
+        case .authorizing: return "Authorizing"
         case .simulating(let coordinate): return coordinate.formatted
         case .stopping: return "Stopping"
         case .failed(let message): return message

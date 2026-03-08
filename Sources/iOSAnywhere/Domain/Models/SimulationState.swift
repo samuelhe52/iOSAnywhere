@@ -17,6 +17,7 @@ enum DeviceConnectionState: Equatable, Sendable {
 
 enum SimulationRunState: Equatable, Sendable {
     case idle
+    case authorizing
     case simulating(LocationCoordinate)
     case stopping
     case failed(String)
