@@ -1,5 +1,7 @@
 # Teleport
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 Teleport is a native macOS app for simulating iPhone location on iOS Simulators and USB-connected physical devices.
 
 Built with SwiftUI and MapKit, it gives you a desktop workflow for picking a point on a map, searching for a place, and pushing that location to your test target.
@@ -73,3 +75,7 @@ Teleport already covers the core teleport workflow for simulators and USB device
 Teleport was originally developed under the name iOSAnywhere and later renamed.
 
 If you are using Teleport from mainland China, Apple Maps search results may be limited to locations inside China or may fail for places outside China. In practice, searching for overseas places may require a VPN. You can still navigate the map directly to other regions and pick a location manually without search.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for release notes, including [v0.1.1](CHANGELOG.md#v011---2026-03-09).
