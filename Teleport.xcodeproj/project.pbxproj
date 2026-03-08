@@ -12,7 +12,7 @@
 		9FF151F32F5D80350025CED2 /* LocationCoordinate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151E02F5D80350025CED2 /* LocationCoordinate.swift */; };
 		9FF151F42F5D80350025CED2 /* USBDeviceLocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151DA2F5D80350025CED2 /* USBDeviceLocationService.swift */; };
 		9FF151F52F5D80350025CED2 /* CommandRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151E42F5D80350025CED2 /* CommandRunner.swift */; };
-		9FF151F62F5D80350025CED2 /* iOSAnywhereApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151D82F5D80350025CED2 /* iOSAnywhereApp.swift */; };
+		9FF151F62F5D80350025CED2 /* TeleportApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151D82F5D80350025CED2 /* TeleportApp.swift */; };
 		9FF151F72F5D80350025CED2 /* SimulatorLocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151DC2F5D80350025CED2 /* SimulatorLocationService.swift */; };
 		9FF151F82F5D80350025CED2 /* MapWorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151EA2F5D80350025CED2 /* MapWorkspaceView.swift */; };
 		9FF151F92F5D80350025CED2 /* InspectorPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151E92F5D80350025CED2 /* InspectorPanelView.swift */; };
@@ -23,8 +23,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		9FF14F6E2F5D7D6C0025CED2 /* iOSAnywhere.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSAnywhere.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		9FF151D82F5D80350025CED2 /* iOSAnywhereApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSAnywhereApp.swift; sourceTree = "<group>"; };
+		9FF14F6E2F5D7D6C0025CED2 /* Teleport.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Teleport.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9FF151D82F5D80350025CED2 /* TeleportApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeleportApp.swift; sourceTree = "<group>"; };
 		9FF151DA2F5D80350025CED2 /* USBDeviceLocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USBDeviceLocationService.swift; sourceTree = "<group>"; };
 		9FF151DC2F5D80350025CED2 /* SimulatorLocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatorLocationService.swift; sourceTree = "<group>"; };
 		9FF151DF2F5D80350025CED2 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
@@ -40,20 +40,20 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		9FE2289F2F5DBF7D002B9B08 /* Exceptions for "Resources" folder in "iOSAnywhere" target */ = {
+		9FE2289F2F5DBF7D002B9B08 /* Exceptions for "Resources" folder in "Teleport" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Assets.xcassets,
 			);
-			target = 9FF14F6D2F5D7D6C0025CED2 /* iOSAnywhere */;
+			target = 9FF14F6D2F5D7D6C0025CED2 /* Teleport */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		9FE2289D2F5DBDF9002B9B08 /* Resources */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				9FE2289F2F5DBF7D002B9B08 /* Exceptions for "Resources" folder in "iOSAnywhere" target */,
+				exceptions = (
+					9FE2289F2F5DBF7D002B9B08 /* Exceptions for "Resources" folder in "Teleport" target */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -83,7 +83,7 @@
 		9FF14F6F2F5D7D6C0025CED2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				9FF14F6E2F5D7D6C0025CED2 /* iOSAnywhere.app */,
+				9FF14F6E2F5D7D6C0025CED2 /* Teleport.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -91,7 +91,7 @@
 		9FF151D92F5D80350025CED2 /* App */ = {
 			isa = PBXGroup;
 			children = (
-				9FF151D82F5D80350025CED2 /* iOSAnywhereApp.swift */,
+				9FF151D82F5D80350025CED2 /* TeleportApp.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -175,7 +175,7 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
-		9FF151EF2F5D80350025CED2 /* iOSAnywhere */ = {
+		9FF151EF2F5D80350025CED2 /* Teleport */ = {
 			isa = PBXGroup;
 			children = (
 				9FF151D92F5D80350025CED2 /* App */,
@@ -185,13 +185,13 @@
 				9FF151EC2F5D80350025CED2 /* UI */,
 				9FF151EE2F5D80350025CED2 /* ViewModels */,
 			);
-			path = iOSAnywhere;
+			path = Teleport;
 			sourceTree = "<group>";
 		};
 		9FF151F02F5D80350025CED2 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				9FF151EF2F5D80350025CED2 /* iOSAnywhere */,
+				9FF151EF2F5D80350025CED2 /* Teleport */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -199,9 +199,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		9FF14F6D2F5D7D6C0025CED2 /* iOSAnywhere */ = {
+		9FF14F6D2F5D7D6C0025CED2 /* Teleport */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9FF14F792F5D7D6D0025CED2 /* Build configuration list for PBXNativeTarget "iOSAnywhere" */;
+			buildConfigurationList = 9FF14F792F5D7D6D0025CED2 /* Build configuration list for PBXNativeTarget "Teleport" */;
 			buildPhases = (
 				9FF14F6A2F5D7D6C0025CED2 /* Sources */,
 				9FF14F6B2F5D7D6C0025CED2 /* Frameworks */,
@@ -211,11 +211,11 @@
 			);
 			dependencies = (
 			);
-			name = iOSAnywhere;
+			name = Teleport;
 			packageProductDependencies = (
 			);
-			productName = iOSAnywhere;
-			productReference = 9FF14F6E2F5D7D6C0025CED2 /* iOSAnywhere.app */;
+			productName = Teleport;
+			productReference = 9FF14F6E2F5D7D6C0025CED2 /* Teleport.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -233,7 +233,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 9FF14F692F5D7D6C0025CED2 /* Build configuration list for PBXProject "iOSAnywhere" */;
+			buildConfigurationList = 9FF14F692F5D7D6C0025CED2 /* Build configuration list for PBXProject "Teleport" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -247,7 +247,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				9FF14F6D2F5D7D6C0025CED2 /* iOSAnywhere */,
+				9FF14F6D2F5D7D6C0025CED2 /* Teleport */,
 			);
 		};
 /* End PBXProject section */
@@ -272,7 +272,7 @@
 				9FF151F32F5D80350025CED2 /* LocationCoordinate.swift in Sources */,
 				9FF151F42F5D80350025CED2 /* USBDeviceLocationService.swift in Sources */,
 				9FF151F52F5D80350025CED2 /* CommandRunner.swift in Sources */,
-				9FF151F62F5D80350025CED2 /* iOSAnywhereApp.swift in Sources */,
+				9FF151F62F5D80350025CED2 /* TeleportApp.swift in Sources */,
 				9FF151F72F5D80350025CED2 /* SimulatorLocationService.swift in Sources */,
 				9FF151F82F5D80350025CED2 /* MapWorkspaceView.swift in Sources */,
 				9FF151F92F5D80350025CED2 /* InspectorPanelView.swift in Sources */,
@@ -411,6 +411,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				AUTOMATION_APPLE_EVENTS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -428,13 +429,13 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "iOSAnywhere uses your current location to center the map when the app launches.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Teleport uses your current location to center the map when the app launches.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.samuelhe.iOSAnywhere;
+				PRODUCT_BUNDLE_IDENTIFIER = com.samuelhe.Teleport;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
@@ -457,6 +458,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				AUTOMATION_APPLE_EVENTS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -474,13 +476,13 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "iOSAnywhere uses your current location to center the map when the app launches.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Teleport uses your current location to center the map when the app launches.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.samuelhe.iOSAnywhere;
+				PRODUCT_BUNDLE_IDENTIFIER = com.samuelhe.Teleport;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
@@ -501,7 +503,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		9FF14F692F5D7D6C0025CED2 /* Build configuration list for PBXProject "iOSAnywhere" */ = {
+		9FF14F692F5D7D6C0025CED2 /* Build configuration list for PBXProject "Teleport" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9FF14F772F5D7D6D0025CED2 /* Debug */,
@@ -510,7 +512,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9FF14F792F5D7D6D0025CED2 /* Build configuration list for PBXNativeTarget "iOSAnywhere" */ = {
+		9FF14F792F5D7D6D0025CED2 /* Build configuration list for PBXNativeTarget "Teleport" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9FF14F7A2F5D7D6D0025CED2 /* Debug */,

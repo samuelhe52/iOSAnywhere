@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "9FF14F6D2F5D7D6C0025CED2"
-               BuildableName = "iOSAnywhere.app"
-               BlueprintName = "iOSAnywhere"
-               ReferencedContainer = "container:iOSAnywhere.xcodeproj">
+               BuildableName = "Teleport.app"
+               BlueprintName = "Teleport"
+               ReferencedContainer = "container:Teleport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,9 +45,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "9FF14F6D2F5D7D6C0025CED2"
-            BuildableName = "iOSAnywhere.app"
-            BlueprintName = "iOSAnywhere"
-            ReferencedContainer = "container:iOSAnywhere.xcodeproj">
+            BuildableName = "Teleport.app"
+            BlueprintName = "Teleport"
+            ReferencedContainer = "container:Teleport.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "9FF14F6D2F5D7D6C0025CED2"
-            BuildableName = "iOSAnywhere.app"
-            BlueprintName = "iOSAnywhere"
-            ReferencedContainer = "container:iOSAnywhere.xcodeproj">
+            BuildableName = "Teleport.app"
+            BlueprintName = "Teleport"
+            ReferencedContainer = "container:Teleport.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

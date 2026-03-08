@@ -110,7 +110,7 @@ actor USBDeviceLocationService: LocationSimulationService {
 
     private func loadCoreDeviceMetadata() throws -> [String: CoreDeviceRecord] {
         let tempDirectory = FileManager.default.temporaryDirectory
-        let outputURL = tempDirectory.appendingPathComponent("iosanywhere-devicectl.json")
+        let outputURL = tempDirectory.appendingPathComponent("teleport-devicectl.json")
 
         _ = try CommandRunner.run(
             xcrunURL,
@@ -186,7 +186,7 @@ actor USBDeviceLocationService: LocationSimulationService {
         process.environment = ProcessInfo.processInfo.environment.merging(
             [
                 "SUDO_ASKPASS": helperFiles.askpassScriptURL.path,
-                "SUDO_PROMPT": "iOSAnywhere requires administrator privileges for physical-device location simulation."
+                "SUDO_PROMPT": "Teleport requires administrator privileges for physical-device location simulation."
             ],
             uniquingKeysWith: { _, new in new }
         )
@@ -227,7 +227,7 @@ actor USBDeviceLocationService: LocationSimulationService {
 
     private func makeHelperFiles() throws -> (statusURL: URL, askpassScriptURL: URL) {
         let helperDirectory = FileManager.default.temporaryDirectory.appendingPathComponent(
-            "iosanywhere-helper",
+            "teleport-helper",
             isDirectory: true
         )
         try FileManager.default.createDirectory(at: helperDirectory, withIntermediateDirectories: true)
@@ -245,13 +245,13 @@ actor USBDeviceLocationService: LocationSimulationService {
             password=$(
                 /usr/bin/osascript \
                     -e 'tell application "System Events" to activate' \
-                    -e 'tell application "System Events" to display dialog "Authorize USB location simulation for your physical device. Your password is handled by macOS and is not stored by iOSAnywhere." default answer "" with hidden answer buttons {"Cancel", "Authorize"} default button "Authorize" with title "Administrator Password" with icon note' \
+                    -e 'tell application "System Events" to display dialog "Authorize USB location simulation for your physical device. Your password is handled by macOS and is not stored by Teleport." default answer "" with hidden answer buttons {"Cancel", "Authorize"} default button "Authorize" with title "Administrator Password" with icon note' \
                     -e 'text returned of result' 2>/dev/null
             )
             status=$?
 
             if [ "$status" -ne 0 ]; then
-                echo "__IOSANYWHERE_AUTH_CANCELLED__" >&2
+                echo "__TELEPORT_AUTH_CANCELLED__" >&2
                 exit 1
             fi
 
@@ -366,7 +366,7 @@ actor USBDeviceLocationService: LocationSimulationService {
             .joined(separator: "\n")
             .lowercased()
 
-        if combined.contains("__iosanywhere_auth_cancelled__") {
+        if combined.contains("__teleport_auth_cancelled__") {
             return "Administrator approval was canceled. Physical-device location simulation did not start."
         }
 

@@ -19,7 +19,7 @@ final class AppLifecycleDelegate: NSObject, NSApplicationDelegate {
 }
 
 @main
-struct iOSAnywhereApp: App {
+struct TeleportApp: App {
     @NSApplicationDelegateAdaptor(AppLifecycleDelegate.self) private var appDelegate
     @State private var viewModel = AppViewModel(
         registry: DeviceRegistry(

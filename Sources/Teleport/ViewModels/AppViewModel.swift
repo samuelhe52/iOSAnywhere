@@ -199,7 +199,7 @@ final class AppViewModel {
             if device.kind == .physicalUSB {
                 simulationState = .authorizing
                 statusMessage =
-                    "Waiting for macOS administrator approval. Your password is entered in a separate system dialog and is never stored by iOSAnywhere."
+                    "Waiting for macOS administrator approval. Your password is entered in a separate system dialog and is never stored by Teleport."
             }
             try await service.setLocation(simulationCoordinate)
             simulationState = .simulating(coordinate)

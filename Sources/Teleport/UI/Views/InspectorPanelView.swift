@@ -151,7 +151,7 @@ struct InspectorPanelView: View {
                     .font(.subheadline.weight(.semibold))
 
                 Text(
-                    "Your password is requested in a separate macOS dialog. iOSAnywhere does not store, display, or reuse that password."
+                    "Your password is requested in a separate macOS dialog. Teleport does not store, display, or reuse that password."
                 )
                 .font(.caption)
                 .foregroundStyle(.secondary)

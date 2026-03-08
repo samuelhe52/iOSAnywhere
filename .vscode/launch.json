@@ -4,21 +4,21 @@
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:iOSAnywhere}",
-            "name": "Debug iOSAnywhere",
-            "target": "iOSAnywhere",
+            "cwd": "${workspaceFolder}",
+            "name": "Debug Teleport",
+            "target": "Teleport",
             "configuration": "debug",
-            "preLaunchTask": "swift: Build Debug iOSAnywhere"
+            "preLaunchTask": "swift: Build Debug Teleport"
         },
         {
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:iOSAnywhere}",
-            "name": "Release iOSAnywhere",
-            "target": "iOSAnywhere",
+            "cwd": "${workspaceFolder}",
+            "name": "Release Teleport",
+            "target": "Teleport",
             "configuration": "release",
-            "preLaunchTask": "swift: Build Release iOSAnywhere"
+            "preLaunchTask": "swift: Build Release Teleport"
         }
     ]
 }
