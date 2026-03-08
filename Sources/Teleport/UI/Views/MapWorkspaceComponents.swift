@@ -106,15 +106,15 @@ struct MapWorkspaceSearchOverlayView: View {
                 } icon: {
                     Image(systemName: "exclamationmark.triangle.fill")
                 }
-                    .font(.footnote)
-                    .foregroundStyle(.orange)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 10)
-                    .background(
-                        MapWorkspaceOverlayCardBackground(
-                            cornerRadius: 14, shadowOpacity: 0.12, shadowRadius: 10, shadowYOffset: 6)
-                    )
-                    .transition(.opacity)
+                .font(.footnote)
+                .foregroundStyle(.orange)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
+                .background(
+                    MapWorkspaceOverlayCardBackground(
+                        cornerRadius: 14, shadowOpacity: 0.12, shadowRadius: 10, shadowYOffset: 6)
+                )
+                .transition(.opacity)
             } else if !searchModel.completions.isEmpty {
                 MapWorkspaceOverlayCard {
                     ScrollView {

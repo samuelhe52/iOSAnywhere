@@ -91,10 +91,18 @@ actor USBDeviceLocationService: LocationSimulationService {
         )
         try? await stopSimulationHelper()
 
-        let helper = try makeSimulationHelper(mode: "set", device: connectedDevice, coordinate: coordinate)
+        let (helper, administratorPassword) = try makeSimulationHelper(
+            mode: "set",
+            device: connectedDevice,
+            coordinate: coordinate
+        )
 
         do {
             try helper.process.run()
+            if let administratorPassword {
+                try helper.stdin.write(contentsOf: Data((administratorPassword + "\n").utf8))
+            }
+            helper.stdin.closeFile()
             TeleportLog.simulation.debug(
                 "Launched USB simulation helper for \(connectedDevice.logLabel, privacy: .public)")
         } catch {
@@ -114,10 +122,19 @@ actor USBDeviceLocationService: LocationSimulationService {
                 helper.process.terminate()
                 helper.process.waitUntilExit()
             }
+            let stdout = helper.stdout.fileHandleForReading.readDataToEndOfFile()
+            let stderr = helper.stderr.fileHandleForReading.readDataToEndOfFile()
             helper.cleanup()
             TeleportLog.simulation.error(
                 "USB simulation helper failed to become ready for \(connectedDevice.logLabel, privacy: .public): \(error.localizedDescription, privacy: .public)"
             )
+            if !stdout.isEmpty || !stderr.isEmpty {
+                throw USBDeviceErrorParser.helperFailure(
+                    stdout: stdout,
+                    stderr: stderr,
+                    fallback: error.localizedDescription
+                )
+            }
             throw error
         }
 
@@ -161,16 +178,25 @@ actor USBDeviceLocationService: LocationSimulationService {
     }
 
     private func resolvedAvailability(for device: XCDeviceRecord, coreDevice: CoreDeviceRecord?) -> Bool {
-        guard device.available else {
-            if let coreDevice {
-                TeleportLog.devices.debug(
-                    "Treating USB device \(device.name, privacy: .public) as unavailable; xcdevice available=false, pairing=\(coreDevice.connectionProperties.pairingState, privacy: .public), developer mode=\(coreDevice.deviceProperties.developerModeStatus, privacy: .public)"
-                )
-            }
+        if device.available {
+            return true
+        }
+
+        guard let coreDevice else {
             return false
         }
 
-        return true
+        let isBootedPhysicalDevice = coreDevice.deviceProperties.bootState == "booted"
+        let isUsableFallback =
+            coreDevice.connectionProperties.pairingState == "paired"
+            && coreDevice.deviceProperties.developerModeStatus == "enabled"
+            && isBootedPhysicalDevice
+
+        TeleportLog.devices.debug(
+            "Resolved USB availability for \(device.name, privacy: .public); xcdevice available=false, pairing=\(coreDevice.connectionProperties.pairingState, privacy: .public), developer mode=\(coreDevice.deviceProperties.developerModeStatus, privacy: .public), boot state=\(coreDevice.deviceProperties.bootState ?? "<nil>", privacy: .public), fallback=\(isUsableFallback, privacy: .public)"
+        )
+
+        return isUsableFallback
     }
 
     private func resolvedPythonExecutable() throws -> URL {
@@ -205,9 +231,10 @@ actor USBDeviceLocationService: LocationSimulationService {
         mode: String,
         device: Device,
         coordinate: LocationCoordinate?
-    ) throws -> USBSimulationHelper {
+    ) throws -> (helper: USBSimulationHelper, administratorPassword: String?) {
         let helperFiles = try USBDeviceScript.makeHelperFiles()
         let pythonExecutableURL = try resolvedPythonExecutable()
+        let administratorPassword = try administratorPasswordIfNeeded(using: helperFiles.promptScriptURL)
         let process = Process()
         let stdinPipe = Pipe()
         let stdoutPipe = Pipe()
@@ -215,31 +242,30 @@ actor USBDeviceLocationService: LocationSimulationService {
 
         process.executableURL = sudoURL
         process.arguments =
-            ["-A", pythonExecutableURL.path]
+            ["-S", "-p", "", pythonExecutableURL.path]
             + USBDeviceScript.helperArguments(
                 mode: mode,
                 device: device,
                 coordinate: coordinate,
-                statusURL: helperFiles.statusURL
+                statusURL: helperFiles.statusURL,
+                stopURL: helperFiles.stopURL
             )
         process.standardInput = stdinPipe
         process.standardOutput = stdoutPipe
         process.standardError = stderrPipe
-        process.environment = ProcessInfo.processInfo.environment.merging(
-            [
-                "SUDO_ASKPASS": helperFiles.askpassScriptURL.path,
-                "SUDO_PROMPT": USBDeviceScript.sudoPrompt
-            ],
-            uniquingKeysWith: { _, new in new }
-        )
+        process.environment = ProcessInfo.processInfo.environment
 
-        return USBSimulationHelper(
-            process: process,
-            stdin: stdinPipe.fileHandleForWriting,
-            stdout: stdoutPipe,
-            stderr: stderrPipe,
-            statusURL: helperFiles.statusURL,
-            askpassScriptURL: helperFiles.askpassScriptURL
+        return (
+            helper: USBSimulationHelper(
+                process: process,
+                stdin: stdinPipe.fileHandleForWriting,
+                stdout: stdoutPipe,
+                stderr: stderrPipe,
+                statusURL: helperFiles.statusURL,
+                stopURL: helperFiles.stopURL,
+                promptScriptURL: helperFiles.promptScriptURL
+            ),
+            administratorPassword: administratorPassword
         )
     }
 
@@ -247,10 +273,15 @@ actor USBDeviceLocationService: LocationSimulationService {
         TeleportLog.simulation.debug(
             "Running one-shot USB helper in \(mode, privacy: .public) mode for \(device.logLabel, privacy: .public)"
         )
-        let helper = try makeSimulationHelper(mode: mode, device: device, coordinate: coordinate)
+        let (helper, administratorPassword) = try makeSimulationHelper(
+            mode: mode, device: device, coordinate: coordinate)
 
         do {
             try helper.process.run()
+            if let administratorPassword {
+                try helper.stdin.write(contentsOf: Data((administratorPassword + "\n").utf8))
+            }
+            helper.stdin.closeFile()
         } catch {
             helper.cleanup()
             TeleportLog.simulation.error(
@@ -289,7 +320,7 @@ actor USBDeviceLocationService: LocationSimulationService {
 
         TeleportLog.simulation.debug("Stopping active USB simulation helper")
         self.simulationHelper = nil
-        simulationHelper.stdin.closeFile()
+        FileManager.default.createFile(atPath: simulationHelper.stopURL.path, contents: Data(), attributes: nil)
         await USBDeviceProcessSupport.waitForProcessExit(simulationHelper.process, timeoutNanoseconds: 5_000_000_000)
 
         if simulationHelper.process.isRunning {
@@ -317,22 +348,24 @@ actor USBDeviceLocationService: LocationSimulationService {
 
     private func waitForHelperReady(_ helper: USBSimulationHelper) async throws {
         let deadline = DispatchTime.now().uptimeNanoseconds + 30_000_000_000
+        var lastProgressStatus: String?
 
         while DispatchTime.now().uptimeNanoseconds < deadline {
             if FileManager.default.fileExists(atPath: helper.statusURL.path) {
                 let status = (try? String(contentsOf: helper.statusURL, encoding: .utf8))?
                     .trimmingCharacters(in: .whitespacesAndNewlines)
 
-                guard status == "READY" else {
-                    TeleportLog.simulation.error(
-                        "USB simulation helper reported invalid startup state: \(status ?? "<nil>", privacy: .public)"
-                    )
-                    throw ServiceError.unavailable(
-                        status ?? String(localized: TeleportStrings.physicalHelperInvalidStartupState))
+                if status == "READY" {
+                    TeleportLog.simulation.debug("USB simulation helper reported ready")
+                    return
                 }
 
-                TeleportLog.simulation.debug("USB simulation helper reported ready")
-                return
+                if status != lastProgressStatus {
+                    lastProgressStatus = status
+                    TeleportLog.simulation.debug(
+                        "USB simulation helper startup progress for \(helper.statusURL.lastPathComponent, privacy: .private): \(status ?? "<nil>", privacy: .public)"
+                    )
+                }
             }
 
             if !helper.process.isRunning {
@@ -347,9 +380,81 @@ actor USBDeviceLocationService: LocationSimulationService {
             try await Task.sleep(nanoseconds: 100_000_000)
         }
 
-        TeleportLog.simulation.error("Timed out waiting for USB simulation helper readiness")
+        TeleportLog.simulation.error(
+            "Timed out waiting for USB simulation helper readiness; last progress state: \(lastProgressStatus ?? "<nil>", privacy: .public)"
+        )
         throw ServiceError.unavailable(
             String(localized: TeleportStrings.timedOutWaitingForAdministratorApproval)
         )
     }
+
+    private func promptForAdministratorPassword(using scriptURL: URL) throws -> String {
+        let process = Process()
+        let stdoutPipe = Pipe()
+        let stderrPipe = Pipe()
+
+        process.executableURL = scriptURL
+        process.standardOutput = stdoutPipe
+        process.standardError = stderrPipe
+
+        do {
+            try process.run()
+        } catch {
+            throw ServiceError.unavailable(
+                String(localized: TeleportStrings.failedToLaunchPhysicalDeviceHelper(error.localizedDescription))
+            )
+        }
+
+        process.waitUntilExit()
+
+        let stdout = String(decoding: stdoutPipe.fileHandleForReading.readDataToEndOfFile(), as: UTF8.self)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let stderr = String(decoding: stderrPipe.fileHandleForReading.readDataToEndOfFile(), as: UTF8.self)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard process.terminationStatus == 0 else {
+            if stderr.localizedCaseInsensitiveContains("__teleport_auth_cancelled__") {
+                throw ServiceError.unavailable(String(localized: TeleportStrings.administratorApprovalCanceled))
+            }
+            throw ServiceError.unavailable(String(localized: TeleportStrings.administratorApprovalCanceled))
+        }
+
+        guard !stdout.isEmpty else {
+            throw ServiceError.unavailable(String(localized: TeleportStrings.administratorApprovalCanceled))
+        }
+
+        return stdout
+    }
+
+    private func administratorPasswordIfNeeded(using scriptURL: URL) throws -> String? {
+        if try hasCachedAdministratorAuthorization() {
+            TeleportLog.simulation.debug("Reusing cached sudo authorization for USB simulation helper")
+            return nil
+        }
+
+        return try promptForAdministratorPassword(using: scriptURL)
+    }
+
+    private func hasCachedAdministratorAuthorization() throws -> Bool {
+        let process = Process()
+        let stdoutPipe = Pipe()
+        let stderrPipe = Pipe()
+
+        process.executableURL = sudoURL
+        process.arguments = ["-n", "true"]
+        process.standardOutput = stdoutPipe
+        process.standardError = stderrPipe
+
+        do {
+            try process.run()
+        } catch {
+            throw ServiceError.unavailable(
+                String(localized: TeleportStrings.failedToLaunchPhysicalDeviceHelper(error.localizedDescription))
+            )
+        }
+
+        process.waitUntilExit()
+        return process.terminationStatus == 0
+    }
+
 }

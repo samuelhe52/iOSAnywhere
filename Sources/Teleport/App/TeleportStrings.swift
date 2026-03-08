@@ -45,8 +45,10 @@ enum TeleportStrings {
     static let usbDeviceUnavailableDetails: LocalizedStringResource = "USB · unavailable"
     static let removeRecentSearchHelp: LocalizedStringResource = "Remove from recent searches"
     static let copyCoordinatesHelp: LocalizedStringResource = "Copy coordinates"
-    static let selectedDeviceUnavailableOverUSB: LocalizedStringResource = "The selected device is not currently available over USB."
-    static let failedToClearPhysicalDeviceLocation: LocalizedStringResource = "Failed to clear the physical-device simulated location."
+    static let selectedDeviceUnavailableOverUSB: LocalizedStringResource =
+        "The selected device is not currently available over USB."
+    static let failedToClearPhysicalDeviceLocation: LocalizedStringResource =
+        "Failed to clear the physical-device simulated location."
     static let physicalHelperInvalidStartupState: LocalizedStringResource =
         "The physical-device helper reported an invalid startup state."
     static let physicalHelperExitedBeforeReady: LocalizedStringResource =

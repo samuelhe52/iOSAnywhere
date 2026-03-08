@@ -58,11 +58,21 @@ extension AppViewModel {
     }
 
     func connectSelectedDevice() async {
+        guard connectionState != .connecting else {
+            TeleportLog.devices.debug(
+                "Ignoring duplicate connect request while a connection attempt is already in progress")
+            return
+        }
+
         guard let selectedDevice else {
             connectionState = .failed(.localized(TeleportStrings.selectDeviceFirst))
             TeleportLog.devices.warning("Connect requested without a selected device")
             return
         }
+
+        connectionState = .connecting
+        statusMessage = .localized(TeleportStrings.connectingToDevice(selectedDevice.name))
+
         guard let device = await refreshedDeviceForAction(selectedDevice, stateTarget: .connection) else {
             return
         }
@@ -77,7 +87,6 @@ extension AppViewModel {
         }
 
         TeleportLog.devices.info("Connecting to \(device.logLabel, privacy: .public)")
-        connectionState = .connecting
         statusMessage = .localized(TeleportStrings.connectingToDevice(device.name))
 
         do {
@@ -113,13 +122,28 @@ extension AppViewModel {
     }
 
     func simulateSelectedLocation() async {
+        switch simulationState {
+        case .authorizing, .stopping:
+            TeleportLog.simulation.debug(
+                "Ignoring duplicate simulate request while a simulation action is already in progress")
+            return
+        case .idle, .failed, .simulating:
+            break
+        }
+
         guard let selectedDevice else {
             simulationState = .failed(.localized(TeleportStrings.selectDeviceFirst))
             TeleportLog.simulation.warning("Simulation requested without a selected device")
             return
         }
-        guard let device = await refreshedDeviceForAction(selectedDevice, stateTarget: .simulation) else {
-            return
+        let device: Device
+        if selectedDevice.kind == .physicalUSB && connectionState == .connected {
+            device = selectedDevice
+        } else {
+            guard let refreshedDevice = await refreshedDeviceForAction(selectedDevice, stateTarget: .simulation) else {
+                return
+            }
+            device = refreshedDevice
         }
         guard let service = registry.service(for: device.kind) else {
             simulationState = .failed(
@@ -205,8 +229,14 @@ extension AppViewModel {
             TeleportLog.simulation.warning("Clear simulated location requested without a selected device")
             return
         }
-        guard let device = await refreshedDeviceForAction(selectedDevice, stateTarget: .simulation) else {
-            return
+        let device: Device
+        if selectedDevice.kind == .physicalUSB && connectionState == .connected {
+            device = selectedDevice
+        } else {
+            guard let refreshedDevice = await refreshedDeviceForAction(selectedDevice, stateTarget: .simulation) else {
+                return
+            }
+            device = refreshedDevice
         }
         guard let service = registry.service(for: device.kind) else {
             simulationState = .failed(.localized(TeleportStrings.noServiceAvailable(for: device.kind.rawValue)))
@@ -293,7 +323,9 @@ extension AppViewModel {
         do {
             let refreshedUSBDevices = try await service.discoverDevices()
             let nonUSBDevices = devices.filter { $0.kind != .physicalUSB }
-            if let refreshedDevice = refreshedUSBDevices.first(where: { $0.id == device.id }), refreshedDevice.isAvailable {
+            if let refreshedDevice = refreshedUSBDevices.first(where: { $0.id == device.id }),
+                refreshedDevice.isAvailable
+            {
                 devices = (nonUSBDevices + refreshedUSBDevices).sorted { $0.name < $1.name }
                 selectedDeviceID = device.id
                 return refreshedDevice
@@ -302,7 +334,8 @@ extension AppViewModel {
             let unavailableDevice = unavailableVersion(
                 of: refreshedUSBDevices.first(where: { $0.id == device.id }) ?? device
             )
-            let mergedUSBDevices = refreshedUSBDevices
+            let mergedUSBDevices =
+                refreshedUSBDevices
                 .filter { $0.id != unavailableDevice.id }
                 + [unavailableDevice]
 

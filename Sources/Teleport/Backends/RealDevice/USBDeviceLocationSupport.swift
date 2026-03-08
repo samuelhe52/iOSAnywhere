@@ -6,11 +6,13 @@ struct USBSimulationHelper {
     let stdout: Pipe
     let stderr: Pipe
     let statusURL: URL
-    let askpassScriptURL: URL
+    let stopURL: URL
+    let promptScriptURL: URL
 
     func cleanup() {
         try? FileManager.default.removeItem(at: statusURL)
-        try? FileManager.default.removeItem(at: askpassScriptURL)
+        try? FileManager.default.removeItem(at: stopURL)
+        try? FileManager.default.removeItem(at: promptScriptURL)
     }
 }
 
@@ -50,11 +52,16 @@ enum USBDeviceErrorParser {
             return String(localized: TeleportStrings.administratorApprovalCanceled)
         }
 
-        if combined.contains("incorrect password") || combined.contains("try again") {
+        if combined.contains("incorrect password")
+            || combined.contains("sorry, try again")
+            || combined.contains("incorrect password attempt")
+        {
             return String(localized: TeleportStrings.administratorPasswordIncorrect)
         }
 
-        if combined.contains("no password was provided") || combined.contains("a password is required") {
+        if combined.contains("no password was provided")
+            || (combined.contains("a password is required") && combined.contains("sudo"))
+        {
             return String(localized: TeleportStrings.administratorApprovalCanceled)
         }
 
@@ -101,10 +108,6 @@ enum USBDeviceErrorParser {
 }
 
 enum USBDeviceScript {
-    static var sudoPrompt: String {
-        String(localized: TeleportStrings.usbSudoPrompt)
-    }
-
     static let pythonResolutionCommand =
         #"python3 -c 'import os, sys; print(os.path.realpath(sys.executable))'"#
 
@@ -122,39 +125,50 @@ enum USBDeviceScript {
             return tuple(parts)
 
 
-        def mark_ready(status_path):
+        def write_status(status_path, value):
             with open(status_path, "w", encoding="utf-8") as handle:
-                handle.write("READY\n")
+                handle.write(f"{value}\n")
 
 
-        async def hold_simulation(simulation):
+        def mark_ready(status_path):
+            write_status(status_path, "READY")
+
+
+        async def hold_simulation(simulation, stop_path):
             try:
-                await asyncio.to_thread(sys.stdin.buffer.read)
+                while True:
+                    try:
+                        with open(stop_path, "r", encoding="utf-8"):
+                            break
+                    except FileNotFoundError:
+                        await asyncio.sleep(0.1)
             finally:
                 await simulation.clear()
 
 
-        async def run_pre_ios17(mode, udid, status_path, latitude, longitude):
+        async def run_pre_ios17(mode, udid, status_path, stop_path, latitude, longitude):
             from pymobiledevice3.lockdown import create_using_usbmux
             from pymobiledevice3.services.dvt.dvt_secure_socket_proxy import DvtSecureSocketProxyService
             from pymobiledevice3.services.dvt.instruments.location_simulation import LocationSimulation
 
+            write_status(status_path, "LOCKDOWN")
             lockdown = await create_using_usbmux(udid, autopair=True)
             try:
+                write_status(status_path, "DVT")
                 async with DvtSecureSocketProxyService(lockdown) as dvt:
                     simulation = LocationSimulation(dvt)
                     await simulation.clear()
                     if mode == "set":
                         await simulation.set(latitude, longitude)
                         mark_ready(status_path)
-                        await hold_simulation(simulation)
+                        await hold_simulation(simulation, stop_path)
                     else:
                         await simulation.clear()
             finally:
                 await lockdown.close()
 
 
-        async def run_ios17_quic(mode, udid, status_path, latitude, longitude):
+        async def run_ios17_quic(mode, udid, status_path, stop_path, latitude, longitude):
             from pymobiledevice3.bonjour import DEFAULT_BONJOUR_TIMEOUT
             from pymobiledevice3.remote.remote_service_discovery import RemoteServiceDiscoveryService
             from pymobiledevice3.remote.tunnel_service import get_remote_pairing_tunnel_services
@@ -166,21 +180,25 @@ enum USBDeviceScript {
             service_provider = None
 
             try:
+                write_status(status_path, "DISCOVERING_TUNNEL")
                 service_providers = await get_remote_pairing_tunnel_services(DEFAULT_BONJOUR_TIMEOUT, udid=udid)
                 service_provider = service_providers[0] if service_providers else None
                 if service_provider is None:
                     raise RuntimeError(f"No remote pairing tunnel service found for {udid}.")
 
+                write_status(status_path, "STARTING_TUNNEL")
                 async with service_provider.start_quic_tunnel() as tunnel_result:
                     resume_remoted_if_required()
+                    write_status(status_path, "RSD")
                     async with RemoteServiceDiscoveryService((tunnel_result.address, tunnel_result.port)) as rsd:
+                        write_status(status_path, "DVT")
                         async with DvtSecureSocketProxyService(rsd) as dvt:
                             simulation = LocationSimulation(dvt)
                             await simulation.clear()
                             if mode == "set":
                                 await simulation.set(latitude, longitude)
                                 mark_ready(status_path)
-                                await hold_simulation(simulation)
+                                await hold_simulation(simulation, stop_path)
                             else:
                                 await simulation.clear()
             finally:
@@ -189,25 +207,30 @@ enum USBDeviceScript {
                 resume_remoted_if_required()
 
 
-        async def run_ios17_tcp(mode, udid, status_path, latitude, longitude):
+        async def run_ios17_tcp(mode, udid, status_path, stop_path, latitude, longitude):
             from pymobiledevice3.lockdown import create_using_usbmux
             from pymobiledevice3.remote.remote_service_discovery import RemoteServiceDiscoveryService
             from pymobiledevice3.remote.tunnel_service import CoreDeviceTunnelProxy
             from pymobiledevice3.services.dvt.dvt_secure_socket_proxy import DvtSecureSocketProxyService
             from pymobiledevice3.services.dvt.instruments.location_simulation import LocationSimulation
 
+            write_status(status_path, "LOCKDOWN")
             lockdown = await create_using_usbmux(udid, autopair=True)
+            write_status(status_path, "CREATING_TUNNEL_PROXY")
             tunnel_proxy = await CoreDeviceTunnelProxy.create(lockdown)
             try:
+                write_status(status_path, "STARTING_TUNNEL")
                 async with tunnel_proxy.start_tcp_tunnel() as tunnel_result:
+                    write_status(status_path, "RSD")
                     async with RemoteServiceDiscoveryService((tunnel_result.address, tunnel_result.port)) as rsd:
+                        write_status(status_path, "DVT")
                         async with DvtSecureSocketProxyService(rsd) as dvt:
                             simulation = LocationSimulation(dvt)
                             await simulation.clear()
                             if mode == "set":
                                 await simulation.set(latitude, longitude)
                                 mark_ready(status_path)
-                                await hold_simulation(simulation)
+                                await hold_simulation(simulation, stop_path)
                             else:
                                 await simulation.clear()
             finally:
@@ -220,17 +243,18 @@ enum USBDeviceScript {
             udid = sys.argv[2]
             version = sys.argv[3]
             status_path = sys.argv[4]
-            latitude = float(sys.argv[5]) if mode == "set" else None
-            longitude = float(sys.argv[6]) if mode == "set" else None
+            stop_path = sys.argv[5]
+            latitude = float(sys.argv[6]) if mode == "set" else None
+            longitude = float(sys.argv[7]) if mode == "set" else None
 
             parsed_version = parse_version(version)
 
             if parsed_version[0] < 17:
-                await run_pre_ios17(mode, udid, status_path, latitude, longitude)
+                await run_pre_ios17(mode, udid, status_path, stop_path, latitude, longitude)
             elif parsed_version < (17, 4):
-                await run_ios17_quic(mode, udid, status_path, latitude, longitude)
+                await run_ios17_quic(mode, udid, status_path, stop_path, latitude, longitude)
             else:
-                await run_ios17_tcp(mode, udid, status_path, latitude, longitude)
+                await run_ios17_tcp(mode, udid, status_path, stop_path, latitude, longitude)
 
 
         try:
@@ -249,7 +273,7 @@ enum USBDeviceScript {
             raise SystemExit(1)
         """#
 
-    static func makeHelperFiles() throws -> (statusURL: URL, askpassScriptURL: URL) {
+    static func makeHelperFiles() throws -> (statusURL: URL, stopURL: URL, promptScriptURL: URL) {
         let helperDirectory = FileManager.default.temporaryDirectory.appendingPathComponent(
             "teleport-helper",
             isDirectory: true
@@ -257,19 +281,21 @@ enum USBDeviceScript {
         try FileManager.default.createDirectory(at: helperDirectory, withIntermediateDirectories: true)
 
         let statusURL = helperDirectory.appendingPathComponent(UUID().uuidString + ".status")
-        let askpassScriptURL = helperDirectory.appendingPathComponent(UUID().uuidString + "-askpass.sh")
-        try createAskpassScript(at: askpassScriptURL)
+        let stopURL = helperDirectory.appendingPathComponent(UUID().uuidString + ".stop")
+        let promptScriptURL = helperDirectory.appendingPathComponent(UUID().uuidString + "-prompt.sh")
+        try createAskpassScript(at: promptScriptURL)
 
-        return (statusURL, askpassScriptURL)
+        return (statusURL, stopURL, promptScriptURL)
     }
 
     static func helperArguments(
         mode: String,
         device: Device,
         coordinate: LocationCoordinate?,
-        statusURL: URL
+        statusURL: URL,
+        stopURL: URL
     ) -> [String] {
-        var arguments = ["-c", pythonHelperScript, mode, device.id, device.osVersion, statusURL.path]
+        var arguments = ["-c", pythonHelperScript, mode, device.id, device.osVersion, statusURL.path, stopURL.path]
 
         if let coordinate {
             arguments.append(String(coordinate.latitude))
@@ -280,33 +306,34 @@ enum USBDeviceScript {
     }
 
     private static func createAskpassScript(at url: URL) throws {
-        let script = """
-            #!/bin/sh
-            export TELEPORT_PROMPT=\(shellSingleQuoted(String(localized: TeleportStrings.usbAuthorizePrompt)))
-            export TELEPORT_CANCEL=\(shellSingleQuoted(String(localized: TeleportStrings.cancel)))
-            export TELEPORT_AUTHORIZE=\(shellSingleQuoted(String(localized: TeleportStrings.authorize)))
-            export TELEPORT_PASSWORD_TITLE=\(shellSingleQuoted(String(localized: TeleportStrings.administratorPassword)))
-            password=$(
-                /usr/bin/osascript <<'APPLESCRIPT' 2>/dev/null
-                    set dialogIcon to POSIX file "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/LockedIcon.icns" as alias
-                    set promptText to system attribute "TELEPORT_PROMPT"
-                    set cancelText to system attribute "TELEPORT_CANCEL"
-                    set authorizeText to system attribute "TELEPORT_AUTHORIZE"
-                    set titleText to system attribute "TELEPORT_PASSWORD_TITLE"
-                    tell application "System Events" to activate
-                    tell application "System Events" to display dialog promptText default answer "" with hidden answer buttons {cancelText, authorizeText} default button authorizeText with title titleText with icon dialogIcon
-                    text returned of result
-                APPLESCRIPT
-            )
-            status=$?
-
-            if [ "$status" -ne 0 ]; then
-                echo "__TELEPORT_AUTH_CANCELLED__" >&2
-                exit 1
-            fi
-
-            printf '%s\n' "$password"
-            """
+        let scriptLines = [
+            "#!/bin/sh",
+            "export TELEPORT_PROMPT=\(shellSingleQuoted(String(localized: TeleportStrings.usbAuthorizePrompt)))",
+            "export TELEPORT_CANCEL=\(shellSingleQuoted(String(localized: TeleportStrings.cancel)))",
+            "export TELEPORT_AUTHORIZE=\(shellSingleQuoted(String(localized: TeleportStrings.authorize)))",
+            "export TELEPORT_PASSWORD_TITLE=\(shellSingleQuoted(String(localized: TeleportStrings.administratorPassword)))",
+            "password=$(",
+            "/usr/bin/osascript <<'APPLESCRIPT' 2>/dev/null",
+            "set dialogIcon to POSIX file \"/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/LockedIcon.icns\" as alias",
+            "set promptText to system attribute \"TELEPORT_PROMPT\"",
+            "set cancelText to system attribute \"TELEPORT_CANCEL\"",
+            "set authorizeText to system attribute \"TELEPORT_AUTHORIZE\"",
+            "set titleText to system attribute \"TELEPORT_PASSWORD_TITLE\"",
+            "tell application \"System Events\" to activate",
+            "tell application \"System Events\" to display dialog promptText default answer \"\" with hidden answer buttons {cancelText, authorizeText} default button authorizeText with title titleText with icon dialogIcon",
+            "text returned of result",
+            "APPLESCRIPT",
+            ")",
+            "status=$?",
+            "",
+            "if [ \"$status\" -ne 0 ]; then",
+            "    echo \"__TELEPORT_AUTH_CANCELLED__\" >&2",
+            "    exit 1",
+            "fi",
+            "",
+            "printf '%s\\n' \"$password\""
+        ]
+        let script = scriptLines.joined(separator: "\n") + "\n"
 
         try script.write(to: url, atomically: true, encoding: .utf8)
         try FileManager.default.setAttributes([.posixPermissions: 0o700], ofItemAtPath: url.path)
@@ -347,6 +374,7 @@ struct CoreDeviceConnectionProperties: Decodable {
 
 struct CoreDeviceProperties: Decodable {
     let developerModeStatus: String
+    let bootState: String?
 }
 
 struct CoreDeviceHardwareProperties: Decodable {

@@ -59,7 +59,8 @@ struct CommandRunner {
             let message =
                 [output.stderrString, output.stdoutString]
                 .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-                .first(where: { !$0.isEmpty }) ?? String(localized: TeleportStrings.commandFailed(exitCode: output.terminationStatus))
+                .first(where: { !$0.isEmpty })
+                ?? String(localized: TeleportStrings.commandFailed(exitCode: output.terminationStatus))
             TeleportLog.commands.error(
                 "Command failed: \(commandDescription, privacy: .public) in \(durationMilliseconds) ms with exit code \(output.terminationStatus): \(message, privacy: .public)"
             )
