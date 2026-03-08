@@ -6,7 +6,10 @@ struct MapWorkspaceView: View {
     @Bindable var viewModel: AppViewModel
     @StateObject private var searchModel = LocationSearchModel()
     @State private var pendingCoordinateSyncTask: Task<Void, Never>?
+    @State private var pendingCameraUpdateTask: Task<Void, Never>?
     @State private var lastSyncedManualCoordinate: LocationCoordinate?
+    @State private var suppressedManualCoordinateSyncCallbacks = 0
+    @State private var currentCameraSpan = MKCoordinateSpan(latitudeDelta: 0.15, longitudeDelta: 0.15)
 
     @State private var cameraPosition: MapCameraPosition = .region(
         MKCoordinateRegion(
@@ -20,32 +23,55 @@ struct MapWorkspaceView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             ZStack(alignment: .top) {
-                Map(position: $cameraPosition) {
-                    if case .simulating(let coordinate) = viewModel.simulationState {
-                        Marker(
-                            "Simulated Location",
-                            coordinate: CLLocationCoordinate2D(
-                                latitude: coordinate.latitude, longitude: coordinate.longitude))
-                    }
+                MapReader { proxy in
+                    Map(position: $cameraPosition) {
+                        if case .simulating(let coordinate) = viewModel.simulationState {
+                            Marker(
+                                "Simulated Location",
+                                coordinate: CLLocationCoordinate2D(
+                                    latitude: coordinate.latitude, longitude: coordinate.longitude))
+                        }
 
-                    if let highlightedCoordinate {
-                        Marker(
-                            highlightedTitle ?? "Selected Place",
-                            coordinate: highlightedCoordinate
-                        )
-                        .tint(.blue)
-                    }
-                }
-                .onMapCameraChange(frequency: .continuous) { _ in
-                    if searchModel.showsOverlay {
-                        withAnimation(.easeInOut(duration: 0.18)) {
-                            searchModel.dismissOverlay()
+                        if let highlightedCoordinate {
+                            Marker(
+                                highlightedTitle ?? "Selected Place",
+                                coordinate: highlightedCoordinate
+                            )
+                            .tint(.blue)
                         }
                     }
+                    .simultaneousGesture(
+                        SpatialTapGesture()
+                            .onEnded { value in
+                                guard let coordinate = proxy.convert(value.location, from: .local) else {
+                                    return
+                                }
+
+                                setPickedLocation(
+                                    LocationCoordinate(
+                                        latitude: coordinate.latitude,
+                                        longitude: coordinate.longitude
+                                    ),
+                                    title: "Picked Location",
+                                    recenterMap: true,
+                                    debounceNanoseconds: 140_000_000,
+                                    preferredSpan: currentCameraSpan
+                                )
+                            }
+                    )
+                    .onMapCameraChange(frequency: .continuous) { context in
+                        currentCameraSpan = context.region.span
+
+                        if searchModel.showsOverlay {
+                            withAnimation(.easeInOut(duration: 0.18)) {
+                                searchModel.dismissOverlay()
+                            }
+                        }
+                    }
+                    .mapStyle(.standard(elevation: .realistic))
+                    .clipShape(RoundedRectangle(cornerRadius: 18))
+                    .frame(minHeight: 420)
                 }
-                .mapStyle(.standard(elevation: .realistic))
-                .clipShape(RoundedRectangle(cornerRadius: 18))
-                .frame(minHeight: 420)
 
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(spacing: 10) {
@@ -159,11 +185,12 @@ struct MapWorkspaceView: View {
         }
 
         let coordinate = result.placemark.coordinate
-        viewModel.latitudeText = String(format: "%.6f", coordinate.latitude)
-        viewModel.longitudeText = String(format: "%.6f", coordinate.longitude)
-        syncMap(
-            to: LocationCoordinate(latitude: coordinate.latitude, longitude: coordinate.longitude),
-            title: result.name ?? "Selected Place"
+        setPickedLocation(
+            LocationCoordinate(latitude: coordinate.latitude, longitude: coordinate.longitude),
+            title: result.name ?? "Selected Place",
+            recenterMap: true,
+            debounceNanoseconds: 0,
+            preferredSpan: MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
         )
         searchModel.acceptSelection(named: result.name)
     }
@@ -172,6 +199,11 @@ struct MapWorkspaceView: View {
         pendingCoordinateSyncTask?.cancel()
 
         guard let coordinate = parsedManualCoordinate else {
+            return
+        }
+
+        if suppressedManualCoordinateSyncCallbacks > 0 {
+            suppressedManualCoordinateSyncCallbacks -= 1
             return
         }
 
@@ -204,17 +236,76 @@ struct MapWorkspaceView: View {
         return LocationCoordinate(latitude: latitude, longitude: longitude)
     }
 
-    private func syncMap(to coordinate: LocationCoordinate, title: String) {
+    private func syncMap(to coordinate: LocationCoordinate, title: String, recenterMap: Bool = true) {
         let center = CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
         highlightedCoordinate = center
         highlightedTitle = title
         lastSyncedManualCoordinate = coordinate
-        cameraPosition = .region(
-            MKCoordinateRegion(
-                center: center,
-                span: MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
+        if recenterMap {
+            updateCameraPosition(
+                MKCoordinateRegion(
+                    center: center,
+                    span: currentCameraSpan
+                ),
+                debounceNanoseconds: 0
             )
-        )
+        }
+    }
+
+    private func setPickedLocation(
+        _ coordinate: LocationCoordinate,
+        title: String,
+        recenterMap: Bool,
+        debounceNanoseconds: UInt64,
+        preferredSpan: MKCoordinateSpan
+    ) {
+        pendingCoordinateSyncTask?.cancel()
+        suppressedManualCoordinateSyncCallbacks = 2
+        viewModel.latitudeText = String(format: "%.6f", coordinate.latitude)
+        viewModel.longitudeText = String(format: "%.6f", coordinate.longitude)
+        syncMap(to: coordinate, title: title, recenterMap: false)
+
+        if recenterMap {
+            updateCameraPosition(
+                MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude),
+                    span: preferredSpan
+                ),
+                debounceNanoseconds: debounceNanoseconds
+            )
+        }
+
+        if searchModel.showsOverlay {
+            withAnimation(.easeInOut(duration: 0.18)) {
+                searchModel.dismissOverlay()
+            }
+        }
+    }
+
+    private func updateCameraPosition(_ region: MKCoordinateRegion, debounceNanoseconds: UInt64) {
+        pendingCameraUpdateTask?.cancel()
+
+        let applyUpdate = {
+            withAnimation(.easeInOut(duration: 0.26)) {
+                cameraPosition = .region(region)
+            }
+        }
+
+        guard debounceNanoseconds > 0 else {
+            applyUpdate()
+            return
+        }
+
+        pendingCameraUpdateTask = Task {
+            try? await Task.sleep(nanoseconds: debounceNanoseconds)
+            guard !Task.isCancelled else {
+                return
+            }
+
+            await MainActor.run {
+                applyUpdate()
+            }
+        }
     }
 }
 
