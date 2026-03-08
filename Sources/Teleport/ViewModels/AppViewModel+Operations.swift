@@ -26,13 +26,18 @@ extension AppViewModel {
         TeleportLog.devices.info("Starting device discovery across simulator and USB services")
         discoveryState = .discovering
         statusMessage = .localized(TeleportStrings.scanningDevices)
+        let previousSelectionID = selectedDeviceID
 
         do {
             async let simulatorDevices = registry.service(for: .simulator)?.discoverDevices() ?? []
             async let physicalDevices = registry.service(for: .physicalUSB)?.discoverDevices() ?? []
             let discovered = try await simulatorDevices + physicalDevices
             devices = discovered.sorted { $0.name < $1.name }
-            selectedDeviceID = devices.first?.id
+            if let previousSelectionID, devices.contains(where: { $0.id == previousSelectionID }) {
+                selectedDeviceID = previousSelectionID
+            } else {
+                selectedDeviceID = devices.first?.id
+            }
             await updateSelectedPythonRuntimeNote()
             discoveryState = .ready
             statusMessage =
@@ -58,7 +63,9 @@ extension AppViewModel {
             TeleportLog.devices.warning("Connect requested without a selected device")
             return
         }
-        let device = selectedDevice
+        guard let device = await refreshedDeviceForAction(selectedDevice, stateTarget: .connection) else {
+            return
+        }
         guard let service = registry.service(for: device.kind) else {
             connectionState = .failed(
                 .localized(TeleportStrings.noServiceAvailable(for: device.kind.rawValue))
@@ -111,7 +118,9 @@ extension AppViewModel {
             TeleportLog.simulation.warning("Simulation requested without a selected device")
             return
         }
-        let device = selectedDevice
+        guard let device = await refreshedDeviceForAction(selectedDevice, stateTarget: .simulation) else {
+            return
+        }
         guard let service = registry.service(for: device.kind) else {
             simulationState = .failed(
                 .localized(TeleportStrings.noServiceAvailable(for: device.kind.rawValue))
@@ -196,7 +205,9 @@ extension AppViewModel {
             TeleportLog.simulation.warning("Clear simulated location requested without a selected device")
             return
         }
-        let device = selectedDevice
+        guard let device = await refreshedDeviceForAction(selectedDevice, stateTarget: .simulation) else {
+            return
+        }
         guard let service = registry.service(for: device.kind) else {
             simulationState = .failed(.localized(TeleportStrings.noServiceAvailable(for: device.kind.rawValue)))
             TeleportLog.simulation.error(
@@ -263,5 +274,84 @@ extension AppViewModel {
         selectedUSBSetupGuide = USBSetupGuide(resolvedPythonPath: path)
         selectedPythonRuntimeNote = .localized(TeleportStrings.usbHelperPython(path))
         TeleportLog.devices.debug("Resolved USB helper Python executable at \(path, privacy: .public)")
+    }
+
+    private enum ActionStateTarget {
+        case connection
+        case simulation
+    }
+
+    private func refreshedDeviceForAction(_ device: Device, stateTarget: ActionStateTarget) async -> Device? {
+        guard device.kind == .physicalUSB else {
+            return device
+        }
+
+        guard let service = registry.service(for: .physicalUSB) else {
+            return device
+        }
+
+        do {
+            let refreshedUSBDevices = try await service.discoverDevices()
+            let nonUSBDevices = devices.filter { $0.kind != .physicalUSB }
+            if let refreshedDevice = refreshedUSBDevices.first(where: { $0.id == device.id }), refreshedDevice.isAvailable {
+                devices = (nonUSBDevices + refreshedUSBDevices).sorted { $0.name < $1.name }
+                selectedDeviceID = device.id
+                return refreshedDevice
+            }
+
+            let unavailableDevice = unavailableVersion(
+                of: refreshedUSBDevices.first(where: { $0.id == device.id }) ?? device
+            )
+            let mergedUSBDevices = refreshedUSBDevices
+                .filter { $0.id != unavailableDevice.id }
+                + [unavailableDevice]
+
+            devices = (nonUSBDevices + mergedUSBDevices).sorted { $0.name < $1.name }
+            selectedDeviceID = unavailableDevice.id
+
+            await invalidateDisconnectedUSBDevice(unavailableDevice, stateTarget: stateTarget)
+            return nil
+        } catch {
+            TeleportLog.devices.error(
+                "Failed to revalidate USB device \(device.logLabel, privacy: .public): \(error.localizedDescription, privacy: .public)"
+            )
+            return device
+        }
+    }
+
+    private func unavailableVersion(of device: Device) -> Device {
+        Device(
+            id: device.id,
+            name: device.name,
+            kind: device.kind,
+            osVersion: device.osVersion,
+            isAvailable: false,
+            details: String(localized: TeleportStrings.usbDeviceUnavailableDetails)
+        )
+    }
+
+    private func invalidateDisconnectedUSBDevice(_ device: Device, stateTarget: ActionStateTarget) async {
+        let message = UserFacingText.localized(TeleportStrings.selectedDeviceUnavailableOverUSB)
+
+        if let service = registry.service(for: .physicalUSB) {
+            await service.disconnect()
+        }
+
+        connectionState = .failed(message)
+        simulationState = .idle
+        showsPythonDependencyGuide = nil
+        statusMessage = message
+
+        switch stateTarget {
+        case .connection:
+            TeleportLog.devices.warning(
+                "USB device \(device.logLabel, privacy: .public) became unavailable before connect"
+            )
+        case .simulation:
+            simulationState = .failed(message)
+            TeleportLog.simulation.warning(
+                "USB device \(device.logLabel, privacy: .public) became unavailable before simulation action"
+            )
+        }
     }
 }

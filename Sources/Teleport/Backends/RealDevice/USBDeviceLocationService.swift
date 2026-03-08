@@ -28,6 +28,10 @@ actor USBDeviceLocationService: LocationSimulationService {
                 let pairingState =
                     coreDevice?.connectionProperties.pairingState ?? (device.available ? "paired" : "unavailable")
                 let isAvailable = resolvedAvailability(for: device, coreDevice: coreDevice)
+                let details =
+                    isAvailable
+                    ? "USB · \(pairingState) · dev mode \(developerMode)"
+                    : String(localized: TeleportStrings.usbDeviceUnavailableDetails)
 
                 return Device(
                     id: device.identifier,
@@ -35,7 +39,7 @@ actor USBDeviceLocationService: LocationSimulationService {
                     kind: .physicalUSB,
                     osVersion: device.operatingSystemVersion,
                     isAvailable: isAvailable,
-                    details: "USB · \(pairingState) · dev mode \(developerMode)"
+                    details: details
                 )
             }
             .sorted { $0.name < $1.name }
@@ -157,16 +161,16 @@ actor USBDeviceLocationService: LocationSimulationService {
     }
 
     private func resolvedAvailability(for device: XCDeviceRecord, coreDevice: CoreDeviceRecord?) -> Bool {
-        if device.available {
-            return true
-        }
-
-        guard let coreDevice else {
+        guard device.available else {
+            if let coreDevice {
+                TeleportLog.devices.debug(
+                    "Treating USB device \(device.name, privacy: .public) as unavailable; xcdevice available=false, pairing=\(coreDevice.connectionProperties.pairingState, privacy: .public), developer mode=\(coreDevice.deviceProperties.developerModeStatus, privacy: .public)"
+                )
+            }
             return false
         }
 
-        return coreDevice.connectionProperties.pairingState == "paired"
-            && coreDevice.deviceProperties.developerModeStatus == "enabled"
+        return true
     }
 
     private func resolvedPythonExecutable() throws -> URL {

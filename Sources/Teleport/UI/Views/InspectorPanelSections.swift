@@ -252,7 +252,7 @@ struct InspectorActionsSectionView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
-                    .disabled(viewModel.selectedDevice == nil)
+                    .disabled(viewModel.selectedDevice == nil || viewModel.selectedDevice?.isAvailable == false)
 
                     Button {
                         Task { await viewModel.disconnectSelectedDevice() }
@@ -272,7 +272,7 @@ struct InspectorActionsSectionView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
-                    .disabled(viewModel.connectionState != .connected)
+                    .disabled(viewModel.connectionState != .connected || viewModel.selectedDevice?.isAvailable == false)
 
                     Button {
                         Task { await viewModel.clearSimulatedLocation() }
@@ -281,7 +281,7 @@ struct InspectorActionsSectionView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.bordered)
-                    .disabled(viewModel.connectionState != .connected)
+                    .disabled(viewModel.connectionState != .connected || viewModel.selectedDevice?.isAvailable == false)
                 }
             }
             .controlSize(.large)
