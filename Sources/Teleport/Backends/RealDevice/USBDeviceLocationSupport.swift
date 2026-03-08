@@ -306,22 +306,25 @@ enum USBDeviceScript {
     }
 
     private static func createAskpassScript(at url: URL) throws {
+        let promptText = shellSingleQuoted(String(localized: TeleportStrings.usbAuthorizePrompt))
+        let cancelText = shellSingleQuoted(String(localized: TeleportStrings.cancel))
+        let authorizeText = shellSingleQuoted(String(localized: TeleportStrings.authorize))
+        let titleText = shellSingleQuoted(String(localized: TeleportStrings.administratorPassword))
+
         let scriptLines = [
             "#!/bin/sh",
-            "export TELEPORT_PROMPT=\(shellSingleQuoted(String(localized: TeleportStrings.usbAuthorizePrompt)))",
-            "export TELEPORT_CANCEL=\(shellSingleQuoted(String(localized: TeleportStrings.cancel)))",
-            "export TELEPORT_AUTHORIZE=\(shellSingleQuoted(String(localized: TeleportStrings.authorize)))",
-            "export TELEPORT_PASSWORD_TITLE=\(shellSingleQuoted(String(localized: TeleportStrings.administratorPassword)))",
             "password=$(",
-            "/usr/bin/osascript <<'APPLESCRIPT' 2>/dev/null",
+            "/usr/bin/osascript - \(promptText) \(cancelText) \(authorizeText) \(titleText) <<'APPLESCRIPT' 2>/dev/null",
+            "on run argv",
             "set dialogIcon to POSIX file \"/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/LockedIcon.icns\" as alias",
-            "set promptText to system attribute \"TELEPORT_PROMPT\"",
-            "set cancelText to system attribute \"TELEPORT_CANCEL\"",
-            "set authorizeText to system attribute \"TELEPORT_AUTHORIZE\"",
-            "set titleText to system attribute \"TELEPORT_PASSWORD_TITLE\"",
+            "set promptText to item 1 of argv",
+            "set cancelText to item 2 of argv",
+            "set authorizeText to item 3 of argv",
+            "set titleText to item 4 of argv",
             "tell application \"System Events\" to activate",
             "tell application \"System Events\" to display dialog promptText default answer \"\" with hidden answer buttons {cancelText, authorizeText} default button authorizeText with title titleText with icon dialogIcon",
-            "text returned of result",
+            "return text returned of result",
+            "end run",
             "APPLESCRIPT",
             ")",
             "status=$?",
