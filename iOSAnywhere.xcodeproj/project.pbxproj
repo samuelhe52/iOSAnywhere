@@ -1,0 +1,475 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		9FF151F12F5D80350025CED2 /* DeviceRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151E52F5D80350025CED2 /* DeviceRegistry.swift */; };
+		9FF151F22F5D80350025CED2 /* DeviceSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151E82F5D80350025CED2 /* DeviceSidebarView.swift */; };
+		9FF151F32F5D80350025CED2 /* LocationCoordinate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151E02F5D80350025CED2 /* LocationCoordinate.swift */; };
+		9FF151F42F5D80350025CED2 /* USBDeviceLocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151DA2F5D80350025CED2 /* USBDeviceLocationService.swift */; };
+		9FF151F52F5D80350025CED2 /* CommandRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151E42F5D80350025CED2 /* CommandRunner.swift */; };
+		9FF151F62F5D80350025CED2 /* iOSAnywhereApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151D82F5D80350025CED2 /* iOSAnywhereApp.swift */; };
+		9FF151F72F5D80350025CED2 /* SimulatorLocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151DC2F5D80350025CED2 /* SimulatorLocationService.swift */; };
+		9FF151F82F5D80350025CED2 /* MapWorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151EA2F5D80350025CED2 /* MapWorkspaceView.swift */; };
+		9FF151F92F5D80350025CED2 /* InspectorPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151E92F5D80350025CED2 /* InspectorPanelView.swift */; };
+		9FF151FA2F5D80350025CED2 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151DF2F5D80350025CED2 /* Device.swift */; };
+		9FF151FB2F5D80350025CED2 /* SimulationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151E12F5D80350025CED2 /* SimulationState.swift */; };
+		9FF151FC2F5D80350025CED2 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151ED2F5D80350025CED2 /* AppViewModel.swift */; };
+		9FF151FD2F5D80350025CED2 /* LocationSimulationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151E62F5D80350025CED2 /* LocationSimulationService.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		9FF14F6E2F5D7D6C0025CED2 /* iOSAnywhere.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iOSAnywhere.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9FF151D82F5D80350025CED2 /* iOSAnywhereApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSAnywhereApp.swift; sourceTree = "<group>"; };
+		9FF151DA2F5D80350025CED2 /* USBDeviceLocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USBDeviceLocationService.swift; sourceTree = "<group>"; };
+		9FF151DC2F5D80350025CED2 /* SimulatorLocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatorLocationService.swift; sourceTree = "<group>"; };
+		9FF151DF2F5D80350025CED2 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
+		9FF151E02F5D80350025CED2 /* LocationCoordinate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationCoordinate.swift; sourceTree = "<group>"; };
+		9FF151E12F5D80350025CED2 /* SimulationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulationState.swift; sourceTree = "<group>"; };
+		9FF151E42F5D80350025CED2 /* CommandRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandRunner.swift; sourceTree = "<group>"; };
+		9FF151E52F5D80350025CED2 /* DeviceRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistry.swift; sourceTree = "<group>"; };
+		9FF151E62F5D80350025CED2 /* LocationSimulationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSimulationService.swift; sourceTree = "<group>"; };
+		9FF151E82F5D80350025CED2 /* DeviceSidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSidebarView.swift; sourceTree = "<group>"; };
+		9FF151E92F5D80350025CED2 /* InspectorPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorPanelView.swift; sourceTree = "<group>"; };
+		9FF151EA2F5D80350025CED2 /* MapWorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapWorkspaceView.swift; sourceTree = "<group>"; };
+		9FF151ED2F5D80350025CED2 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9FF14F6B2F5D7D6C0025CED2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		9FF14F652F5D7D6C0025CED2 = {
+			isa = PBXGroup;
+			children = (
+				9FF151F02F5D80350025CED2 /* Sources */,
+				9FF14F6F2F5D7D6C0025CED2 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9FF14F6F2F5D7D6C0025CED2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9FF14F6E2F5D7D6C0025CED2 /* iOSAnywhere.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9FF151D92F5D80350025CED2 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				9FF151D82F5D80350025CED2 /* iOSAnywhereApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		9FF151DB2F5D80350025CED2 /* RealDevice */ = {
+			isa = PBXGroup;
+			children = (
+				9FF151DA2F5D80350025CED2 /* USBDeviceLocationService.swift */,
+			);
+			path = RealDevice;
+			sourceTree = "<group>";
+		};
+		9FF151DD2F5D80350025CED2 /* Simulator */ = {
+			isa = PBXGroup;
+			children = (
+				9FF151DC2F5D80350025CED2 /* SimulatorLocationService.swift */,
+			);
+			path = Simulator;
+			sourceTree = "<group>";
+		};
+		9FF151DE2F5D80350025CED2 /* Backends */ = {
+			isa = PBXGroup;
+			children = (
+				9FF151DB2F5D80350025CED2 /* RealDevice */,
+				9FF151DD2F5D80350025CED2 /* Simulator */,
+			);
+			path = Backends;
+			sourceTree = "<group>";
+		};
+		9FF151E22F5D80350025CED2 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				9FF151DF2F5D80350025CED2 /* Device.swift */,
+				9FF151E02F5D80350025CED2 /* LocationCoordinate.swift */,
+				9FF151E12F5D80350025CED2 /* SimulationState.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		9FF151E32F5D80350025CED2 /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				9FF151E22F5D80350025CED2 /* Models */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		9FF151E72F5D80350025CED2 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				9FF151E42F5D80350025CED2 /* CommandRunner.swift */,
+				9FF151E52F5D80350025CED2 /* DeviceRegistry.swift */,
+				9FF151E62F5D80350025CED2 /* LocationSimulationService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		9FF151EB2F5D80350025CED2 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				9FF151E82F5D80350025CED2 /* DeviceSidebarView.swift */,
+				9FF151E92F5D80350025CED2 /* InspectorPanelView.swift */,
+				9FF151EA2F5D80350025CED2 /* MapWorkspaceView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		9FF151EC2F5D80350025CED2 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				9FF151EB2F5D80350025CED2 /* Views */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		9FF151EE2F5D80350025CED2 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				9FF151ED2F5D80350025CED2 /* AppViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		9FF151EF2F5D80350025CED2 /* iOSAnywhere */ = {
+			isa = PBXGroup;
+			children = (
+				9FF151D92F5D80350025CED2 /* App */,
+				9FF151DE2F5D80350025CED2 /* Backends */,
+				9FF151E32F5D80350025CED2 /* Domain */,
+				9FF151E72F5D80350025CED2 /* Services */,
+				9FF151EC2F5D80350025CED2 /* UI */,
+				9FF151EE2F5D80350025CED2 /* ViewModels */,
+			);
+			path = iOSAnywhere;
+			sourceTree = "<group>";
+		};
+		9FF151F02F5D80350025CED2 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				9FF151EF2F5D80350025CED2 /* iOSAnywhere */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9FF14F6D2F5D7D6C0025CED2 /* iOSAnywhere */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9FF14F792F5D7D6D0025CED2 /* Build configuration list for PBXNativeTarget "iOSAnywhere" */;
+			buildPhases = (
+				9FF14F6A2F5D7D6C0025CED2 /* Sources */,
+				9FF14F6B2F5D7D6C0025CED2 /* Frameworks */,
+				9FF14F6C2F5D7D6C0025CED2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = iOSAnywhere;
+			packageProductDependencies = (
+			);
+			productName = iOSAnywhere;
+			productReference = 9FF14F6E2F5D7D6C0025CED2 /* iOSAnywhere.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9FF14F662F5D7D6C0025CED2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2630;
+				LastUpgradeCheck = 2630;
+				TargetAttributes = {
+					9FF14F6D2F5D7D6C0025CED2 = {
+						CreatedOnToolsVersion = 26.3;
+					};
+				};
+			};
+			buildConfigurationList = 9FF14F692F5D7D6C0025CED2 /* Build configuration list for PBXProject "iOSAnywhere" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 9FF14F652F5D7D6C0025CED2;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 9FF14F6F2F5D7D6C0025CED2 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9FF14F6D2F5D7D6C0025CED2 /* iOSAnywhere */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9FF14F6C2F5D7D6C0025CED2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9FF14F6A2F5D7D6C0025CED2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9FF151F12F5D80350025CED2 /* DeviceRegistry.swift in Sources */,
+				9FF151F22F5D80350025CED2 /* DeviceSidebarView.swift in Sources */,
+				9FF151F32F5D80350025CED2 /* LocationCoordinate.swift in Sources */,
+				9FF151F42F5D80350025CED2 /* USBDeviceLocationService.swift in Sources */,
+				9FF151F52F5D80350025CED2 /* CommandRunner.swift in Sources */,
+				9FF151F62F5D80350025CED2 /* iOSAnywhereApp.swift in Sources */,
+				9FF151F72F5D80350025CED2 /* SimulatorLocationService.swift in Sources */,
+				9FF151F82F5D80350025CED2 /* MapWorkspaceView.swift in Sources */,
+				9FF151F92F5D80350025CED2 /* InspectorPanelView.swift in Sources */,
+				9FF151FA2F5D80350025CED2 /* Device.swift in Sources */,
+				9FF151FB2F5D80350025CED2 /* SimulationState.swift in Sources */,
+				9FF151FC2F5D80350025CED2 /* AppViewModel.swift in Sources */,
+				9FF151FD2F5D80350025CED2 /* LocationSimulationService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		9FF14F772F5D7D6D0025CED2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = LB52UWA223;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.7;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		9FF14F782F5D7D6D0025CED2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = LB52UWA223;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.7;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		9FF14F7A2F5D7D6D0025CED2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LB52UWA223;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.samuelhe.iOSAnywhere;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		9FF14F7B2F5D7D6D0025CED2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LB52UWA223;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.samuelhe.iOSAnywhere;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9FF14F692F5D7D6C0025CED2 /* Build configuration list for PBXProject "iOSAnywhere" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9FF14F772F5D7D6D0025CED2 /* Debug */,
+				9FF14F782F5D7D6D0025CED2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9FF14F792F5D7D6D0025CED2 /* Build configuration list for PBXNativeTarget "iOSAnywhere" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9FF14F7A2F5D7D6D0025CED2 /* Debug */,
+				9FF14F7B2F5D7D6D0025CED2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9FF14F662F5D7D6C0025CED2 /* Project object */;
+}

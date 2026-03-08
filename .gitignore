@@ -12,6 +12,8 @@ playground.xcworkspace
 # Swift Package Manager
 .build/
 .swiftpm/
+.venv/
+tmp/
 
 # Local macOS/editor files
 .DS_Store

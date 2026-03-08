@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:iOSAnywhere}",
+            "name": "Debug iOSAnywhere",
+            "target": "iOSAnywhere",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug iOSAnywhere"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:iOSAnywhere}",
+            "name": "Release iOSAnywhere",
+            "target": "iOSAnywhere",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release iOSAnywhere"
+        }
+    ]
+}
