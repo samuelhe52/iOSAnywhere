@@ -30,6 +30,12 @@ python3 -m pip install pymobiledevice3
 
 ## Quick Start
 
+### Download a built app
+
+If you do not want to build Teleport yourself, download the latest `.dmg` from the [Releases](https://github.com/samuelhe52/Teleport/releases) page.
+
+Open the disk image, drag `Teleport.app` into `Applications`, and then launch it from there.
+
 ### Run in Xcode
 
 1. Open `Teleport.xcodeproj`.
