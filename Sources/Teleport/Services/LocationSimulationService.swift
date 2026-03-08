@@ -1,4 +1,14 @@
 import Foundation
+import OSLog
+
+enum TeleportLog {
+    private static let subsystem = Bundle.main.bundleIdentifier ?? "Teleport"
+
+    static let search = Logger(subsystem: subsystem, category: "search")
+    static let devices = Logger(subsystem: subsystem, category: "devices")
+    static let simulation = Logger(subsystem: subsystem, category: "simulation")
+    static let commands = Logger(subsystem: subsystem, category: "commands")
+}
 
 protocol LocationSimulationService: Sendable {
     var kind: DeviceKind { get }

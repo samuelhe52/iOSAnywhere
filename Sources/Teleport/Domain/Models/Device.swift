@@ -12,4 +12,8 @@ struct Device: Identifiable, Hashable, Codable, Sendable {
     var osVersion: String
     var isAvailable: Bool
     var details: String
+
+    var logLabel: String {
+        "\(name) [\(kind.rawValue)]"
+    }
 }

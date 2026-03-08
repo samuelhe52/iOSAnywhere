@@ -2,6 +2,7 @@ import Combine
 import CoreLocation
 import Foundation
 import MapKit
+import OSLog
 
 struct LocationSearchCompletion: Identifiable, Equatable {
     let id: String
@@ -130,6 +131,7 @@ final class LocationSearchModel: NSObject, ObservableObject, MKLocalSearchComple
         completions = []
         errorMessage = nil
         completer.queryFragment = ""
+        TeleportLog.search.debug("Accepted search selection name: \((name ?? query), privacy: .private)")
     }
 
     func recordSelection(title: String, subtitle: String, coordinate: LocationCoordinate) {
@@ -147,16 +149,23 @@ final class LocationSearchModel: NSObject, ObservableObject, MKLocalSearchComple
         }
 
         saveHistory()
+        TeleportLog.search.info(
+            "Recorded search history entry for \(title, privacy: .public) / \(subtitle, privacy: .public) at \(coordinate.formatted, privacy: .private)"
+        )
     }
 
     func removeHistoryEntry(_ entry: LocationSearchHistoryEntry) {
         history.removeAll { $0.id == entry.id }
         saveHistory()
+        TeleportLog.search.debug(
+            "Removed search history entry for \(entry.title, privacy: .public) / \(entry.subtitle, privacy: .public)"
+        )
     }
 
     func clearHistory() {
         history = []
         saveHistory()
+        TeleportLog.search.info("Cleared search history")
     }
 
     func dismissOverlay() {
@@ -177,27 +186,45 @@ final class LocationSearchModel: NSObject, ObservableObject, MKLocalSearchComple
                 rawValue: $0
             )
         }
+        TeleportLog.search.debug(
+            "Search completer updated \(self.completions.count) result(s) for query fragment \(self.query, privacy: .private)"
+        )
     }
 
     func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
         completions = []
         errorMessage = "Apple location search is temporarily unavailable."
+        TeleportLog.search.error(
+            "Search completer failed for query fragment \(self.query, privacy: .private): \(error.localizedDescription, privacy: .public)"
+        )
     }
 
     func resolve(_ completion: LocationSearchCompletion) async -> MKMapItem? {
+        TeleportLog.search.info(
+            "Resolving search completion \(completion.title, privacy: .public) / \(completion.subtitle, privacy: .public)"
+        )
         do {
             let request = MKLocalSearch.Request(completion: completion.rawValue)
             let response = try await MKLocalSearch(request: request).start()
 
             guard let first = response.mapItems.first else {
                 errorMessage = "No map result was returned for that place."
+                TeleportLog.search.warning(
+                    "Search completion resolved with no map items for \(completion.title, privacy: .public) / \(completion.subtitle, privacy: .public)"
+                )
                 return nil
             }
 
             errorMessage = nil
+            TeleportLog.search.info(
+                "Resolved search completion \(completion.title, privacy: .public) / \(completion.subtitle, privacy: .public) to \(first.placemark.coordinate.latitude, privacy: .private), \(first.placemark.coordinate.longitude, privacy: .private)"
+            )
             return first
         } catch {
             errorMessage = "Unable to load that location from Apple Maps right now."
+            TeleportLog.search.error(
+                "Failed to resolve search completion \(completion.title, privacy: .public) / \(completion.subtitle, privacy: .public): \(error.localizedDescription, privacy: .public)"
+            )
             return nil
         }
     }
@@ -212,6 +239,7 @@ final class LocationSearchModel: NSObject, ObservableObject, MKLocalSearchComple
             history = try JSONDecoder().decode([LocationSearchHistoryEntry].self, from: data)
         } catch {
             history = []
+            TeleportLog.search.error("Failed to decode search history: \(error.localizedDescription, privacy: .public)")
         }
     }
 
@@ -226,6 +254,7 @@ final class LocationSearchModel: NSObject, ObservableObject, MKLocalSearchComple
             defaults.set(data, forKey: Preferences.searchHistory)
         } catch {
             defaults.removeObject(forKey: Preferences.searchHistory)
+            TeleportLog.search.error("Failed to encode search history: \(error.localizedDescription, privacy: .public)")
         }
     }
 }

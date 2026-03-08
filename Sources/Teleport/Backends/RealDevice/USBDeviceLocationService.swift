@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 
 actor USBDeviceLocationService: LocationSimulationService {
     let kind: DeviceKind = .physicalUSB
@@ -13,11 +14,12 @@ actor USBDeviceLocationService: LocationSimulationService {
     private var resolvedPythonExecutableURL: URL?
 
     func discoverDevices() async throws -> [Device] {
+        TeleportLog.devices.info("Discovering connected physical USB devices")
         let xcdeviceOutput = try CommandRunner.run(xcrunURL, arguments: ["xcdevice", "list"])
         let devices = try JSONDecoder().decode([XCDeviceRecord].self, from: xcdeviceOutput.stdout)
         let metadata = (try? loadCoreDeviceMetadata()) ?? [:]
 
-        return
+        let discoveredDevices =
             devices
             .filter { !$0.simulator && $0.platform == "com.apple.platform.iphoneos" && $0.interface == "usb" }
             .map { device in
@@ -37,6 +39,9 @@ actor USBDeviceLocationService: LocationSimulationService {
                 )
             }
             .sorted { $0.name < $1.name }
+
+        TeleportLog.devices.info("Discovered \(discoveredDevices.count) physical USB device(s)")
+        return discoveredDevices
     }
 
     func resolvedPythonExecutablePathForDisplay() -> String? {
@@ -45,18 +50,28 @@ actor USBDeviceLocationService: LocationSimulationService {
 
     func connect(to device: Device) async throws {
         guard device.isAvailable else {
+            TeleportLog.devices.warning(
+                "Attempted to connect to unavailable USB device \(device.logLabel, privacy: .public)"
+            )
             throw ServiceError.unavailable("The selected device is not currently available over USB.")
         }
 
         if connectedDevice?.id != device.id {
+            if connectedDevice != nil {
+                TeleportLog.devices.debug("Switching active USB device to \(device.logLabel, privacy: .public)")
+            }
             try? await stopSimulationHelper()
             activeCoordinate = nil
         }
 
         connectedDevice = device
+        TeleportLog.devices.info("USB device connected: \(device.logLabel, privacy: .public)")
     }
 
     func disconnect() async {
+        if let connectedDevice {
+            TeleportLog.devices.info("Disconnecting USB device \(connectedDevice.logLabel, privacy: .public)")
+        }
         try? await stopSimulationHelper()
         connectedDevice = nil
         activeCoordinate = nil
@@ -67,14 +82,22 @@ actor USBDeviceLocationService: LocationSimulationService {
             throw ServiceError.invalidSelection
         }
 
+        TeleportLog.simulation.info(
+            "Starting USB location simulation for \(connectedDevice.logLabel, privacy: .public) at \(coordinate.formatted, privacy: .private)"
+        )
         try? await stopSimulationHelper()
 
         let helper = try makeSimulationHelper(mode: "set", device: connectedDevice, coordinate: coordinate)
 
         do {
             try helper.process.run()
+            TeleportLog.simulation.debug(
+                "Launched USB simulation helper for \(connectedDevice.logLabel, privacy: .public)")
         } catch {
             helper.cleanup()
+            TeleportLog.simulation.error(
+                "Failed to launch USB simulation helper for \(connectedDevice.logLabel, privacy: .public): \(error.localizedDescription, privacy: .public)"
+            )
             throw ServiceError.unavailable("Failed to launch the physical-device helper: \(error.localizedDescription)")
         }
 
@@ -86,11 +109,15 @@ actor USBDeviceLocationService: LocationSimulationService {
                 helper.process.waitUntilExit()
             }
             helper.cleanup()
+            TeleportLog.simulation.error(
+                "USB simulation helper failed to become ready for \(connectedDevice.logLabel, privacy: .public): \(error.localizedDescription, privacy: .public)"
+            )
             throw error
         }
 
         simulationHelper = helper
         activeCoordinate = coordinate
+        TeleportLog.simulation.info("USB simulation active for \(connectedDevice.logLabel, privacy: .public)")
     }
 
     func clearLocation() async throws {
@@ -98,20 +125,25 @@ actor USBDeviceLocationService: LocationSimulationService {
             throw ServiceError.invalidSelection
         }
 
+        TeleportLog.simulation.info("Clearing USB simulated location for \(connectedDevice.logLabel, privacy: .public)")
         if simulationHelper != nil {
             try await stopSimulationHelper()
             activeCoordinate = nil
+            TeleportLog.simulation.info(
+                "Stopped active USB simulation helper for \(connectedDevice.logLabel, privacy: .public)")
             return
         }
 
         try runOneShotHelper(mode: "clear", device: connectedDevice, coordinate: nil)
         activeCoordinate = nil
+        TeleportLog.simulation.info("Cleared USB simulated location for \(connectedDevice.logLabel, privacy: .public)")
     }
 
     private func loadCoreDeviceMetadata() throws -> [String: CoreDeviceRecord] {
         let tempDirectory = FileManager.default.temporaryDirectory
         let outputURL = tempDirectory.appendingPathComponent("teleport-devicectl.json")
 
+        TeleportLog.devices.debug("Loading CoreDevice metadata for USB device discovery")
         _ = try CommandRunner.run(
             xcrunURL,
             arguments: ["devicectl", "list", "devices", "--json-output", outputURL.path]
@@ -140,6 +172,7 @@ actor USBDeviceLocationService: LocationSimulationService {
             return resolvedPythonExecutableURL
         }
 
+        TeleportLog.devices.debug("Resolving python3 executable for USB helper")
         let output = try CommandRunner.run(
             shellURL,
             arguments: ["-lc", Self.pythonResolutionCommand]
@@ -156,6 +189,7 @@ actor USBDeviceLocationService: LocationSimulationService {
 
         let resolvedURL = URL(fileURLWithPath: path)
         resolvedPythonExecutableURL = resolvedURL
+        TeleportLog.devices.info("Resolved python3 executable for USB helper at \(path, privacy: .public)")
         return resolvedURL
     }
 
@@ -202,12 +236,18 @@ actor USBDeviceLocationService: LocationSimulationService {
     }
 
     private func runOneShotHelper(mode: String, device: Device, coordinate: LocationCoordinate?) throws {
+        TeleportLog.simulation.debug(
+            "Running one-shot USB helper in \(mode, privacy: .public) mode for \(device.logLabel, privacy: .public)"
+        )
         let helper = try makeSimulationHelper(mode: mode, device: device, coordinate: coordinate)
 
         do {
             try helper.process.run()
         } catch {
             helper.cleanup()
+            TeleportLog.simulation.error(
+                "Failed to launch one-shot USB helper for \(device.logLabel, privacy: .public): \(error.localizedDescription, privacy: .public)"
+            )
             throw ServiceError.unavailable("Failed to launch the physical-device helper: \(error.localizedDescription)")
         }
 
@@ -217,12 +257,19 @@ actor USBDeviceLocationService: LocationSimulationService {
         helper.cleanup()
 
         guard helper.process.terminationStatus == 0 else {
+            TeleportLog.simulation.error(
+                "One-shot USB helper failed for \(device.logLabel, privacy: .public) with exit code \(helper.process.terminationStatus)"
+            )
             throw helperFailure(
                 stdout: stdout,
                 stderr: stderr,
                 fallback: "Failed to clear the physical-device simulated location."
             )
         }
+
+        TeleportLog.simulation.debug(
+            "One-shot USB helper completed in \(mode, privacy: .public) mode for \(device.logLabel, privacy: .public)"
+        )
     }
 
     private func makeHelperFiles() throws -> (statusURL: URL, askpassScriptURL: URL) {
@@ -284,6 +331,7 @@ actor USBDeviceLocationService: LocationSimulationService {
             return
         }
 
+        TeleportLog.simulation.debug("Stopping active USB simulation helper")
         self.simulationHelper = nil
         simulationHelper.stdin.closeFile()
         await waitForProcessExit(simulationHelper.process, timeoutNanoseconds: 5_000_000_000)
@@ -298,12 +346,17 @@ actor USBDeviceLocationService: LocationSimulationService {
         simulationHelper.cleanup()
 
         guard simulationHelper.process.terminationStatus == 0 else {
+            TeleportLog.simulation.error(
+                "USB simulation helper exited with code \(simulationHelper.process.terminationStatus) while stopping"
+            )
             throw helperFailure(
                 stdout: stdout,
                 stderr: stderr,
                 fallback: "Failed to clear the physical-device simulated location."
             )
         }
+
+        TeleportLog.simulation.debug("USB simulation helper stopped cleanly")
     }
 
     private func waitForHelperReady(_ helper: SimulationHelper) async throws {
@@ -315,13 +368,19 @@ actor USBDeviceLocationService: LocationSimulationService {
                     .trimmingCharacters(in: .whitespacesAndNewlines)
 
                 guard status == "READY" else {
+                    TeleportLog.simulation.error(
+                        "USB simulation helper reported invalid startup state: \(status ?? "<nil>", privacy: .public)"
+                    )
                     throw ServiceError.unavailable(
                         status ?? "The physical-device helper reported an invalid startup state.")
                 }
+
+                TeleportLog.simulation.debug("USB simulation helper reported ready")
                 return
             }
 
             if !helper.process.isRunning {
+                TeleportLog.simulation.error("USB simulation helper exited before reporting ready")
                 throw helperFailure(
                     stdout: helper.stdout.fileHandleForReading.readDataToEndOfFile(),
                     stderr: helper.stderr.fileHandleForReading.readDataToEndOfFile(),
@@ -332,6 +391,7 @@ actor USBDeviceLocationService: LocationSimulationService {
             try await Task.sleep(nanoseconds: 100_000_000)
         }
 
+        TeleportLog.simulation.error("Timed out waiting for USB simulation helper readiness")
         throw ServiceError.unavailable(
             "Timed out waiting for administrator approval or helper startup while enabling physical-device location simulation."
         )
