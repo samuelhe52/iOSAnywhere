@@ -38,6 +38,7 @@ struct iOSAnywhereApp: App {
                 MapWorkspaceView(viewModel: viewModel)
             } detail: {
                 InspectorPanelView(viewModel: viewModel)
+                    .navigationSplitViewColumnWidth(min: 260, ideal: 280, max: 340)
             }
             .task {
                 appDelegate.shutdownHandler = {
@@ -45,7 +46,7 @@ struct iOSAnywhereApp: App {
                 }
                 await viewModel.refreshDevices()
             }
-            .frame(minWidth: 1080, minHeight: 720)
+            .frame(minWidth: 1200, minHeight: 720)
         }
         .windowResizability(.contentSize)
     }

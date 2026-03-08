@@ -26,7 +26,7 @@ struct InspectorPanelView: View {
             }
             .padding(20)
         }
-        .frame(minWidth: 300, maxHeight: .infinity, alignment: .top)
+        .frame(minWidth: 280, maxHeight: .infinity, alignment: .top)
         .sheet(isPresented: $viewModel.showsUSBPrivilegeNotice) {
             USBAuthorizationSheet(
                 continueAction: {
