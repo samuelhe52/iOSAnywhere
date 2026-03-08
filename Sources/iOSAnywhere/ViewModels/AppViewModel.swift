@@ -110,7 +110,8 @@ final class AppViewModel {
         do {
             if device.kind == .physicalUSB {
                 simulationState = .authorizing
-                statusMessage = "Waiting for macOS administrator approval. Your password is entered in a separate system dialog and is never stored by iOSAnywhere."
+                statusMessage =
+                    "Waiting for macOS administrator approval. Your password is entered in a separate system dialog and is never stored by iOSAnywhere."
             }
             try await service.setLocation(coordinate)
             simulationState = .simulating(coordinate)

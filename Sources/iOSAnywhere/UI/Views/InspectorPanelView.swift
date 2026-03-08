@@ -21,11 +21,15 @@ struct InspectorPanelView: View {
             if viewModel.selectedDeviceRequiresAdministratorApproval {
                 GroupBox {
                     VStack(alignment: .leading, spacing: 8) {
-                        Label("Administrator approval is required for USB device simulation.", systemImage: "lock.shield")
-                            .font(.subheadline.weight(.semibold))
-                        Text("Your password is requested in a separate macOS dialog. iOSAnywhere does not store, display, or reuse that password.")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                        Label(
+                            "Administrator approval is required for USB device simulation.", systemImage: "lock.shield"
+                        )
+                        .font(.subheadline.weight(.semibold))
+                        Text(
+                            "Your password is requested in a separate macOS dialog. iOSAnywhere does not store, display, or reuse that password."
+                        )
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -114,7 +118,7 @@ struct InspectorPanelView: View {
     }
 }
 
-private struct USBAuthorizationSheet: View {
+fileprivate struct USBAuthorizationSheet: View {
     let continueAction: () -> Void
     let cancelAction: () -> Void
 
@@ -140,10 +144,12 @@ private struct USBAuthorizationSheet: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Administrator Approval Required")
                         .font(.title3.weight(.semibold))
-                    Text("To simulate location on a USB device, macOS will ask for your administrator password in a separate system dialog.")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
+                    Text(
+                        "To simulate location on a USB device, macOS will ask for your administrator password in a separate system dialog."
+                    )
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
                 }
             }
 
@@ -182,7 +188,7 @@ private struct USBAuthorizationSheet: View {
     }
 }
 
-private struct SimpleSecurityRow: View {
+fileprivate struct SimpleSecurityRow: View {
     let icon: String
     let text: String
 

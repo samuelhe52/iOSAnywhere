@@ -16,7 +16,8 @@ actor USBDeviceLocationService: LocationSimulationService {
         let devices = try JSONDecoder().decode([XCDeviceRecord].self, from: xcdeviceOutput.stdout)
         let metadata = (try? loadCoreDeviceMetadata()) ?? [:]
 
-        return devices
+        return
+            devices
             .filter { !$0.simulator && $0.platform == "com.apple.platform.iphoneos" && $0.interface == "usb" }
             .map { device in
                 let coreDevice = metadata[device.identifier]
@@ -127,12 +128,14 @@ actor USBDeviceLocationService: LocationSimulationService {
         let stderrPipe = Pipe()
 
         process.executableURL = sudoURL
-        process.arguments = ["-A", python3URL.path] + helperArguments(
-            mode: mode,
-            device: device,
-            coordinate: coordinate,
-            statusURL: helperFiles.statusURL
-        )
+        process.arguments =
+            ["-A", python3URL.path]
+            + helperArguments(
+                mode: mode,
+                device: device,
+                coordinate: coordinate,
+                statusURL: helperFiles.statusURL
+            )
         process.standardInput = stdinPipe
         process.standardOutput = stdoutPipe
         process.standardError = stderrPipe
@@ -194,22 +197,22 @@ actor USBDeviceLocationService: LocationSimulationService {
 
     private func createAskpassScript(at url: URL) throws {
         let script = #"""
-#!/bin/sh
-password=$(
-    /usr/bin/osascript \
-        -e 'tell application "System Events" to activate' \
-        -e 'tell application "System Events" to display dialog "Authorize USB location simulation for your physical device. Your password is handled by macOS and is not stored by iOSAnywhere." default answer "" with hidden answer buttons {"Cancel", "Authorize"} default button "Authorize" with title "Administrator Password" with icon note' \
-        -e 'text returned of result' 2>/dev/null
-)
-status=$?
+            #!/bin/sh
+            password=$(
+                /usr/bin/osascript \
+                    -e 'tell application "System Events" to activate' \
+                    -e 'tell application "System Events" to display dialog "Authorize USB location simulation for your physical device. Your password is handled by macOS and is not stored by iOSAnywhere." default answer "" with hidden answer buttons {"Cancel", "Authorize"} default button "Authorize" with title "Administrator Password" with icon note' \
+                    -e 'text returned of result' 2>/dev/null
+            )
+            status=$?
 
-if [ "$status" -ne 0 ]; then
-    echo "__IOSANYWHERE_AUTH_CANCELLED__" >&2
-    exit 1
-fi
+            if [ "$status" -ne 0 ]; then
+                echo "__IOSANYWHERE_AUTH_CANCELLED__" >&2
+                exit 1
+            fi
 
-printf '%s\n' "$password"
-"""#
+            printf '%s\n' "$password"
+            """#
 
         try script.write(to: url, atomically: true, encoding: .utf8)
         try FileManager.default.setAttributes([.posixPermissions: 0o700], ofItemAtPath: url.path)
@@ -267,7 +270,8 @@ printf '%s\n' "$password"
                     .trimmingCharacters(in: .whitespacesAndNewlines)
 
                 guard status == "READY" else {
-                    throw ServiceError.unavailable(status ?? "The physical-device helper reported an invalid startup state.")
+                    throw ServiceError.unavailable(
+                        status ?? "The physical-device helper reported an invalid startup state.")
                 }
                 return
             }
@@ -284,7 +288,8 @@ printf '%s\n' "$password"
         }
 
         throw ServiceError.unavailable(
-            "Timed out waiting for administrator approval or helper startup while enabling physical-device location simulation.")
+            "Timed out waiting for administrator approval or helper startup while enabling physical-device location simulation."
+        )
     }
 
     private func waitForProcessExit(_ process: Process, timeoutNanoseconds: UInt64) async {
@@ -343,71 +348,38 @@ printf '%s\n' "$password"
     }
 
     private static let pythonHelperScript = #"""
-import asyncio
-import re
-import sys
+        import asyncio
+        import re
+        import sys
 
 
-def parse_version(version_text):
-    parts = [int(part) for part in re.findall(r"\d+", version_text)[:2]]
-    while len(parts) < 2:
-        parts.append(0)
-    return tuple(parts)
+        def parse_version(version_text):
+            parts = [int(part) for part in re.findall(r"\d+", version_text)[:2]]
+            while len(parts) < 2:
+                parts.append(0)
+            return tuple(parts)
 
 
-def mark_ready(status_path):
-    with open(status_path, "w", encoding="utf-8") as handle:
-        handle.write("READY\n")
+        def mark_ready(status_path):
+            with open(status_path, "w", encoding="utf-8") as handle:
+                handle.write("READY\n")
 
 
-async def hold_simulation(simulation):
-    try:
-        await asyncio.to_thread(sys.stdin.buffer.read)
-    finally:
-        await simulation.clear()
-
-
-async def run_pre_ios17(mode, udid, status_path, latitude, longitude):
-    from pymobiledevice3.lockdown import create_using_usbmux
-    from pymobiledevice3.services.dvt.dvt_secure_socket_proxy import DvtSecureSocketProxyService
-    from pymobiledevice3.services.dvt.instruments.location_simulation import LocationSimulation
-
-    lockdown = await create_using_usbmux(udid, autopair=True)
-    try:
-        async with DvtSecureSocketProxyService(lockdown) as dvt:
-            simulation = LocationSimulation(dvt)
-            await simulation.clear()
-            if mode == "set":
-                await simulation.set(latitude, longitude)
-                mark_ready(status_path)
-                await hold_simulation(simulation)
-            else:
+        async def hold_simulation(simulation):
+            try:
+                await asyncio.to_thread(sys.stdin.buffer.read)
+            finally:
                 await simulation.clear()
-    finally:
-        await lockdown.close()
 
 
-async def run_ios17_quic(mode, udid, status_path, latitude, longitude):
-    from pymobiledevice3.bonjour import DEFAULT_BONJOUR_TIMEOUT
-    from pymobiledevice3.remote.remote_service_discovery import RemoteServiceDiscoveryService
-    from pymobiledevice3.remote.tunnel_service import get_remote_pairing_tunnel_services
-    from pymobiledevice3.remote.utils import resume_remoted_if_required, stop_remoted_if_required
-    from pymobiledevice3.services.dvt.dvt_secure_socket_proxy import DvtSecureSocketProxyService
-    from pymobiledevice3.services.dvt.instruments.location_simulation import LocationSimulation
+        async def run_pre_ios17(mode, udid, status_path, latitude, longitude):
+            from pymobiledevice3.lockdown import create_using_usbmux
+            from pymobiledevice3.services.dvt.dvt_secure_socket_proxy import DvtSecureSocketProxyService
+            from pymobiledevice3.services.dvt.instruments.location_simulation import LocationSimulation
 
-    stop_remoted_if_required()
-    service_provider = None
-
-    try:
-        service_providers = await get_remote_pairing_tunnel_services(DEFAULT_BONJOUR_TIMEOUT, udid=udid)
-        service_provider = service_providers[0] if service_providers else None
-        if service_provider is None:
-            raise RuntimeError(f"No remote pairing tunnel service found for {udid}.")
-
-        async with service_provider.start_quic_tunnel() as tunnel_result:
-            resume_remoted_if_required()
-            async with RemoteServiceDiscoveryService((tunnel_result.address, tunnel_result.port)) as rsd:
-                async with DvtSecureSocketProxyService(rsd) as dvt:
+            lockdown = await create_using_usbmux(udid, autopair=True)
+            try:
+                async with DvtSecureSocketProxyService(lockdown) as dvt:
                     simulation = LocationSimulation(dvt)
                     await simulation.clear()
                     if mode == "set":
@@ -416,68 +388,101 @@ async def run_ios17_quic(mode, udid, status_path, latitude, longitude):
                         await hold_simulation(simulation)
                     else:
                         await simulation.clear()
-    finally:
-        if service_provider is not None:
-            await service_provider.close()
-        resume_remoted_if_required()
+            finally:
+                await lockdown.close()
 
 
-async def run_ios17_tcp(mode, udid, status_path, latitude, longitude):
-    from pymobiledevice3.lockdown import create_using_usbmux
-    from pymobiledevice3.remote.remote_service_discovery import RemoteServiceDiscoveryService
-    from pymobiledevice3.remote.tunnel_service import CoreDeviceTunnelProxy
-    from pymobiledevice3.services.dvt.dvt_secure_socket_proxy import DvtSecureSocketProxyService
-    from pymobiledevice3.services.dvt.instruments.location_simulation import LocationSimulation
+        async def run_ios17_quic(mode, udid, status_path, latitude, longitude):
+            from pymobiledevice3.bonjour import DEFAULT_BONJOUR_TIMEOUT
+            from pymobiledevice3.remote.remote_service_discovery import RemoteServiceDiscoveryService
+            from pymobiledevice3.remote.tunnel_service import get_remote_pairing_tunnel_services
+            from pymobiledevice3.remote.utils import resume_remoted_if_required, stop_remoted_if_required
+            from pymobiledevice3.services.dvt.dvt_secure_socket_proxy import DvtSecureSocketProxyService
+            from pymobiledevice3.services.dvt.instruments.location_simulation import LocationSimulation
 
-    lockdown = await create_using_usbmux(udid, autopair=True)
-    tunnel_proxy = await CoreDeviceTunnelProxy.create(lockdown)
-    try:
-        async with tunnel_proxy.start_tcp_tunnel() as tunnel_result:
-            async with RemoteServiceDiscoveryService((tunnel_result.address, tunnel_result.port)) as rsd:
-                async with DvtSecureSocketProxyService(rsd) as dvt:
-                    simulation = LocationSimulation(dvt)
-                    await simulation.clear()
-                    if mode == "set":
-                        await simulation.set(latitude, longitude)
-                        mark_ready(status_path)
-                        await hold_simulation(simulation)
-                    else:
-                        await simulation.clear()
-    finally:
-        await tunnel_proxy.close()
-        await lockdown.close()
+            stop_remoted_if_required()
+            service_provider = None
 
+            try:
+                service_providers = await get_remote_pairing_tunnel_services(DEFAULT_BONJOUR_TIMEOUT, udid=udid)
+                service_provider = service_providers[0] if service_providers else None
+                if service_provider is None:
+                    raise RuntimeError(f"No remote pairing tunnel service found for {udid}.")
 
-async def main():
-    mode = sys.argv[1]
-    udid = sys.argv[2]
-    version = sys.argv[3]
-    status_path = sys.argv[4]
-    latitude = float(sys.argv[5]) if mode == "set" else None
-    longitude = float(sys.argv[6]) if mode == "set" else None
-
-    parsed_version = parse_version(version)
-
-    if parsed_version[0] < 17:
-        await run_pre_ios17(mode, udid, status_path, latitude, longitude)
-    elif parsed_version < (17, 4):
-        await run_ios17_quic(mode, udid, status_path, latitude, longitude)
-    else:
-        await run_ios17_tcp(mode, udid, status_path, latitude, longitude)
+                async with service_provider.start_quic_tunnel() as tunnel_result:
+                    resume_remoted_if_required()
+                    async with RemoteServiceDiscoveryService((tunnel_result.address, tunnel_result.port)) as rsd:
+                        async with DvtSecureSocketProxyService(rsd) as dvt:
+                            simulation = LocationSimulation(dvt)
+                            await simulation.clear()
+                            if mode == "set":
+                                await simulation.set(latitude, longitude)
+                                mark_ready(status_path)
+                                await hold_simulation(simulation)
+                            else:
+                                await simulation.clear()
+            finally:
+                if service_provider is not None:
+                    await service_provider.close()
+                resume_remoted_if_required()
 
 
-try:
-    asyncio.run(main())
-except ModuleNotFoundError as error:
-    if error.name and error.name.startswith("pymobiledevice3"):
-        print("pymobiledevice3 is not installed. Install it with: python3 -m pip install pymobiledevice3", file=sys.stderr)
-    else:
-        print(f"Missing Python module: {error.name}", file=sys.stderr)
-    raise SystemExit(2)
-except Exception as error:
-    print(str(error), file=sys.stderr)
-    raise SystemExit(1)
-"""#
+        async def run_ios17_tcp(mode, udid, status_path, latitude, longitude):
+            from pymobiledevice3.lockdown import create_using_usbmux
+            from pymobiledevice3.remote.remote_service_discovery import RemoteServiceDiscoveryService
+            from pymobiledevice3.remote.tunnel_service import CoreDeviceTunnelProxy
+            from pymobiledevice3.services.dvt.dvt_secure_socket_proxy import DvtSecureSocketProxyService
+            from pymobiledevice3.services.dvt.instruments.location_simulation import LocationSimulation
+
+            lockdown = await create_using_usbmux(udid, autopair=True)
+            tunnel_proxy = await CoreDeviceTunnelProxy.create(lockdown)
+            try:
+                async with tunnel_proxy.start_tcp_tunnel() as tunnel_result:
+                    async with RemoteServiceDiscoveryService((tunnel_result.address, tunnel_result.port)) as rsd:
+                        async with DvtSecureSocketProxyService(rsd) as dvt:
+                            simulation = LocationSimulation(dvt)
+                            await simulation.clear()
+                            if mode == "set":
+                                await simulation.set(latitude, longitude)
+                                mark_ready(status_path)
+                                await hold_simulation(simulation)
+                            else:
+                                await simulation.clear()
+            finally:
+                await tunnel_proxy.close()
+                await lockdown.close()
+
+
+        async def main():
+            mode = sys.argv[1]
+            udid = sys.argv[2]
+            version = sys.argv[3]
+            status_path = sys.argv[4]
+            latitude = float(sys.argv[5]) if mode == "set" else None
+            longitude = float(sys.argv[6]) if mode == "set" else None
+
+            parsed_version = parse_version(version)
+
+            if parsed_version[0] < 17:
+                await run_pre_ios17(mode, udid, status_path, latitude, longitude)
+            elif parsed_version < (17, 4):
+                await run_ios17_quic(mode, udid, status_path, latitude, longitude)
+            else:
+                await run_ios17_tcp(mode, udid, status_path, latitude, longitude)
+
+
+        try:
+            asyncio.run(main())
+        except ModuleNotFoundError as error:
+            if error.name and error.name.startswith("pymobiledevice3"):
+                print("pymobiledevice3 is not installed. Install it with: python3 -m pip install pymobiledevice3", file=sys.stderr)
+            else:
+                print(f"Missing Python module: {error.name}", file=sys.stderr)
+            raise SystemExit(2)
+        except Exception as error:
+            print(str(error), file=sys.stderr)
+            raise SystemExit(1)
+        """#
 }
 
 fileprivate struct XCDeviceRecord: Decodable {

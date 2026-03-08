@@ -165,7 +165,7 @@ struct MapWorkspaceView: View {
     }
 }
 
-private struct LocationSearchCompletion: Identifiable, Equatable {
+fileprivate struct LocationSearchCompletion: Identifiable, Equatable {
     let id: String
     let title: String
     let subtitle: String
@@ -173,7 +173,7 @@ private struct LocationSearchCompletion: Identifiable, Equatable {
 }
 
 @MainActor
-private final class LocationSearchModel: NSObject, ObservableObject, MKLocalSearchCompleterDelegate {
+fileprivate final class LocationSearchModel: NSObject, ObservableObject, MKLocalSearchCompleterDelegate {
     @Published var query: String = "" {
         didSet {
             errorMessage = nil
