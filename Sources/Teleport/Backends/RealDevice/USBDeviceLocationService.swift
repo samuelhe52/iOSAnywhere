@@ -53,7 +53,7 @@ actor USBDeviceLocationService: LocationSimulationService {
             TeleportLog.devices.warning(
                 "Attempted to connect to unavailable USB device \(device.logLabel, privacy: .public)"
             )
-            throw ServiceError.unavailable("The selected device is not currently available over USB.")
+            throw ServiceError.unavailable(String(localized: TeleportStrings.selectedDeviceUnavailableOverUSB))
         }
 
         if connectedDevice?.id != device.id {
@@ -98,7 +98,9 @@ actor USBDeviceLocationService: LocationSimulationService {
             TeleportLog.simulation.error(
                 "Failed to launch USB simulation helper for \(connectedDevice.logLabel, privacy: .public): \(error.localizedDescription, privacy: .public)"
             )
-            throw ServiceError.unavailable("Failed to launch the physical-device helper: \(error.localizedDescription)")
+            throw ServiceError.unavailable(
+                String(localized: TeleportStrings.failedToLaunchPhysicalDeviceHelper(error.localizedDescription))
+            )
         }
 
         do {
@@ -180,11 +182,13 @@ actor USBDeviceLocationService: LocationSimulationService {
         let path = output.stdoutString.trimmingCharacters(in: .whitespacesAndNewlines)
 
         guard path.hasPrefix("/") else {
-            throw ServiceError.unavailable("Unable to resolve python3 from \(shellURL.lastPathComponent).")
+            throw ServiceError.unavailable(
+                String(localized: TeleportStrings.unableToResolvePython3(from: shellURL.lastPathComponent))
+            )
         }
 
         guard FileManager.default.isExecutableFile(atPath: path) else {
-            throw ServiceError.unavailable("Resolved python3 to \(path), but that file is not executable.")
+            throw ServiceError.unavailable(String(localized: TeleportStrings.pythonPathNotExecutable(path)))
         }
 
         let resolvedURL = URL(fileURLWithPath: path)
@@ -248,7 +252,9 @@ actor USBDeviceLocationService: LocationSimulationService {
             TeleportLog.simulation.error(
                 "Failed to launch one-shot USB helper for \(device.logLabel, privacy: .public): \(error.localizedDescription, privacy: .public)"
             )
-            throw ServiceError.unavailable("Failed to launch the physical-device helper: \(error.localizedDescription)")
+            throw ServiceError.unavailable(
+                String(localized: TeleportStrings.failedToLaunchPhysicalDeviceHelper(error.localizedDescription))
+            )
         }
 
         helper.process.waitUntilExit()
@@ -263,7 +269,7 @@ actor USBDeviceLocationService: LocationSimulationService {
             throw USBDeviceErrorParser.helperFailure(
                 stdout: stdout,
                 stderr: stderr,
-                fallback: "Failed to clear the physical-device simulated location."
+                fallback: String(localized: TeleportStrings.failedToClearPhysicalDeviceLocation)
             )
         }
 
@@ -318,7 +324,7 @@ actor USBDeviceLocationService: LocationSimulationService {
                         "USB simulation helper reported invalid startup state: \(status ?? "<nil>", privacy: .public)"
                     )
                     throw ServiceError.unavailable(
-                        status ?? "The physical-device helper reported an invalid startup state.")
+                        status ?? String(localized: TeleportStrings.physicalHelperInvalidStartupState))
                 }
 
                 TeleportLog.simulation.debug("USB simulation helper reported ready")
@@ -330,7 +336,7 @@ actor USBDeviceLocationService: LocationSimulationService {
                 throw USBDeviceErrorParser.helperFailure(
                     stdout: helper.stdout.fileHandleForReading.readDataToEndOfFile(),
                     stderr: helper.stderr.fileHandleForReading.readDataToEndOfFile(),
-                    fallback: "Physical-device location simulation exited before reporting ready."
+                    fallback: String(localized: TeleportStrings.physicalHelperExitedBeforeReady)
                 )
             }
 
@@ -339,7 +345,7 @@ actor USBDeviceLocationService: LocationSimulationService {
 
         TeleportLog.simulation.error("Timed out waiting for USB simulation helper readiness")
         throw ServiceError.unavailable(
-            "Timed out waiting for administrator approval or helper startup while enabling physical-device location simulation."
+            String(localized: TeleportStrings.timedOutWaitingForAdministratorApproval)
         )
     }
 }

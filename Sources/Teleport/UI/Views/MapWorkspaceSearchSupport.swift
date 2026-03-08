@@ -105,7 +105,7 @@ final class LocationSearchModel: NSObject, ObservableObject, MKLocalSearchComple
     }
     @Published var completions: [LocationSearchCompletion] = []
     @Published private(set) var history: [LocationSearchHistoryEntry] = []
-    @Published var errorMessage: String?
+    @Published var errorMessage: UserFacingText?
 
     private let completer = MKLocalSearchCompleter()
     private let defaults: UserDefaults
@@ -193,7 +193,7 @@ final class LocationSearchModel: NSObject, ObservableObject, MKLocalSearchComple
 
     func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
         completions = []
-        errorMessage = "Apple location search is temporarily unavailable."
+        errorMessage = .localized(TeleportStrings.searchUnavailable)
         TeleportLog.search.error(
             "Search completer failed for query fragment \(self.query, privacy: .private): \(error.localizedDescription, privacy: .public)"
         )
@@ -208,7 +208,7 @@ final class LocationSearchModel: NSObject, ObservableObject, MKLocalSearchComple
             let response = try await MKLocalSearch(request: request).start()
 
             guard let first = response.mapItems.first else {
-                errorMessage = "No map result was returned for that place."
+                errorMessage = .localized(TeleportStrings.searchNoResult)
                 TeleportLog.search.warning(
                     "Search completion resolved with no map items for \(completion.title, privacy: .public) / \(completion.subtitle, privacy: .public)"
                 )
@@ -221,7 +221,7 @@ final class LocationSearchModel: NSObject, ObservableObject, MKLocalSearchComple
             )
             return first
         } catch {
-            errorMessage = "Unable to load that location from Apple Maps right now."
+            errorMessage = .localized(TeleportStrings.searchUnableToLoad)
             TeleportLog.search.error(
                 "Failed to resolve search completion \(completion.title, privacy: .public) / \(completion.subtitle, privacy: .public): \(error.localizedDescription, privacy: .public)"
             )

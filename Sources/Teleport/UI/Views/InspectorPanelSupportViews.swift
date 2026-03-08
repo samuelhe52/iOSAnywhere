@@ -2,10 +2,10 @@ import AppKit
 import SwiftUI
 
 struct InspectorPanelSection<Content: View>: View {
-    let title: String?
+    let title: LocalizedStringResource?
     @ViewBuilder let content: () -> Content
 
-    init(_ title: String? = nil, @ViewBuilder content: @escaping () -> Content) {
+    init(_ title: LocalizedStringResource? = nil, @ViewBuilder content: @escaping () -> Content) {
         self.title = title
         self.content = content
     }
@@ -149,8 +149,8 @@ enum StatusTone {
 }
 
 struct StatusRow: View {
-    let title: String
-    let value: String
+    let title: LocalizedStringResource
+    let value: UserFacingText
     let tone: StatusTone
 
     var body: some View {
@@ -167,7 +167,7 @@ struct StatusRow: View {
 }
 
 struct StatusRowValue: View {
-    let value: String
+    let value: UserFacingText
     let tone: StatusTone
 
     var body: some View {
@@ -272,7 +272,7 @@ struct USBOnboardingSheet: View {
                     .foregroundStyle(.secondary)
 
                 SelectableCodeRow(
-                    text: guide?.pythonStatusText ?? "Select a USB device to resolve the helper Python interpreter.")
+                    text: guide?.pythonStatusText ?? String(localized: TeleportStrings.selectUSBDeviceToResolvePython))
             }
 
             VStack(alignment: .leading, spacing: 8) {
@@ -294,7 +294,7 @@ struct USBOnboardingSheet: View {
                 .toggleStyle(.checkbox)
 
             HStack {
-                Button("Cancel", role: .cancel) {
+                Button(String(localized: TeleportStrings.cancel), role: .cancel) {
                     cancelAction()
                 }
 
@@ -323,7 +323,7 @@ struct USBOnboardingSheet: View {
 
 struct SimpleSecurityRow: View {
     let icon: String
-    let text: String
+    let text: LocalizedStringResource
 
     var body: some View {
         HStack(alignment: .center, spacing: 10) {

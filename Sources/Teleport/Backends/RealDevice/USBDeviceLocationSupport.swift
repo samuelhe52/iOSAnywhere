@@ -47,15 +47,15 @@ enum USBDeviceErrorParser {
             .lowercased()
 
         if combined.contains("__teleport_auth_cancelled__") {
-            return "Administrator approval was canceled. Physical-device location simulation did not start."
+            return String(localized: TeleportStrings.administratorApprovalCanceled)
         }
 
         if combined.contains("incorrect password") || combined.contains("try again") {
-            return "The administrator password was incorrect. Check the password and try again."
+            return String(localized: TeleportStrings.administratorPasswordIncorrect)
         }
 
         if combined.contains("no password was provided") || combined.contains("a password is required") {
-            return "Administrator approval was canceled. Physical-device location simulation did not start."
+            return String(localized: TeleportStrings.administratorApprovalCanceled)
         }
 
         return nil
@@ -71,17 +71,17 @@ enum USBDeviceErrorParser {
         let resolvedPython = extractValue(in: combined, prefix: "Resolved Python: ")
         let installCommand = extractValue(in: combined, prefix: "Install command: ")
 
-        var lines = ["pymobiledevice3 is missing for the Python executable used by USB device simulation."]
+        var lines = [String(localized: TeleportStrings.pythonDependencyMissingIntro)]
 
         if let resolvedPython {
-            lines.append("Resolved Python: \(resolvedPython)")
+            lines.append(String(localized: TeleportStrings.resolvedPythonLine(resolvedPython)))
         }
 
         if let installCommand {
-            lines.append("Run: \(installCommand)")
+            lines.append(String(localized: TeleportStrings.runCommandLine(installCommand)))
         }
 
-        lines.append("Then retry the USB location action.")
+        lines.append(String(localized: TeleportStrings.retryUSBLocationAction))
         return lines.joined(separator: "\n")
     }
 
@@ -101,7 +101,9 @@ enum USBDeviceErrorParser {
 }
 
 enum USBDeviceScript {
-    static let sudoPrompt = "Teleport requires administrator privileges for physical-device location simulation."
+    static var sudoPrompt: String {
+        String(localized: TeleportStrings.usbSudoPrompt)
+    }
 
     static let pythonResolutionCommand =
         #"python3 -c 'import os, sys; print(os.path.realpath(sys.executable))'"#
@@ -278,14 +280,23 @@ enum USBDeviceScript {
     }
 
     private static func createAskpassScript(at url: URL) throws {
-        let script = #"""
+        let script = """
             #!/bin/sh
+            export TELEPORT_PROMPT=\(shellSingleQuoted(String(localized: TeleportStrings.usbAuthorizePrompt)))
+            export TELEPORT_CANCEL=\(shellSingleQuoted(String(localized: TeleportStrings.cancel)))
+            export TELEPORT_AUTHORIZE=\(shellSingleQuoted(String(localized: TeleportStrings.authorize)))
+            export TELEPORT_PASSWORD_TITLE=\(shellSingleQuoted(String(localized: TeleportStrings.administratorPassword)))
             password=$(
-                /usr/bin/osascript \
-                    -e 'set dialogIcon to POSIX file "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/LockedIcon.icns" as alias' \
-                    -e 'tell application "System Events" to activate' \
-                    -e 'tell application "System Events" to display dialog "Authorize USB location simulation for your physical device. Your password is handled by macOS and is not stored by Teleport." default answer "" with hidden answer buttons {"Cancel", "Authorize"} default button "Authorize" with title "Administrator Password" with icon dialogIcon' \
-                    -e 'text returned of result' 2>/dev/null
+                /usr/bin/osascript <<'APPLESCRIPT' 2>/dev/null
+                    set dialogIcon to POSIX file "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/LockedIcon.icns" as alias
+                    set promptText to system attribute "TELEPORT_PROMPT"
+                    set cancelText to system attribute "TELEPORT_CANCEL"
+                    set authorizeText to system attribute "TELEPORT_AUTHORIZE"
+                    set titleText to system attribute "TELEPORT_PASSWORD_TITLE"
+                    tell application "System Events" to activate
+                    tell application "System Events" to display dialog promptText default answer "" with hidden answer buttons {cancelText, authorizeText} default button authorizeText with title titleText with icon dialogIcon
+                    text returned of result
+                APPLESCRIPT
             )
             status=$?
 
@@ -295,10 +306,14 @@ enum USBDeviceScript {
             fi
 
             printf '%s\n' "$password"
-            """#
+            """
 
         try script.write(to: url, atomically: true, encoding: .utf8)
         try FileManager.default.setAttributes([.posixPermissions: 0o700], ofItemAtPath: url.path)
+    }
+
+    private static func shellSingleQuoted(_ value: String) -> String {
+        "'" + value.replacingOccurrences(of: "'", with: "'\"'\"'") + "'"
     }
 }
 

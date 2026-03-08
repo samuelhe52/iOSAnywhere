@@ -4,7 +4,7 @@ enum DiscoveryState: Equatable, Sendable {
     case idle
     case discovering
     case ready
-    case failed(String)
+    case failed(UserFacingText)
 }
 
 enum DeviceConnectionState: Equatable, Sendable {
@@ -12,7 +12,7 @@ enum DeviceConnectionState: Equatable, Sendable {
     case connecting
     case connected
     case disconnecting
-    case failed(String)
+    case failed(UserFacingText)
 }
 
 enum SimulationRunState: Equatable, Sendable {
@@ -20,5 +20,5 @@ enum SimulationRunState: Equatable, Sendable {
     case authorizing
     case simulating(LocationCoordinate)
     case stopping
-    case failed(String)
+    case failed(UserFacingText)
 }

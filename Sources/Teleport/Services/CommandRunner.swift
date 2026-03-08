@@ -37,7 +37,12 @@ struct CommandRunner {
                 "Failed to launch command \(commandDescription, privacy: .public): \(error.localizedDescription, privacy: .public)"
             )
             throw ServiceError.unavailable(
-                "Failed to launch \(executableURL.lastPathComponent): \(error.localizedDescription)")
+                String(
+                    localized: TeleportStrings.failedToLaunchExecutable(
+                        executableURL.lastPathComponent,
+                        details: error.localizedDescription
+                    )
+                ))
         }
 
         process.waitUntilExit()
@@ -54,7 +59,7 @@ struct CommandRunner {
             let message =
                 [output.stderrString, output.stdoutString]
                 .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-                .first(where: { !$0.isEmpty }) ?? "Command failed with exit code \(output.terminationStatus)."
+                .first(where: { !$0.isEmpty }) ?? String(localized: TeleportStrings.commandFailed(exitCode: output.terminationStatus))
             TeleportLog.commands.error(
                 "Command failed: \(commandDescription, privacy: .public) in \(durationMilliseconds) ms with exit code \(output.terminationStatus): \(message, privacy: .public)"
             )

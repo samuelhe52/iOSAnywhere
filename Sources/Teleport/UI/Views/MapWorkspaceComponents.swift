@@ -24,13 +24,25 @@ struct MapWorkspaceMapCanvasView: View {
                 }
 
                 if let highlightedCoordinate {
-                    Marker(
-                        highlightedTitle ?? "Selected Place",
-                        coordinate: CLLocationCoordinate2D(
-                            latitude: highlightedCoordinate.latitude,
-                            longitude: highlightedCoordinate.longitude
-                        )
-                    )
+                    Group {
+                        if let highlightedTitle {
+                            Marker(
+                                highlightedTitle,
+                                coordinate: CLLocationCoordinate2D(
+                                    latitude: highlightedCoordinate.latitude,
+                                    longitude: highlightedCoordinate.longitude
+                                )
+                            )
+                        } else {
+                            Marker(
+                                "Selected Place",
+                                coordinate: CLLocationCoordinate2D(
+                                    latitude: highlightedCoordinate.latitude,
+                                    longitude: highlightedCoordinate.longitude
+                                )
+                            )
+                        }
+                    }
                     .tint(.blue)
                 }
             }
@@ -89,7 +101,11 @@ struct MapWorkspaceSearchOverlayView: View {
             .background(MapWorkspaceOverlayCardBackground(shadowOpacity: 0.16, shadowRadius: 12, shadowYOffset: 8))
 
             if let errorMessage = searchModel.errorMessage {
-                Label(errorMessage, systemImage: "exclamationmark.triangle.fill")
+                Label {
+                    Text(errorMessage)
+                } icon: {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                }
                     .font(.footnote)
                     .foregroundStyle(.orange)
                     .padding(.horizontal, 14)

@@ -9,9 +9,15 @@ struct InspectorPanelHeaderView: View {
             Text("Session")
                 .font(.title3.weight(.semibold))
 
-            Text(selectedDeviceName ?? "Select a device to begin")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+            if let selectedDeviceName {
+                Text(selectedDeviceName)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            } else {
+                Text("Select a device to begin")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 }
@@ -33,8 +39,13 @@ struct InspectorDeviceSectionView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(viewModel.selectedDevice?.name ?? "No device selected")
-                        .font(.headline)
+                    if let deviceName = viewModel.selectedDevice?.name {
+                        Text(deviceName)
+                            .font(.headline)
+                    } else {
+                        Text("No device selected")
+                            .font(.headline)
+                    }
 
                     Text(deviceSubtitle)
                         .font(.subheadline)
@@ -54,11 +65,13 @@ struct InspectorDeviceSectionView: View {
 
     private var deviceSubtitle: String {
         guard let device = viewModel.selectedDevice else {
-            return "Choose a USB device or simulator from the sidebar."
+            return String(localized: TeleportStrings.chooseDeviceFromSidebar)
         }
 
-        let kind = device.kind == .simulator ? "Simulator" : "USB Device"
-        return "\(kind) · iOS \(device.osVersion)"
+        let kind = String(
+            localized: device.kind == .simulator ? TeleportStrings.simulatorKind : TeleportStrings.usbDeviceKind
+        )
+        return String(localized: TeleportStrings.deviceSubtitle(kind: kind, osVersion: device.osVersion))
     }
 
     private var deviceIcon: String {
@@ -310,12 +323,12 @@ struct InspectorStatusSectionView: View {
 }
 
 extension DiscoveryState {
-    fileprivate var inspectorLabel: String {
+    fileprivate var inspectorLabel: UserFacingText {
         switch self {
-        case .idle: return "Idle"
-        case .discovering: return "Discovering"
-        case .ready: return "Ready"
-        case .failed: return "Failed"
+        case .idle: return .localized(TeleportStrings.stateIdle)
+        case .discovering: return .localized(TeleportStrings.stateDiscovering)
+        case .ready: return .localized(TeleportStrings.stateReady)
+        case .failed: return .localized(TeleportStrings.stateFailed)
         }
     }
 
@@ -334,13 +347,13 @@ extension DiscoveryState {
 }
 
 extension DeviceConnectionState {
-    fileprivate var inspectorLabel: String {
+    fileprivate var inspectorLabel: UserFacingText {
         switch self {
-        case .disconnected: return "Disconnected"
-        case .connecting: return "Connecting"
-        case .connected: return "Connected"
-        case .disconnecting: return "Disconnecting"
-        case .failed: return "Failed"
+        case .disconnected: return .localized(TeleportStrings.stateDisconnected)
+        case .connecting: return .localized(TeleportStrings.stateConnecting)
+        case .connected: return .localized(TeleportStrings.stateConnected)
+        case .disconnecting: return .localized(TeleportStrings.stateDisconnecting)
+        case .failed: return .localized(TeleportStrings.stateFailed)
         }
     }
 
@@ -359,13 +372,13 @@ extension DeviceConnectionState {
 }
 
 extension SimulationRunState {
-    fileprivate var inspectorLabel: String {
+    fileprivate var inspectorLabel: UserFacingText {
         switch self {
-        case .idle: return "Idle"
-        case .authorizing: return "Authorizing"
-        case .simulating(let coordinate): return coordinate.formatted
-        case .stopping: return "Stopping"
-        case .failed: return "Failed"
+        case .idle: return .localized(TeleportStrings.stateIdle)
+        case .authorizing: return .localized(TeleportStrings.stateAuthorizing)
+        case .simulating(let coordinate): return .verbatim(coordinate.formatted)
+        case .stopping: return .localized(TeleportStrings.stateStopping)
+        case .failed: return .localized(TeleportStrings.stateFailed)
         }
     }
 

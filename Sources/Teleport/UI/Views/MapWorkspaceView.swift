@@ -43,7 +43,7 @@ struct MapWorkspaceView: View {
                                 latitude: coordinate.latitude,
                                 longitude: coordinate.longitude
                             ),
-                            title: "Picked Location",
+                            title: String(localized: TeleportStrings.pickedLocation),
                             source: .appleMapDisplay,
                             recenterMap: true,
                             debounceNanoseconds: 140_000_000,
@@ -110,7 +110,7 @@ struct MapWorkspaceView: View {
         let selectedCoordinate = LocationCoordinate(latitude: coordinate.latitude, longitude: coordinate.longitude)
         setPickedLocation(
             selectedCoordinate,
-            title: result.name ?? "Selected Place",
+            title: result.name ?? String(localized: TeleportStrings.selectedPlace),
             source: .appleMapDisplay,
             recenterMap: true,
             debounceNanoseconds: 0,
@@ -166,7 +166,7 @@ struct MapWorkspaceView: View {
             }
 
             await MainActor.run {
-                syncMap(to: coordinate, title: "Manual Coordinates")
+                syncMap(to: coordinate, title: String(localized: TeleportStrings.manualCoordinates))
             }
         }
     }
@@ -284,7 +284,7 @@ struct MapWorkspaceView: View {
         hasAppliedStartupLocation = true
         setPickedLocation(
             LocationCoordinate(latitude: coordinate.latitude, longitude: coordinate.longitude),
-            title: "Current Location",
+            title: String(localized: TeleportStrings.currentLocation),
             source: .coreLocation,
             recenterMap: true,
             debounceNanoseconds: 0,

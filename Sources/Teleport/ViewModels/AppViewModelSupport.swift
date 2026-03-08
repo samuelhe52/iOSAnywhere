@@ -20,7 +20,7 @@ struct USBSetupGuide: Equatable {
             return resolvedPythonPath
         }
 
-        return "python3 is not currently resolving from your shell. Install Python 3 first, then refresh devices."
+        return String(localized: TeleportStrings.pythonUnavailableInShell)
     }
 
     private static func shellQuoted(_ value: String) -> String {

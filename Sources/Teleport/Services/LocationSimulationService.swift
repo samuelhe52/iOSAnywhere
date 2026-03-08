@@ -29,7 +29,7 @@ enum ServiceError: LocalizedError, Equatable {
         case .unsupported(let message), .unavailable(let message):
             return message
         case .invalidSelection:
-            return "Select a device first."
+            return String(localized: TeleportStrings.selectDeviceFirst)
         }
     }
 }

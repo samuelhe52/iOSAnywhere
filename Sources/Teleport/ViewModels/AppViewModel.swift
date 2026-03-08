@@ -21,10 +21,10 @@ final class AppViewModel {
     var showsPythonDependencyGuide: PythonDependencyInstallGuide?
     var latitudeText: String = "37.3346"
     var longitudeText: String = "-122.0090"
-    var statusMessage: String = "Ready to discover simulators and USB devices."
+    var statusMessage: UserFacingText = .localized(TeleportStrings.readyToDiscoverDevices)
     var suppressUSBPrivilegeNotice: Bool
     var selectedUSBSetupGuide: USBSetupGuide?
-    var selectedPythonRuntimeNote: String?
+    var selectedPythonRuntimeNote: UserFacingText?
 
     init(registry: DeviceRegistry, defaults: UserDefaults = .standard) {
         self.registry = registry

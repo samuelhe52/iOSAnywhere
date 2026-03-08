@@ -1,0 +1,1126 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@ · iOS %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · iOS %2$@"
+          }
+        }
+      }
+    },
+    "%lld" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        }
+      }
+    },
+    "Actions" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作"
+          }
+        }
+      }
+    },
+    "Administrator approval is required for USB device simulation." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB 设备模拟需要管理员授权。"
+          }
+        }
+      }
+    },
+    "Administrator approval was canceled before the macOS password prompt." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 macOS 密码提示出现前，管理员授权已取消。"
+          }
+        }
+      }
+    },
+    "Administrator approval was canceled. Physical-device location simulation did not start." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "管理员授权已取消。真机位置模拟未启动。"
+          }
+        }
+      }
+    },
+    "Administrator Password" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "管理员密码"
+          }
+        }
+      }
+    },
+    "Apple location search is temporarily unavailable." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple 位置搜索暂时不可用。"
+          }
+        }
+      }
+    },
+    "Authorize" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "授权"
+          }
+        }
+      }
+    },
+    "Authorize USB location simulation for your physical device. Your password is handled by macOS and is not stored by Teleport." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为你的真机授权 USB 位置模拟。你的密码由 macOS 处理，Teleport 不会存储该密码。"
+          }
+        }
+      }
+    },
+    "Authorizing" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "授权中"
+          }
+        }
+      }
+    },
+    "Before simulating location on a physical iPhone, confirm the device and host are ready." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在为真机 iPhone 模拟位置之前，请确认设备和主机已准备就绪。"
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
+        }
+      }
+    },
+    "Choose a USB device or simulator from the sidebar." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请从侧边栏选择一个 USB 设备或模拟器。"
+          }
+        }
+      }
+    },
+    "Clear" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清除"
+          }
+        }
+      }
+    },
+    "Cleared simulated location on %@." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已清除 %@ 上的模拟位置。"
+          }
+        }
+      }
+    },
+    "Close" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
+        }
+      }
+    },
+    "Command failed with exit code %d." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "命令失败，退出代码为 %d。"
+          }
+        }
+      }
+    },
+    "Complete the separate macOS password dialog to continue." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请完成单独弹出的 macOS 密码对话框以继续。"
+          }
+        }
+      }
+    },
+    "Connect" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接"
+          }
+        }
+      }
+    },
+    "Connected" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已连接"
+          }
+        }
+      }
+    },
+    "Connected to %@." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已连接到 %@。"
+          }
+        }
+      }
+    },
+    "Connecting" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接中"
+          }
+        }
+      }
+    },
+    "Connecting to %@..." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在连接到 %@..."
+          }
+        }
+      }
+    },
+    "Connection" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接"
+          }
+        }
+      }
+    },
+    "Continue" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "继续"
+          }
+        }
+      }
+    },
+    "Copied" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已复制"
+          }
+        }
+      }
+    },
+    "Copy Command" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制命令"
+          }
+        }
+      }
+    },
+    "Copy coordinates" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制坐标"
+          }
+        }
+      }
+    },
+    "Copy Install Command" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制安装命令"
+          }
+        }
+      }
+    },
+    "Current Location" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前位置"
+          }
+        }
+      }
+    },
+    "Devices" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设备"
+          }
+        }
+      }
+    },
+    "Disconnect" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "断开连接"
+          }
+        }
+      }
+    },
+    "Disconnected" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已断开"
+          }
+        }
+      }
+    },
+    "Disconnected and cleared simulated locations." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已断开连接并清除模拟位置。"
+          }
+        }
+      }
+    },
+    "Disconnected from %@." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已断开与 %@ 的连接。"
+          }
+        }
+      }
+    },
+    "Disconnecting" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "断开中"
+          }
+        }
+      }
+    },
+    "Discovering" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "发现中"
+          }
+        }
+      }
+    },
+    "Discovery" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "发现"
+          }
+        }
+      }
+    },
+    "Don't show this again" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不再显示"
+          }
+        }
+      }
+    },
+    "Enable Developer Mode on the iPhone in Settings > Privacy & Security > Developer Mode." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请在 iPhone 的“设置 > 隐私与安全性 > 开发者模式”中启用开发者模式。"
+          }
+        }
+      }
+    },
+    "Enter valid coordinates." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请输入有效坐标。"
+          }
+        }
+      }
+    },
+    "Failed" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "失败"
+          }
+        }
+      }
+    },
+    "Failed to clear the physical-device simulated location." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法清除真机的模拟位置。"
+          }
+        }
+      }
+    },
+    "Failed to launch %@: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法启动 %1$@：%2$@"
+          }
+        }
+      }
+    },
+    "Failed to launch the physical-device helper: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法启动真机辅助程序：%@"
+          }
+        }
+      }
+    },
+    "Found %lld device(s)." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已找到 %lld 台设备。"
+          }
+        }
+      }
+    },
+    "Idle" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空闲"
+          }
+        }
+      }
+    },
+    "Install Command" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "安装命令"
+          }
+        }
+      }
+    },
+    "Install pymobiledevice3" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "安装 pymobiledevice3"
+          }
+        }
+      }
+    },
+    "Install pymobiledevice3 for the selected Python interpreter to continue USB location simulation." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请为所选 Python 解释器安装 pymobiledevice3，以继续进行 USB 位置模拟。"
+          }
+        }
+      }
+    },
+    "Install pymobiledevice3 into the same Python interpreter used by the USB helper." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请将 pymobiledevice3 安装到 USB 辅助程序所使用的同一个 Python 解释器中。"
+          }
+        }
+      }
+    },
+    "Install Python 3 on this Mac so `python3` resolves from your shell." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请在这台 Mac 上安装 Python 3，以便 shell 可以解析到 `python3`。"
+          }
+        }
+      }
+    },
+    "Latitude" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "纬度"
+          }
+        }
+      }
+    },
+    "Longitude" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "经度"
+          }
+        }
+      }
+    },
+    "macOS will ask for your administrator password in a separate system dialog when the USB tunnel starts." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当 USB 隧道启动时，macOS 会在单独的系统对话框中请求你的管理员密码。"
+          }
+        }
+      }
+    },
+    "Manual Coordinates" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手动坐标"
+          }
+        }
+      }
+    },
+    "Missing Python dependency" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "缺少 Python 依赖"
+          }
+        }
+      }
+    },
+    "No device selected" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未选择设备"
+          }
+        }
+      }
+    },
+    "No devices found." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未找到设备。"
+          }
+        }
+      }
+    },
+    "No map result was returned for that place." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "该地点未返回地图结果。"
+          }
+        }
+      }
+    },
+    "No service available for %@." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有适用于 %@ 的服务。"
+          }
+        }
+      }
+    },
+    "Physical-device location simulation exited before reporting ready." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "真机位置模拟在报告就绪前已退出。"
+          }
+        }
+      }
+    },
+    "Picked Location" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选取的位置"
+          }
+        }
+      }
+    },
+    "pymobiledevice3 is missing for the Python executable used by USB device simulation." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用于 USB 设备模拟的 Python 可执行文件缺少 pymobiledevice3。"
+          }
+        }
+      }
+    },
+    "python3 is not currently resolving from your shell. Install Python 3 first, then refresh devices." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前无法从你的 shell 解析到 python3。请先安装 Python 3，然后刷新设备。"
+          }
+        }
+      }
+    },
+    "Ready" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "就绪"
+          }
+        }
+      }
+    },
+    "Ready to discover simulators and USB devices." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "准备好发现模拟器和 USB 设备。"
+          }
+        }
+      }
+    },
+    "Recent Searches" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最近搜索"
+          }
+        }
+      }
+    },
+    "Refresh Devices" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刷新设备"
+          }
+        }
+      }
+    },
+    "Remove from recent searches" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从最近搜索中移除"
+          }
+        }
+      }
+    },
+    "Resolved Python" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已解析的 Python"
+          }
+        }
+      }
+    },
+    "Resolved Python: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已解析的 Python：%@"
+          }
+        }
+      }
+    },
+    "Resolved python3 to %@, but that file is not executable." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "python3 已解析为 %@，但该文件不可执行。"
+          }
+        }
+      }
+    },
+    "Review the administrator approval note to continue with USB location simulation." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请先查看管理员授权说明，再继续进行 USB 位置模拟。"
+          }
+        }
+      }
+    },
+    "Run the command in Terminal, then return here and retry the USB location action." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请在终端中运行该命令，然后返回这里重试 USB 位置操作。"
+          }
+        }
+      }
+    },
+    "Run the install command in Terminal if needed, then continue. You can copy the command directly from this sheet." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如有需要，请先在终端中运行安装命令，然后继续。你可以直接从此面板复制该命令。"
+          }
+        }
+      }
+    },
+    "Run: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "运行：%@"
+          }
+        }
+      }
+    },
+    "Scanning for simulator and USB devices..." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在扫描模拟器和 USB 设备..."
+          }
+        }
+      }
+    },
+    "Search for a place or address" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜索地点或地址"
+          }
+        }
+      }
+    },
+    "Select a device first." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请先选择一个设备。"
+          }
+        }
+      }
+    },
+    "Select a device to begin" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请选择一个设备以开始"
+          }
+        }
+      }
+    },
+    "Select a USB device to resolve the helper Python interpreter." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请选择一个 USB 设备以解析辅助程序所用的 Python 解释器。"
+          }
+        }
+      }
+    },
+    "Selected Place" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选定地点"
+          }
+        }
+      }
+    },
+    "Session" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会话"
+          }
+        }
+      }
+    },
+    "Session Log" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会话日志"
+          }
+        }
+      }
+    },
+    "Simulate" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模拟"
+          }
+        }
+      }
+    },
+    "Simulated Location" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模拟位置"
+          }
+        }
+      }
+    },
+    "Simulating %@ on %@." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在 %2$@ 上模拟 %1$@。"
+          }
+        }
+      }
+    },
+    "Simulation" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模拟"
+          }
+        }
+      }
+    },
+    "Simulator" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模拟器"
+          }
+        }
+      }
+    },
+    "Simulators" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模拟器"
+          }
+        }
+      }
+    },
+    "Status" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "状态"
+          }
+        }
+      }
+    },
+    "Stop" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停止"
+          }
+        }
+      }
+    },
+    "Stopping" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停止中"
+          }
+        }
+      }
+    },
+    "Teleport requires administrator privileges for physical-device location simulation." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teleport 需要管理员权限才能进行真机位置模拟。"
+          }
+        }
+      }
+    },
+    "The administrator password was incorrect. Check the password and try again." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "管理员密码不正确。请检查密码后重试。"
+          }
+        }
+      }
+    },
+    "The physical-device helper reported an invalid startup state." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "真机辅助程序报告了无效的启动状态。"
+          }
+        }
+      }
+    },
+    "The selected device is not currently available over USB." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所选设备当前无法通过 USB 使用。"
+          }
+        }
+      }
+    },
+    "Then retry the USB location action." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "然后重试 USB 位置操作。"
+          }
+        }
+      }
+    },
+    "Timed out waiting for administrator approval or helper startup while enabling physical-device location simulation." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "等待管理员授权或辅助程序启动超时，无法启用真机位置模拟。"
+          }
+        }
+      }
+    },
+    "Unable to load that location from Apple Maps right now." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前无法从 Apple 地图加载该位置。"
+          }
+        }
+      }
+    },
+    "Unable to resolve python3 from %@." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法从 %@ 解析 python3。"
+          }
+        }
+      }
+    },
+    "USB · unavailable" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB · 不可用"
+          }
+        }
+      }
+    },
+    "USB Device" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB 设备"
+          }
+        }
+      }
+    },
+    "USB Device Setup" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB 设备设置"
+          }
+        }
+      }
+    },
+    "USB device simulation needs pymobiledevice3 in the exact Python interpreter selected for the helper." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB 设备模拟需要在辅助程序所选的确切 Python 解释器中安装 pymobiledevice3。"
+          }
+        }
+      }
+    },
+    "USB Devices" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB 设备"
+          }
+        }
+      }
+    },
+    "USB helper Python: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB 辅助程序 Python：%@"
+          }
+        }
+      }
+    },
+    "Waiting for administrator approval" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "等待管理员授权"
+          }
+        }
+      }
+    },
+    "Waiting for macOS administrator approval. Your password is entered in a separate system dialog and is never stored by Teleport." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在等待 macOS 管理员授权。你的密码将在单独的系统对话框中输入，Teleport 永远不会存储该密码。"
+          }
+        }
+      }
+    },
+    "Your password is requested in a separate macOS dialog. Teleport does not store, display, or reuse that password." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你的密码将在单独的 macOS 对话框中请求。Teleport 不会存储、显示或重复使用该密码。"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.1"
+}

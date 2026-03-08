@@ -25,7 +25,7 @@ extension AppViewModel {
     func refreshDevices() async {
         TeleportLog.devices.info("Starting device discovery across simulator and USB services")
         discoveryState = .discovering
-        statusMessage = "Scanning for simulator and USB devices..."
+        statusMessage = .localized(TeleportStrings.scanningDevices)
 
         do {
             async let simulatorDevices = registry.service(for: .simulator)?.discoverDevices() ?? []
@@ -35,13 +35,17 @@ extension AppViewModel {
             selectedDeviceID = devices.first?.id
             await updateSelectedPythonRuntimeNote()
             discoveryState = .ready
-            statusMessage = devices.isEmpty ? "No devices found." : "Found \(devices.count) device(s)."
+            statusMessage =
+                devices.isEmpty
+                ? .localized(TeleportStrings.noDevicesFound)
+                : .localized(TeleportStrings.foundDevices(devices.count))
             TeleportLog.devices.info(
                 "Device discovery completed with \(self.devices.count) device(s); selected device: \(self.selectedDevice?.logLabel ?? "none", privacy: .public)"
             )
         } catch {
-            discoveryState = .failed(error.localizedDescription)
-            statusMessage = error.localizedDescription
+            let message = UserFacingText.verbatim(error.localizedDescription)
+            discoveryState = .failed(message)
+            statusMessage = message
             TeleportLog.devices.error(
                 "Device discovery failed: \(error.localizedDescription, privacy: .public)"
             )
@@ -49,14 +53,16 @@ extension AppViewModel {
     }
 
     func connectSelectedDevice() async {
-        guard let device = selectedDevice else {
-            connectionState = .failed(ServiceError.invalidSelection.localizedDescription)
+        guard let selectedDevice else {
+            connectionState = .failed(.localized(TeleportStrings.selectDeviceFirst))
             TeleportLog.devices.warning("Connect requested without a selected device")
             return
         }
+        let device = selectedDevice
         guard let service = registry.service(for: device.kind) else {
             connectionState = .failed(
-                ServiceError.unsupported("No service available for \(device.kind.rawValue).").localizedDescription)
+                .localized(TeleportStrings.noServiceAvailable(for: device.kind.rawValue))
+            )
             TeleportLog.devices.error(
                 "No service available while connecting to \(device.logLabel, privacy: .public)"
             )
@@ -65,16 +71,17 @@ extension AppViewModel {
 
         TeleportLog.devices.info("Connecting to \(device.logLabel, privacy: .public)")
         connectionState = .connecting
-        statusMessage = "Connecting to \(device.name)..."
+        statusMessage = .localized(TeleportStrings.connectingToDevice(device.name))
 
         do {
             try await service.connect(to: device)
             connectionState = .connected
-            statusMessage = "Connected to \(device.name)."
+            statusMessage = .localized(TeleportStrings.connectedToDevice(device.name))
             TeleportLog.devices.info("Connected to \(device.logLabel, privacy: .public)")
         } catch {
-            connectionState = .failed(error.localizedDescription)
-            statusMessage = error.localizedDescription
+            let message = UserFacingText.verbatim(error.localizedDescription)
+            connectionState = .failed(message)
+            statusMessage = message
             TeleportLog.devices.error(
                 "Connection failed for \(device.logLabel, privacy: .public): \(error.localizedDescription, privacy: .public)"
             )
@@ -94,27 +101,30 @@ extension AppViewModel {
         connectionState = .disconnected
         simulationState = .idle
         showsPythonDependencyGuide = nil
-        statusMessage = "Disconnected from \(device.name)."
+        statusMessage = .localized(TeleportStrings.disconnectedFromDevice(device.name))
         TeleportLog.devices.info("Disconnected from \(device.logLabel, privacy: .public)")
     }
 
     func simulateSelectedLocation() async {
-        guard let device = selectedDevice else {
-            simulationState = .failed(ServiceError.invalidSelection.localizedDescription)
+        guard let selectedDevice else {
+            simulationState = .failed(.localized(TeleportStrings.selectDeviceFirst))
             TeleportLog.simulation.warning("Simulation requested without a selected device")
             return
         }
+        let device = selectedDevice
         guard let service = registry.service(for: device.kind) else {
             simulationState = .failed(
-                ServiceError.unsupported("No service available for \(device.kind.rawValue).").localizedDescription)
+                .localized(TeleportStrings.noServiceAvailable(for: device.kind.rawValue))
+            )
             TeleportLog.simulation.error(
                 "No service available while simulating on \(device.logLabel, privacy: .public)"
             )
             return
         }
         guard let latitude = Double(latitudeText), let longitude = Double(longitudeText) else {
-            simulationState = .failed("Enter valid coordinates.")
-            statusMessage = "Enter valid coordinates."
+            let message = UserFacingText.localized(TeleportStrings.enterValidCoordinates)
+            simulationState = .failed(message)
+            statusMessage = message
             TeleportLog.simulation.warning(
                 "Simulation rejected for \(device.logLabel, privacy: .public) because coordinates were invalid"
             )
@@ -123,7 +133,7 @@ extension AppViewModel {
 
         if device.kind == .physicalUSB && showsUSBApprovalReminder {
             showsUSBPrivilegeNotice = true
-            statusMessage = "Review the administrator approval note to continue with USB location simulation."
+            statusMessage = .localized(TeleportStrings.reviewAdministratorApproval)
             TeleportLog.simulation.info(
                 "Showing administrator approval reminder before USB simulation for \(device.logLabel, privacy: .public)"
             )
@@ -145,8 +155,7 @@ extension AppViewModel {
         do {
             if device.kind == .physicalUSB {
                 simulationState = .authorizing
-                statusMessage =
-                    "Waiting for macOS administrator approval. Your password is entered in a separate system dialog and is never stored by Teleport."
+                statusMessage = .localized(TeleportStrings.waitingForAdministratorApproval)
                 TeleportLog.simulation.info(
                     "Waiting for administrator authorization for USB simulation on \(device.logLabel, privacy: .public)"
                 )
@@ -154,7 +163,7 @@ extension AppViewModel {
             try await service.setLocation(simulationCoordinate)
             simulationState = .simulating(coordinate)
             showsPythonDependencyGuide = nil
-            statusMessage = "Simulating \(coordinate.formatted) on \(device.name)."
+            statusMessage = .localized(TeleportStrings.simulatingCoordinate(coordinate.formatted, on: device.name))
             TeleportLog.simulation.info(
                 "Simulation active on \(device.logLabel, privacy: .public); displayed coordinate: \(coordinate.formatted, privacy: .private)"
             )
@@ -175,15 +184,24 @@ extension AppViewModel {
 
     func dismissUSBPrivilegeNotice() {
         showsUSBPrivilegeNotice = false
-        simulationState = .failed("Administrator approval was canceled before the macOS password prompt.")
-        statusMessage = "Administrator approval was canceled before the macOS password prompt."
+        let message = UserFacingText.localized(TeleportStrings.approvalCanceledBeforePrompt)
+        simulationState = .failed(message)
+        statusMessage = message
         TeleportLog.simulation.warning("Administrator approval reminder was dismissed before USB simulation")
     }
 
     func clearSimulatedLocation() async {
-        guard let device = selectedDevice, let service = registry.service(for: device.kind) else {
-            simulationState = .failed(ServiceError.invalidSelection.localizedDescription)
+        guard let selectedDevice else {
+            simulationState = .failed(.localized(TeleportStrings.selectDeviceFirst))
             TeleportLog.simulation.warning("Clear simulated location requested without a selected device")
+            return
+        }
+        let device = selectedDevice
+        guard let service = registry.service(for: device.kind) else {
+            simulationState = .failed(.localized(TeleportStrings.noServiceAvailable(for: device.kind.rawValue)))
+            TeleportLog.simulation.error(
+                "No service available while clearing simulation on \(device.logLabel, privacy: .public)"
+            )
             return
         }
 
@@ -193,7 +211,7 @@ extension AppViewModel {
             try await service.clearLocation()
             simulationState = .idle
             showsPythonDependencyGuide = nil
-            statusMessage = "Cleared simulated location on \(device.name)."
+            statusMessage = .localized(TeleportStrings.clearedSimulatedLocation(on: device.name))
             TeleportLog.simulation.info("Cleared simulated location on \(device.logLabel, privacy: .public)")
         } catch {
             handleSimulationError(error)
@@ -205,7 +223,7 @@ extension AppViewModel {
         await registry.shutdownAll()
         connectionState = .disconnected
         simulationState = .idle
-        statusMessage = "Disconnected and cleared simulated locations."
+        statusMessage = .localized(TeleportStrings.disconnectedAndClearedLocations)
         TeleportLog.devices.info("All services shut down for termination")
     }
 
@@ -219,14 +237,14 @@ extension AppViewModel {
 
         if let guide = PythonDependencyInstallGuide.parse(from: message) {
             showsPythonDependencyGuide = guide
-            simulationState = .failed("Missing Python dependency")
-            statusMessage =
-                "Install pymobiledevice3 for the selected Python interpreter to continue USB location simulation."
+            simulationState = .failed(.localized(TeleportStrings.missingPythonDependency))
+            statusMessage = .localized(TeleportStrings.installPythonDependency)
             return
         }
 
-        simulationState = .failed(message)
-        statusMessage = message
+        let userFacingMessage = UserFacingText.verbatim(message)
+        simulationState = .failed(userFacingMessage)
+        statusMessage = userFacingMessage
     }
 
     func updateSelectedPythonRuntimeNote() async {
@@ -243,7 +261,7 @@ extension AppViewModel {
         }
 
         selectedUSBSetupGuide = USBSetupGuide(resolvedPythonPath: path)
-        selectedPythonRuntimeNote = "USB helper Python: \(path)"
+        selectedPythonRuntimeNote = .localized(TeleportStrings.usbHelperPython(path))
         TeleportLog.devices.debug("Resolved USB helper Python executable at \(path, privacy: .public)")
     }
 }
