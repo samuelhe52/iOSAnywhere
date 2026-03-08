@@ -5,11 +5,12 @@ actor USBDeviceLocationService: LocationSimulationService {
 
     private let xcrunURL = URL(fileURLWithPath: "/usr/bin/xcrun")
     private let sudoURL = URL(fileURLWithPath: "/usr/bin/sudo")
-    private let python3URL = URL(fileURLWithPath: "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3")
+    private let shellURL = URL(fileURLWithPath: ProcessInfo.processInfo.environment["SHELL"] ?? "/bin/zsh")
 
     private var connectedDevice: Device?
     private var activeCoordinate: LocationCoordinate?
     private var simulationHelper: SimulationHelper?
+    private var resolvedPythonExecutableURL: URL?
 
     func discoverDevices() async throws -> [Device] {
         let xcdeviceOutput = try CommandRunner.run(xcrunURL, arguments: ["xcdevice", "list"])
@@ -24,17 +25,22 @@ actor USBDeviceLocationService: LocationSimulationService {
                 let developerMode = coreDevice?.deviceProperties.developerModeStatus ?? "unknown"
                 let pairingState =
                     coreDevice?.connectionProperties.pairingState ?? (device.available ? "paired" : "unavailable")
+                let isAvailable = resolvedAvailability(for: device, coreDevice: coreDevice)
 
                 return Device(
                     id: device.identifier,
                     name: device.name,
                     kind: .physicalUSB,
                     osVersion: device.operatingSystemVersion,
-                    isAvailable: device.available,
+                    isAvailable: isAvailable,
                     details: "USB · \(pairingState) · dev mode \(developerMode)"
                 )
             }
             .sorted { $0.name < $1.name }
+    }
+
+    func resolvedPythonExecutablePathForDisplay() -> String? {
+        try? resolvedPythonExecutable().path
     }
 
     func connect(to device: Device) async throws {
@@ -116,12 +122,50 @@ actor USBDeviceLocationService: LocationSimulationService {
         return Dictionary(uniqueKeysWithValues: response.result.devices.map { ($0.hardwareProperties.udid, $0) })
     }
 
+    private func resolvedAvailability(for device: XCDeviceRecord, coreDevice: CoreDeviceRecord?) -> Bool {
+        if device.available {
+            return true
+        }
+
+        guard let coreDevice else {
+            return false
+        }
+
+        return coreDevice.connectionProperties.pairingState == "paired"
+            && coreDevice.deviceProperties.developerModeStatus == "enabled"
+    }
+
+    private func resolvedPythonExecutable() throws -> URL {
+        if let resolvedPythonExecutableURL {
+            return resolvedPythonExecutableURL
+        }
+
+        let output = try CommandRunner.run(
+            shellURL,
+            arguments: ["-lc", Self.pythonResolutionCommand]
+        )
+        let path = output.stdoutString.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard path.hasPrefix("/") else {
+            throw ServiceError.unavailable("Unable to resolve python3 from \(shellURL.lastPathComponent).")
+        }
+
+        guard FileManager.default.isExecutableFile(atPath: path) else {
+            throw ServiceError.unavailable("Resolved python3 to \(path), but that file is not executable.")
+        }
+
+        let resolvedURL = URL(fileURLWithPath: path)
+        resolvedPythonExecutableURL = resolvedURL
+        return resolvedURL
+    }
+
     private func makeSimulationHelper(
         mode: String,
         device: Device,
         coordinate: LocationCoordinate?
     ) throws -> SimulationHelper {
         let helperFiles = try makeHelperFiles()
+        let pythonExecutableURL = try resolvedPythonExecutable()
         let process = Process()
         let stdinPipe = Pipe()
         let stdoutPipe = Pipe()
@@ -129,7 +173,7 @@ actor USBDeviceLocationService: LocationSimulationService {
 
         process.executableURL = sudoURL
         process.arguments =
-            ["-A", python3URL.path]
+            ["-A", pythonExecutableURL.path]
             + helperArguments(
                 mode: mode,
                 device: device,
@@ -308,6 +352,10 @@ actor USBDeviceLocationService: LocationSimulationService {
             return ServiceError.unavailable(friendlyMessage)
         }
 
+        if let dependencyGuidance = missingPythonDependencyMessage(stderr: stderrText, stdout: stdoutText) {
+            return ServiceError.unavailable(dependencyGuidance)
+        }
+
         let output = [stderrText, stdoutText].first(where: { !$0.isEmpty })
 
         return ServiceError.unavailable(output ?? fallback)
@@ -333,6 +381,45 @@ actor USBDeviceLocationService: LocationSimulationService {
         return nil
     }
 
+    private func missingPythonDependencyMessage(stderr: String, stdout: String) -> String? {
+        let combined = [stderr, stdout]
+            .joined(separator: "\n")
+
+        guard combined.localizedCaseInsensitiveContains("pymobiledevice3 is not installed") else {
+            return nil
+        }
+
+        let resolvedPython = extractValue(in: combined, prefix: "Resolved Python: ")
+        let installCommand = extractValue(in: combined, prefix: "Install command: ")
+
+        var lines = ["pymobiledevice3 is missing for the Python executable used by USB device simulation."]
+
+        if let resolvedPython {
+            lines.append("Resolved Python: \(resolvedPython)")
+        }
+
+        if let installCommand {
+            lines.append("Run: \(installCommand)")
+        }
+
+        lines.append("Then retry the USB location action.")
+        return lines.joined(separator: "\n")
+    }
+
+    private func extractValue(in text: String, prefix: String) -> String? {
+        text
+            .split(separator: "\n", omittingEmptySubsequences: false)
+            .compactMap { line -> String? in
+                let line = String(line)
+                guard line.hasPrefix(prefix) else {
+                    return nil
+                }
+
+                return String(line.dropFirst(prefix.count)).trimmingCharacters(in: .whitespacesAndNewlines)
+            }
+            .first
+    }
+
     private struct SimulationHelper {
         let process: Process
         let stdin: FileHandle
@@ -347,9 +434,12 @@ actor USBDeviceLocationService: LocationSimulationService {
         }
     }
 
+    private static let pythonResolutionCommand = #"python3 -c 'import os, sys; print(os.path.realpath(sys.executable))'"#
+
     private static let pythonHelperScript = #"""
         import asyncio
         import re
+        import shlex
         import sys
 
 
@@ -475,7 +565,10 @@ actor USBDeviceLocationService: LocationSimulationService {
             asyncio.run(main())
         except ModuleNotFoundError as error:
             if error.name and error.name.startswith("pymobiledevice3"):
-                print("pymobiledevice3 is not installed. Install it with: python3 -m pip install pymobiledevice3", file=sys.stderr)
+                install_command = f"{shlex.quote(sys.executable)} -m pip install pymobiledevice3"
+                print("pymobiledevice3 is not installed for the resolved Python executable.", file=sys.stderr)
+                print(f"Resolved Python: {sys.executable}", file=sys.stderr)
+                print(f"Install command: {install_command}", file=sys.stderr)
             else:
                 print(f"Missing Python module: {error.name}", file=sys.stderr)
             raise SystemExit(2)

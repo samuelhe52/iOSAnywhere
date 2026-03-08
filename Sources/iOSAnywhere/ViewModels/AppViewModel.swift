@@ -1,6 +1,64 @@
 import Foundation
 import Observation
 
+struct USBSetupGuide: Equatable {
+    let resolvedPythonPath: String?
+
+    var pythonInstallCommand: String {
+        if let resolvedPythonPath {
+            return Self.shellQuoted(resolvedPythonPath) + " -m pip install pymobiledevice3"
+        }
+
+        return "python3 -m pip install pymobiledevice3"
+    }
+
+    var pythonStatusText: String {
+        if let resolvedPythonPath {
+            return resolvedPythonPath
+        }
+
+        return "python3 is not currently resolving from your shell. Install Python 3 first, then refresh devices."
+    }
+
+    private static func shellQuoted(_ value: String) -> String {
+        guard value.contains(where: { $0.isWhitespace || $0 == "'" }) else {
+            return value
+        }
+
+        return "'" + value.replacingOccurrences(of: "'", with: "'\\''") + "'"
+    }
+}
+
+struct PythonDependencyInstallGuide: Identifiable, Equatable {
+    let resolvedPythonPath: String
+    let installCommand: String
+
+    var id: String {
+        resolvedPythonPath + "\n" + installCommand
+    }
+
+    static func parse(from message: String) -> PythonDependencyInstallGuide? {
+        let lines = message.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
+        guard lines.contains(where: { $0.localizedCaseInsensitiveContains("pymobiledevice3 is missing") }) else {
+            return nil
+        }
+
+        guard
+            let resolvedPythonPath = lines.first(where: { $0.hasPrefix("Resolved Python: ") })?
+                .replacingOccurrences(of: "Resolved Python: ", with: ""),
+            let installCommand = lines.first(where: { $0.hasPrefix("Run: ") })?
+                .replacingOccurrences(of: "Run: ", with: "")
+        else {
+            return nil
+        }
+
+        return PythonDependencyInstallGuide(
+            resolvedPythonPath: resolvedPythonPath,
+            installCommand: installCommand
+        )
+    }
+}
+
 @Observable
 @MainActor
 final class AppViewModel {
@@ -16,12 +74,19 @@ final class AppViewModel {
     var connectionState: DeviceConnectionState = .disconnected
     var simulationState: SimulationRunState = .idle
     var devices: [Device] = []
-    var selectedDeviceID: String?
+    var selectedDeviceID: String? {
+        didSet {
+            Task { await updateSelectedPythonRuntimeNote() }
+        }
+    }
     var showsUSBPrivilegeNotice: Bool = false
+    var showsPythonDependencyGuide: PythonDependencyInstallGuide?
     var latitudeText: String = "37.3346"
     var longitudeText: String = "-122.0090"
     var statusMessage: String = "Ready to discover simulators and USB devices."
     var suppressUSBPrivilegeNotice: Bool
+    var selectedUSBSetupGuide: USBSetupGuide?
+    var selectedPythonRuntimeNote: String?
 
     init(registry: DeviceRegistry, defaults: UserDefaults = .standard) {
         self.registry = registry
@@ -59,6 +124,7 @@ final class AppViewModel {
             let discovered = try await simulatorDevices + physicalDevices
             devices = discovered.sorted { $0.name < $1.name }
             selectedDeviceID = devices.first?.id
+            await updateSelectedPythonRuntimeNote()
             discoveryState = .ready
             statusMessage = devices.isEmpty ? "No devices found." : "Found \(devices.count) device(s)."
         } catch {
@@ -101,6 +167,7 @@ final class AppViewModel {
         await service.disconnect()
         connectionState = .disconnected
         simulationState = .idle
+        showsPythonDependencyGuide = nil
         statusMessage = "Disconnected from \(device.name)."
     }
 
@@ -136,10 +203,10 @@ final class AppViewModel {
             }
             try await service.setLocation(simulationCoordinate)
             simulationState = .simulating(coordinate)
+            showsPythonDependencyGuide = nil
             statusMessage = "Simulating \(coordinate.formatted) on \(device.name)."
         } catch {
-            simulationState = .failed(error.localizedDescription)
-            statusMessage = error.localizedDescription
+            handleSimulationError(error)
         }
     }
 
@@ -169,10 +236,10 @@ final class AppViewModel {
         do {
             try await service.clearLocation()
             simulationState = .idle
+            showsPythonDependencyGuide = nil
             statusMessage = "Cleared simulated location on \(device.name)."
         } catch {
-            simulationState = .failed(error.localizedDescription)
-            statusMessage = error.localizedDescription
+            handleSimulationError(error)
         }
     }
 
@@ -181,5 +248,37 @@ final class AppViewModel {
         connectionState = .disconnected
         simulationState = .idle
         statusMessage = "Disconnected and cleared simulated locations."
+    }
+
+    func dismissPythonDependencyGuide() {
+        showsPythonDependencyGuide = nil
+    }
+
+    private func handleSimulationError(_ error: Error) {
+        let message = error.localizedDescription
+
+        if let guide = PythonDependencyInstallGuide.parse(from: message) {
+            showsPythonDependencyGuide = guide
+            simulationState = .failed("Missing Python dependency")
+            statusMessage = "Install pymobiledevice3 for the selected Python interpreter to continue USB location simulation."
+            return
+        }
+
+        simulationState = .failed(message)
+        statusMessage = message
+    }
+
+    private func updateSelectedPythonRuntimeNote() async {
+        guard selectedDevice?.kind == .physicalUSB,
+            let usbService = registry.service(for: .physicalUSB) as? USBDeviceLocationService,
+            let path = await usbService.resolvedPythonExecutablePathForDisplay()
+        else {
+            selectedUSBSetupGuide = selectedDevice?.kind == .physicalUSB ? USBSetupGuide(resolvedPythonPath: nil) : nil
+            selectedPythonRuntimeNote = nil
+            return
+        }
+
+        selectedUSBSetupGuide = USBSetupGuide(resolvedPythonPath: path)
+        selectedPythonRuntimeNote = "USB helper Python: \(path)"
     }
 }

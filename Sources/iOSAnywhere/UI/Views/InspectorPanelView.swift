@@ -28,12 +28,21 @@ struct InspectorPanelView: View {
         }
         .frame(minWidth: 280, maxHeight: .infinity, alignment: .top)
         .sheet(isPresented: $viewModel.showsUSBPrivilegeNotice) {
-            USBAuthorizationSheet(
+            USBOnboardingSheet(
+                guide: viewModel.selectedUSBSetupGuide,
                 continueAction: { suppressFuturePrompts in
                     Task { await viewModel.confirmUSBPrivilegeNotice(suppressFuturePrompts: suppressFuturePrompts) }
                 },
                 cancelAction: {
                     viewModel.dismissUSBPrivilegeNotice()
+                }
+            )
+        }
+        .sheet(item: $viewModel.showsPythonDependencyGuide) { guide in
+            PythonDependencyInstallSheet(
+                guide: guide,
+                dismissAction: {
+                    viewModel.dismissPythonDependencyGuide()
                 }
             )
         }
@@ -198,7 +207,7 @@ struct InspectorPanelView: View {
                     Button {
                         Task { await viewModel.disconnectSelectedDevice() }
                     } label: {
-                        Label("Disconnect", systemImage: "link.badge.minus")
+                        Label("Disconnect", image: "link.slash")
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.bordered)
@@ -231,17 +240,28 @@ struct InspectorPanelView: View {
 
     private var statusSection: some View {
         panelSection("Session Log") {
-            HStack(alignment: .center, spacing: 10) {
-                Image(systemName: statusSymbol)
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(statusTint)
-                    .frame(width: 18)
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .center, spacing: 10) {
+                    Image(systemName: statusSymbol)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(statusTint)
+                        .frame(width: 18)
 
-                Text(viewModel.statusMessage)
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    Text(viewModel.statusMessage)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
+                if let pythonNote = viewModel.selectedPythonRuntimeNote {
+                    Text(pythonNote)
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                        .textSelection(.enabled)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.leading, 28)
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -279,6 +299,13 @@ struct InspectorPanelView: View {
     }
 
     private var statusSymbol: String {
+        if case .failed = viewModel.simulationState {
+            return "exclamationmark.triangle.fill"
+        }
+        if case .failed = viewModel.connectionState {
+            return "exclamationmark.triangle.fill"
+        }
+
         switch viewModel.connectionState {
         case .connected:
             return "checkmark.circle.fill"
@@ -430,6 +457,85 @@ struct InspectorPanelView: View {
     }
 }
 
+private struct PythonDependencyInstallSheet: View {
+    let guide: PythonDependencyInstallGuide
+    let dismissAction: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            HStack(alignment: .center, spacing: 12) {
+                Image(systemName: "shippingbox.fill")
+                    .font(.system(size: 22, weight: .semibold))
+                    .foregroundStyle(.orange)
+                    .frame(width: 28)
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Install pymobiledevice3")
+                        .font(.title3.weight(.semibold))
+
+                    Text("USB device simulation needs pymobiledevice3 in the exact Python interpreter selected for the helper.")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Resolved Python")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+
+                SelectableCodeRow(text: guide.resolvedPythonPath)
+            }
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Install Command")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+
+                SelectableCodeRow(text: guide.installCommand)
+            }
+
+            Text("Run the command in Terminal, then return here and retry the USB location action.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 10) {
+                Button("Copy Command") {
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(guide.installCommand, forType: .string)
+                }
+                .buttonStyle(.borderedProminent)
+
+                Button("Close") {
+                    dismissAction()
+                }
+                .buttonStyle(.bordered)
+            }
+        }
+        .padding(24)
+        .frame(width: 560)
+    }
+}
+
+private struct SelectableCodeRow: View {
+    let text: String
+
+    var body: some View {
+        Text(text)
+            .font(.system(.body, design: .monospaced))
+            .textSelection(.enabled)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(Color.primary.opacity(0.06))
+            )
+    }
+}
+
 fileprivate enum StatusTone {
     case neutral
     case active
@@ -518,9 +624,10 @@ fileprivate struct CopiedPopup: View {
     }
 }
 
-fileprivate struct USBAuthorizationSheet: View {
+fileprivate struct USBOnboardingSheet: View {
     @State private var suppressFuturePrompts = false
 
+    let guide: USBSetupGuide?
     let continueAction: (Bool) -> Void
     let cancelAction: () -> Void
 
@@ -544,10 +651,10 @@ fileprivate struct USBAuthorizationSheet: View {
                 }
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("Administrator Approval Required")
+                    Text("USB Device Setup")
                         .font(.title3.weight(.semibold))
                     Text(
-                        "To simulate location on a USB device, macOS will ask for your administrator password in a separate system dialog."
+                        "Before simulating location on a physical iPhone, confirm the device and host are ready."
                     )
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
@@ -557,12 +664,20 @@ fileprivate struct USBAuthorizationSheet: View {
 
             VStack(alignment: .leading, spacing: 10) {
                 SimpleSecurityRow(
-                    icon: "checkmark.shield",
-                    text: "iOSAnywhere does not capture or store your password."
+                    icon: "iphone.gen3.badge.exclamationmark",
+                    text: "Enable Developer Mode on the iPhone in Settings > Privacy & Security > Developer Mode."
                 )
                 SimpleSecurityRow(
-                    icon: "cable.connector",
-                    text: "The approval is used only to create the USB device tunnel."
+                    icon: "terminal",
+                    text: "Install Python 3 on this Mac so `python3` resolves from your shell."
+                )
+                SimpleSecurityRow(
+                    icon: "shippingbox",
+                    text: "Install pymobiledevice3 into the same Python interpreter used by the USB helper."
+                )
+                SimpleSecurityRow(
+                    icon: "checkmark.shield",
+                    text: "macOS will ask for your administrator password in a separate system dialog when the USB tunnel starts."
                 )
             }
             .padding(16)
@@ -571,6 +686,27 @@ fileprivate struct USBAuthorizationSheet: View {
                     .fill(Color(NSColor.controlBackgroundColor))
             )
 
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Resolved Python")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+
+                SelectableCodeRow(text: guide?.pythonStatusText ?? "Select a USB device to resolve the helper Python interpreter.")
+            }
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Install Command")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+
+                SelectableCodeRow(text: guide?.pythonInstallCommand ?? "python3 -m pip install pymobiledevice3")
+            }
+
+            Text("Run the install command in Terminal if needed, then continue. You can copy the command directly from this sheet.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+
             Toggle("Don't show this again", isOn: $suppressFuturePrompts)
                 .toggleStyle(.checkbox)
 
@@ -578,6 +714,15 @@ fileprivate struct USBAuthorizationSheet: View {
                 Button("Cancel", role: .cancel) {
                     cancelAction()
                 }
+
+                Button("Copy Install Command") {
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(
+                        guide?.pythonInstallCommand ?? "python3 -m pip install pymobiledevice3",
+                        forType: .string
+                    )
+                }
+                .buttonStyle(.bordered)
 
                 Spacer()
 
@@ -589,7 +734,7 @@ fileprivate struct USBAuthorizationSheet: View {
             }
         }
         .padding(24)
-        .frame(width: 440)
+        .frame(width: 560)
     }
 }
 

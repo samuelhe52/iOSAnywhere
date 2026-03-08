@@ -1,12 +1,16 @@
 import Combine
+import CoreLocation
 import MapKit
 import SwiftUI
 
 struct MapWorkspaceView: View {
     @Bindable var viewModel: AppViewModel
     @StateObject private var searchModel = LocationSearchModel()
+    @StateObject private var startupLocationModel = StartupLocationModel()
+    @FocusState private var isSearchFieldFocused: Bool
     @State private var pendingCoordinateSyncTask: Task<Void, Never>?
     @State private var pendingCameraUpdateTask: Task<Void, Never>?
+    @State private var hasAppliedStartupLocation = false
     @State private var lastSyncedManualCoordinate: LocationCoordinate?
     @State private var suppressedManualCoordinateSyncCallbacks = 0
     @State private var currentCameraSpan = MKCoordinateSpan(latitudeDelta: 0.15, longitudeDelta: 0.15)
@@ -19,6 +23,11 @@ struct MapWorkspaceView: View {
     )
     @State private var highlightedCoordinate: LocationCoordinate?
     @State private var highlightedTitle: String?
+
+    private enum CoordinateSource {
+        case appleMapDisplay
+        case coreLocation
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -58,6 +67,7 @@ struct MapWorkspaceView: View {
                                         longitude: coordinate.longitude
                                     ),
                                     title: "Picked Location",
+                                    source: .appleMapDisplay,
                                     recenterMap: true,
                                     debounceNanoseconds: 140_000_000,
                                     preferredSpan: currentCameraSpan
@@ -67,9 +77,10 @@ struct MapWorkspaceView: View {
                     .onMapCameraChange(frequency: .continuous) { context in
                         currentCameraSpan = context.region.span
 
-                        if searchModel.showsOverlay {
+                        if searchModel.showsOverlay || shouldShowHistoryOverlay {
                             withAnimation(.easeInOut(duration: 0.18)) {
                                 searchModel.dismissOverlay()
+                                isSearchFieldFocused = false
                             }
                         }
                     }
@@ -85,6 +96,7 @@ struct MapWorkspaceView: View {
 
                         TextField("Search for a place or address", text: $searchModel.query)
                             .textFieldStyle(.plain)
+                            .focused($isSearchFieldFocused)
 
                         if !searchModel.query.isEmpty {
                             Button {
@@ -161,6 +173,88 @@ struct MapWorkspaceView: View {
                                 .strokeBorder(Color.white.opacity(0.06))
                         )
                         .transition(.opacity)
+                    } else if shouldShowHistoryOverlay {
+                        VStack(alignment: .leading, spacing: 0) {
+                            HStack {
+                                Label("Recent Searches", systemImage: "clock.arrow.circlepath")
+                                    .font(.footnote.weight(.semibold))
+                                    .foregroundStyle(.secondary)
+
+                                Spacer(minLength: 12)
+
+                                Button("Clear") {
+                                    withAnimation(.easeInOut(duration: 0.18)) {
+                                        searchModel.clearHistory()
+                                    }
+                                }
+                                .buttonStyle(.plain)
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.secondary)
+                            }
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 12)
+
+                            Divider()
+
+                            ScrollView {
+                                VStack(alignment: .leading, spacing: 0) {
+                                    ForEach(searchModel.history) { entry in
+                                        HStack(spacing: 10) {
+                                            Button {
+                                                selectHistoryEntry(entry)
+                                            } label: {
+                                                VStack(alignment: .leading, spacing: 4) {
+                                                    Text(entry.title)
+                                                        .foregroundStyle(.primary)
+
+                                                    if !entry.subtitle.isEmpty {
+                                                        Text(entry.subtitle)
+                                                            .font(.caption)
+                                                            .foregroundStyle(.secondary)
+                                                    }
+
+                                                    Text(entry.coordinate.formatted)
+                                                        .font(.caption2)
+                                                        .foregroundStyle(.tertiary)
+                                                }
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                                .padding(.vertical, 10)
+                                                .contentShape(Rectangle())
+                                            }
+                                            .buttonStyle(.plain)
+
+                                            Button {
+                                                withAnimation(.easeInOut(duration: 0.18)) {
+                                                    searchModel.removeHistoryEntry(entry)
+                                                }
+                                            } label: {
+                                                Image(systemName: "xmark.circle.fill")
+                                                    .foregroundStyle(.tertiary)
+                                            }
+                                            .buttonStyle(.plain)
+                                            .help("Remove from recent searches")
+                                        }
+                                        .padding(.horizontal, 14)
+
+                                        if entry.id != searchModel.history.last?.id {
+                                            Divider()
+                                                .padding(.leading, 14)
+                                        }
+                                    }
+                                }
+                            }
+                            .frame(maxHeight: 280)
+                        }
+                        .background(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .fill(Color(NSColor.controlBackgroundColor))
+                                .shadow(color: .black.opacity(0.18), radius: 16, y: 10)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .strokeBorder(Color.white.opacity(0.06))
+                        )
+                        .transition(.opacity)
                     }
                 }
                 .padding(16)
@@ -168,6 +262,7 @@ struct MapWorkspaceView: View {
             }
             .animation(.easeInOut(duration: 0.2), value: searchModel.completions)
             .animation(.easeInOut(duration: 0.2), value: searchModel.errorMessage)
+            .animation(.easeInOut(duration: 0.2), value: searchModel.history)
 
             HStack(spacing: 12) {
                 TextField("Latitude", text: $viewModel.latitudeText)
@@ -182,6 +277,12 @@ struct MapWorkspaceView: View {
         .onChange(of: viewModel.longitudeText) { _, _ in
             scheduleManualCoordinateSync()
         }
+        .task {
+            startupLocationModel.requestLocationIfNeeded()
+        }
+        .onReceive(startupLocationModel.$startupCoordinate.compactMap { $0 }) { coordinate in
+            applyStartupLocationIfNeeded(coordinate)
+        }
     }
 
     private func selectCompletion(_ completion: LocationSearchCompletion) async {
@@ -190,14 +291,40 @@ struct MapWorkspaceView: View {
         }
 
         let coordinate = result.placemark.coordinate
+        let selectedCoordinate = LocationCoordinate(latitude: coordinate.latitude, longitude: coordinate.longitude)
         setPickedLocation(
-            LocationCoordinate(latitude: coordinate.latitude, longitude: coordinate.longitude),
+            selectedCoordinate,
             title: result.name ?? "Selected Place",
+            source: .appleMapDisplay,
             recenterMap: true,
             debounceNanoseconds: 0,
             preferredSpan: MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
         )
+        searchModel.recordSelection(
+            title: result.name ?? completion.title,
+            subtitle: completion.subtitle,
+            coordinate: selectedCoordinate
+        )
         searchModel.acceptSelection(named: result.name)
+        isSearchFieldFocused = false
+    }
+
+    private func selectHistoryEntry(_ entry: LocationSearchHistoryEntry) {
+        setPickedLocation(
+            entry.coordinate,
+            title: entry.title,
+            source: .appleMapDisplay,
+            recenterMap: true,
+            debounceNanoseconds: 0,
+            preferredSpan: MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
+        )
+        searchModel.acceptSelection(named: entry.title)
+        searchModel.recordSelection(
+            title: entry.title,
+            subtitle: entry.subtitle,
+            coordinate: entry.coordinate
+        )
+        isSearchFieldFocused = false
     }
 
     private func scheduleManualCoordinateSync() {
@@ -241,6 +368,12 @@ struct MapWorkspaceView: View {
         return LocationCoordinate(latitude: latitude, longitude: longitude)
     }
 
+    private var shouldShowHistoryOverlay: Bool {
+        isSearchFieldFocused
+            && searchModel.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            && !searchModel.history.isEmpty
+    }
+
     private func syncMap(to coordinate: LocationCoordinate, title: String, recenterMap: Bool = true) {
         highlightedCoordinate = coordinate
         highlightedTitle = title
@@ -262,22 +395,25 @@ struct MapWorkspaceView: View {
     private func setPickedLocation(
         _ coordinate: LocationCoordinate,
         title: String,
+        source: CoordinateSource,
         recenterMap: Bool,
         debounceNanoseconds: UInt64,
         preferredSpan: MKCoordinateSpan
     ) {
+        let displayedCoordinate = displayCoordinate(for: coordinate, source: source)
+
         pendingCoordinateSyncTask?.cancel()
         suppressedManualCoordinateSyncCallbacks = 2
-        viewModel.latitudeText = String(format: "%.6f", coordinate.latitude)
-        viewModel.longitudeText = String(format: "%.6f", coordinate.longitude)
-        syncMap(to: coordinate, title: title, recenterMap: false)
+        viewModel.latitudeText = String(format: "%.6f", displayedCoordinate.latitude)
+        viewModel.longitudeText = String(format: "%.6f", displayedCoordinate.longitude)
+        syncMap(to: displayedCoordinate, title: title, recenterMap: false)
 
         if recenterMap {
             updateCameraPosition(
                 MKCoordinateRegion(
                     center: CLLocationCoordinate2D(
-                        latitude: coordinate.latitude,
-                        longitude: coordinate.longitude
+                        latitude: displayedCoordinate.latitude,
+                        longitude: displayedCoordinate.longitude
                     ),
                     span: preferredSpan
                 ),
@@ -285,9 +421,10 @@ struct MapWorkspaceView: View {
             )
         }
 
-        if searchModel.showsOverlay {
+        if searchModel.showsOverlay || shouldShowHistoryOverlay {
             withAnimation(.easeInOut(duration: 0.18)) {
                 searchModel.dismissOverlay()
+                isSearchFieldFocused = false
             }
         }
     }
@@ -318,6 +455,36 @@ struct MapWorkspaceView: View {
         }
     }
 
+    private func applyStartupLocationIfNeeded(_ coordinate: CLLocationCoordinate2D) {
+        guard !hasAppliedStartupLocation else {
+            return
+        }
+
+        guard highlightedCoordinate == nil, lastSyncedManualCoordinate == nil else {
+            hasAppliedStartupLocation = true
+            return
+        }
+
+        hasAppliedStartupLocation = true
+        setPickedLocation(
+            LocationCoordinate(latitude: coordinate.latitude, longitude: coordinate.longitude),
+            title: "Current Location",
+            source: .coreLocation,
+            recenterMap: true,
+            debounceNanoseconds: 0,
+            preferredSpan: MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
+        )
+    }
+
+    private func displayCoordinate(for coordinate: LocationCoordinate, source: CoordinateSource) -> LocationCoordinate {
+        switch source {
+        case .appleMapDisplay:
+            return coordinate
+        case .coreLocation:
+            return ChinaCoordinateTransform.displayCoordinate(for: coordinate)
+        }
+    }
+
 }
 
 fileprivate struct LocationSearchCompletion: Identifiable, Equatable {
@@ -327,8 +494,83 @@ fileprivate struct LocationSearchCompletion: Identifiable, Equatable {
     let rawValue: MKLocalSearchCompletion
 }
 
+fileprivate struct LocationSearchHistoryEntry: Identifiable, Equatable, Codable {
+    let title: String
+    let subtitle: String
+    let coordinate: LocationCoordinate
+
+    var id: String {
+        let latitude = String(format: "%.6f", coordinate.latitude)
+        let longitude = String(format: "%.6f", coordinate.longitude)
+        return [title, subtitle, latitude, longitude].joined(separator: "|")
+    }
+}
+
+@MainActor
+fileprivate final class StartupLocationModel: NSObject, ObservableObject, CLLocationManagerDelegate {
+    @Published var startupCoordinate: CLLocationCoordinate2D?
+
+    private let locationManager = CLLocationManager()
+    private var hasRequestedLocation = false
+
+    override init() {
+        super.init()
+        locationManager.delegate = self
+    }
+
+    func requestLocationIfNeeded() {
+        guard !hasRequestedLocation, CLLocationManager.locationServicesEnabled() else {
+            return
+        }
+
+        hasRequestedLocation = true
+
+        switch locationManager.authorizationStatus {
+        case .authorizedAlways, .authorizedWhenInUse:
+            locationManager.requestLocation()
+        case .notDetermined:
+            locationManager.requestWhenInUseAuthorization()
+        case .denied, .restricted:
+            break
+        @unknown default:
+            break
+        }
+    }
+
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        switch manager.authorizationStatus {
+        case .authorizedAlways, .authorizedWhenInUse:
+            manager.requestLocation()
+        case .denied, .restricted:
+            startupCoordinate = nil
+        case .notDetermined:
+            break
+        @unknown default:
+            break
+        }
+    }
+
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard startupCoordinate == nil, let location = locations.last else {
+            return
+        }
+
+        startupCoordinate = location.coordinate
+    }
+
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        startupCoordinate = nil
+    }
+}
+
 @MainActor
 fileprivate final class LocationSearchModel: NSObject, ObservableObject, MKLocalSearchCompleterDelegate {
+    private enum Preferences {
+        static let searchHistory = "locationSearchHistory"
+    }
+
+    private static let maxHistoryEntries = 10
+
     @Published var query: String = "" {
         didSet {
             errorMessage = nil
@@ -345,15 +587,19 @@ fileprivate final class LocationSearchModel: NSObject, ObservableObject, MKLocal
         }
     }
     @Published var completions: [LocationSearchCompletion] = []
+    @Published private(set) var history: [LocationSearchHistoryEntry] = []
     @Published var errorMessage: String?
 
     private let completer = MKLocalSearchCompleter()
+    private let defaults: UserDefaults
     private var suppressNextQueryFragmentUpdate = false
 
-    override init() {
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
         super.init()
         completer.delegate = self
         completer.resultTypes = [.address, .pointOfInterest]
+        loadHistory()
     }
 
     func clear() {
@@ -368,6 +614,33 @@ fileprivate final class LocationSearchModel: NSObject, ObservableObject, MKLocal
         completions = []
         errorMessage = nil
         completer.queryFragment = ""
+    }
+
+    func recordSelection(title: String, subtitle: String, coordinate: LocationCoordinate) {
+        let entry = LocationSearchHistoryEntry(
+            title: title,
+            subtitle: subtitle,
+            coordinate: coordinate
+        )
+
+        history.removeAll { $0.id == entry.id }
+        history.insert(entry, at: 0)
+
+        if history.count > Self.maxHistoryEntries {
+            history = Array(history.prefix(Self.maxHistoryEntries))
+        }
+
+        saveHistory()
+    }
+
+    func removeHistoryEntry(_ entry: LocationSearchHistoryEntry) {
+        history.removeAll { $0.id == entry.id }
+        saveHistory()
+    }
+
+    func clearHistory() {
+        history = []
+        saveHistory()
     }
 
     func dismissOverlay() {
@@ -410,6 +683,33 @@ fileprivate final class LocationSearchModel: NSObject, ObservableObject, MKLocal
         } catch {
             errorMessage = "Unable to load that location from Apple Maps right now."
             return nil
+        }
+    }
+
+    private func loadHistory() {
+        guard let data = defaults.data(forKey: Preferences.searchHistory) else {
+            history = []
+            return
+        }
+
+        do {
+            history = try JSONDecoder().decode([LocationSearchHistoryEntry].self, from: data)
+        } catch {
+            history = []
+        }
+    }
+
+    private func saveHistory() {
+        if history.isEmpty {
+            defaults.removeObject(forKey: Preferences.searchHistory)
+            return
+        }
+
+        do {
+            let data = try JSONEncoder().encode(history)
+            defaults.set(data, forKey: Preferences.searchHistory)
+        } catch {
+            defaults.removeObject(forKey: Preferences.searchHistory)
         }
     }
 }
