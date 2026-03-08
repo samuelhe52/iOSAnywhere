@@ -244,8 +244,9 @@ actor USBDeviceLocationService: LocationSimulationService {
             #!/bin/sh
             password=$(
                 /usr/bin/osascript \
+                    -e 'set dialogIcon to POSIX file "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/LockedIcon.icns" as alias' \
                     -e 'tell application "System Events" to activate' \
-                    -e 'tell application "System Events" to display dialog "Authorize USB location simulation for your physical device. Your password is handled by macOS and is not stored by Teleport." default answer "" with hidden answer buttons {"Cancel", "Authorize"} default button "Authorize" with title "Administrator Password" with icon note' \
+                    -e 'tell application "System Events" to display dialog "Authorize USB location simulation for your physical device. Your password is handled by macOS and is not stored by Teleport." default answer "" with hidden answer buttons {"Cancel", "Authorize"} default button "Authorize" with title "Administrator Password" with icon dialogIcon' \
                     -e 'text returned of result' 2>/dev/null
             )
             status=$?
