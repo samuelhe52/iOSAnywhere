@@ -8,6 +8,12 @@ Built with SwiftUI and MapKit, it gives you a desktop workflow for picking a poi
 
 ![Teleport app screenshot](Resources/screenshot-main.jpg)
 
+## Disclaimer
+
+Teleport is intended solely for developer testing, debugging, and other legitimate development workflows. Use outside of those purposes is not recommended.
+
+By using this project for any non-development or otherwise unintended purpose, you do so at your own risk. The app and its developer do not accept responsibility for any consequences, liabilities, or damages arising from such use.
+
 ## Features
 
 - Native macOS three-pane UI for device selection, map interaction, and session controls
