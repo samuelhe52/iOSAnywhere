@@ -146,13 +146,13 @@ enum USBDeviceScript {
                 await simulation.clear()
 
 
-        async def run_pre_ios17(mode, udid, status_path, stop_path, latitude, longitude):
+        async def run_pre_ios17(mode, udid, connection_type, status_path, stop_path, latitude, longitude):
             from pymobiledevice3.lockdown import create_using_usbmux
             from pymobiledevice3.services.dvt.dvt_secure_socket_proxy import DvtSecureSocketProxyService
             from pymobiledevice3.services.dvt.instruments.location_simulation import LocationSimulation
 
             write_status(status_path, "LOCKDOWN")
-            lockdown = await create_using_usbmux(udid, autopair=True)
+            lockdown = await create_using_usbmux(udid, connection_type=connection_type, autopair=True)
             try:
                 write_status(status_path, "DVT")
                 async with DvtSecureSocketProxyService(lockdown) as dvt:
@@ -184,7 +184,9 @@ enum USBDeviceScript {
                 service_providers = await get_remote_pairing_tunnel_services(DEFAULT_BONJOUR_TIMEOUT, udid=udid)
                 service_provider = service_providers[0] if service_providers else None
                 if service_provider is None:
-                    raise RuntimeError(f"No remote pairing tunnel service found for {udid}.")
+                    raise RuntimeError(
+                        f"No remote pairing tunnel service found for {udid}. Connect the device over USB once to create a pairing record, unlock it, and keep it on the same local network before retrying Wi-Fi."
+                    )
 
                 write_status(status_path, "STARTING_TUNNEL")
                 async with service_provider.start_quic_tunnel() as tunnel_result:
@@ -207,7 +209,7 @@ enum USBDeviceScript {
                 resume_remoted_if_required()
 
 
-        async def run_ios17_tcp(mode, udid, status_path, stop_path, latitude, longitude):
+        async def run_ios17_tcp(mode, udid, connection_type, status_path, stop_path, latitude, longitude):
             from pymobiledevice3.lockdown import create_using_usbmux
             from pymobiledevice3.remote.remote_service_discovery import RemoteServiceDiscoveryService
             from pymobiledevice3.remote.tunnel_service import CoreDeviceTunnelProxy
@@ -215,7 +217,7 @@ enum USBDeviceScript {
             from pymobiledevice3.services.dvt.instruments.location_simulation import LocationSimulation
 
             write_status(status_path, "LOCKDOWN")
-            lockdown = await create_using_usbmux(udid, autopair=True)
+            lockdown = await create_using_usbmux(udid, connection_type=connection_type, autopair=True)
             write_status(status_path, "CREATING_TUNNEL_PROXY")
             tunnel_proxy = await CoreDeviceTunnelProxy.create(lockdown)
             try:
@@ -244,17 +246,21 @@ enum USBDeviceScript {
             version = sys.argv[3]
             status_path = sys.argv[4]
             stop_path = sys.argv[5]
-            latitude = float(sys.argv[6]) if mode == "set" else None
-            longitude = float(sys.argv[7]) if mode == "set" else None
+            device_kind = sys.argv[6]
+            latitude = float(sys.argv[7]) if mode == "set" else None
+            longitude = float(sys.argv[8]) if mode == "set" else None
 
             parsed_version = parse_version(version)
+            connection_type = "USB" if device_kind == "physicalUSB" else "Network"
 
             if parsed_version[0] < 17:
-                await run_pre_ios17(mode, udid, status_path, stop_path, latitude, longitude)
+                await run_pre_ios17(mode, udid, connection_type, status_path, stop_path, latitude, longitude)
+            elif device_kind == "physicalNetwork":
+                await run_ios17_tcp(mode, udid, connection_type, status_path, stop_path, latitude, longitude)
             elif parsed_version < (17, 4):
                 await run_ios17_quic(mode, udid, status_path, stop_path, latitude, longitude)
             else:
-                await run_ios17_tcp(mode, udid, status_path, stop_path, latitude, longitude)
+                await run_ios17_tcp(mode, udid, connection_type, status_path, stop_path, latitude, longitude)
 
 
         try:
@@ -295,7 +301,10 @@ enum USBDeviceScript {
         statusURL: URL,
         stopURL: URL
     ) -> [String] {
-        var arguments = ["-c", pythonHelperScript, mode, device.id, device.osVersion, statusURL.path, stopURL.path]
+        var arguments = [
+            "-c", pythonHelperScript, mode, device.id, device.osVersion, statusURL.path, stopURL.path,
+            device.kind.rawValue,
+        ]
 
         if let coordinate {
             arguments.append(String(coordinate.latitude))
@@ -347,16 +356,6 @@ enum USBDeviceScript {
     }
 }
 
-struct XCDeviceRecord: Decodable {
-    let simulator: Bool
-    let operatingSystemVersion: String
-    let available: Bool
-    let platform: String
-    let identifier: String
-    let interface: String?
-    let name: String
-}
-
 struct CoreDeviceListResponse: Decodable {
     let result: CoreDeviceResult
 }
@@ -366,20 +365,34 @@ struct CoreDeviceResult: Decodable {
 }
 
 struct CoreDeviceRecord: Decodable {
+    let capabilities: [CoreDeviceCapability]
     let connectionProperties: CoreDeviceConnectionProperties
     let deviceProperties: CoreDeviceProperties
     let hardwareProperties: CoreDeviceHardwareProperties
 }
 
+struct CoreDeviceCapability: Decodable {
+    let featureIdentifier: String
+}
+
 struct CoreDeviceConnectionProperties: Decodable {
     let pairingState: String
+    let transportType: String?
+    let tunnelState: String?
+    let tunnelTransportProtocol: String?
 }
 
 struct CoreDeviceProperties: Decodable {
+    let ddiServicesAvailable: Bool?
     let developerModeStatus: String
     let bootState: String?
+    let name: String
+    let osBuildUpdate: String?
+    let osVersionNumber: String
 }
 
 struct CoreDeviceHardwareProperties: Decodable {
+    let platform: String
+    let reality: String
     let udid: String
 }

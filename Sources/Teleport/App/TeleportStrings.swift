@@ -1,21 +1,21 @@
 import Foundation
 
 enum TeleportStrings {
-    static let readyToDiscoverDevices: LocalizedStringResource = "Ready to discover simulators and USB devices."
-    static let scanningDevices: LocalizedStringResource = "Scanning for simulator and USB devices..."
+    static let readyToDiscoverDevices: LocalizedStringResource = "Ready to discover simulators and physical devices."
+    static let scanningDevices: LocalizedStringResource = "Scanning for simulator and physical devices..."
     static let noDevicesFound: LocalizedStringResource = "No devices found."
     static let enterValidCoordinates: LocalizedStringResource = "Enter valid coordinates."
     static let reviewAdministratorApproval: LocalizedStringResource =
-        "Review the administrator approval note to continue with USB location simulation."
-    static let waitingForAdministratorApproval: LocalizedStringResource =
-        "Waiting for macOS administrator approval. Your password is entered in a separate system dialog and is never stored by Teleport."
+        "Review the administrator approval note to continue with physical-device location simulation."
+    static let startingPhysicalDeviceSimulation: LocalizedStringResource =
+        "Starting physical-device location simulation. This can take a moment while Teleport connects to the device and prepares the helper."
     static let approvalCanceledBeforePrompt: LocalizedStringResource =
         "Administrator approval was canceled before the macOS password prompt."
     static let disconnectedAndClearedLocations: LocalizedStringResource =
         "Disconnected and cleared simulated locations."
     static let missingPythonDependency: LocalizedStringResource = "Missing Python dependency"
     static let installPythonDependency: LocalizedStringResource =
-        "Install pymobiledevice3 for the selected Python interpreter to continue USB location simulation."
+        "Install pymobiledevice3 for the selected Python interpreter to continue physical-device location simulation."
     static let selectDeviceFirst: LocalizedStringResource = "Select a device first."
     static let pythonUnavailableInShell: LocalizedStringResource =
         "python3 is not currently resolving from your shell. Install Python 3 first, then refresh devices."
@@ -27,7 +27,7 @@ enum TeleportStrings {
     static let stateConnecting: LocalizedStringResource = "Connecting"
     static let stateConnected: LocalizedStringResource = "Connected"
     static let stateDisconnecting: LocalizedStringResource = "Disconnecting"
-    static let stateAuthorizing: LocalizedStringResource = "Authorizing"
+    static let stateStarting: LocalizedStringResource = "Starting"
     static let stateStopping: LocalizedStringResource = "Stopping"
     static let searchUnavailable: LocalizedStringResource = "Apple location search is temporarily unavailable."
     static let searchNoResult: LocalizedStringResource = "No map result was returned for that place."
@@ -37,37 +37,41 @@ enum TeleportStrings {
     static let manualCoordinates: LocalizedStringResource = "Manual Coordinates"
     static let currentLocation: LocalizedStringResource = "Current Location"
     static let simulatedLocation: LocalizedStringResource = "Simulated Location"
-    static let chooseDeviceFromSidebar: LocalizedStringResource = "Choose a USB device or simulator from the sidebar."
+    static let chooseDeviceFromSidebar: LocalizedStringResource = "Choose a physical device or simulator from the sidebar."
     static let selectDeviceToBegin: LocalizedStringResource = "Select a device to begin"
     static let noDeviceSelected: LocalizedStringResource = "No device selected"
     static let simulatorKind: LocalizedStringResource = "Simulator"
     static let usbDeviceKind: LocalizedStringResource = "USB Device"
+    static let wifiDeviceKind: LocalizedStringResource = "Wi-Fi Device"
     static let usbDeviceUnavailableDetails: LocalizedStringResource = "USB · unavailable"
+    static let wifiDeviceUnavailableDetails: LocalizedStringResource = "Wi-Fi · unavailable"
     static let removeRecentSearchHelp: LocalizedStringResource = "Remove from recent searches"
     static let copyCoordinatesHelp: LocalizedStringResource = "Copy coordinates"
     static let selectedDeviceUnavailableOverUSB: LocalizedStringResource =
-        "The selected device is not currently available over USB."
+        "The selected physical device is not currently reachable."
+    static let selectedPhysicalDeviceUnavailable: LocalizedStringResource =
+        "The selected physical device is not currently reachable."
     static let failedToClearPhysicalDeviceLocation: LocalizedStringResource =
         "Failed to clear the physical-device simulated location."
     static let physicalHelperInvalidStartupState: LocalizedStringResource =
         "The physical-device helper reported an invalid startup state."
     static let physicalHelperExitedBeforeReady: LocalizedStringResource =
         "Physical-device location simulation exited before reporting ready."
-    static let timedOutWaitingForAdministratorApproval: LocalizedStringResource =
-        "Timed out waiting for administrator approval or helper startup while enabling physical-device location simulation."
+    static let timedOutWaitingForPhysicalDeviceStartup: LocalizedStringResource =
+        "Timed out while waiting for the physical-device helper to start location simulation."
     static let administratorApprovalCanceled: LocalizedStringResource =
         "Administrator approval was canceled. Physical-device location simulation did not start."
     static let administratorPasswordIncorrect: LocalizedStringResource =
         "The administrator password was incorrect. Check the password and try again."
     static let selectUSBDeviceToResolvePython: LocalizedStringResource =
-        "Select a USB device to resolve the helper Python interpreter."
+        "Select a physical device to resolve the helper Python interpreter."
     static let pythonDependencyMissingIntro: LocalizedStringResource =
-        "pymobiledevice3 is missing for the Python executable used by USB device simulation."
-    static let retryUSBLocationAction: LocalizedStringResource = "Then retry the USB location action."
+        "pymobiledevice3 is missing for the Python executable used by physical-device simulation."
+    static let retryUSBLocationAction: LocalizedStringResource = "Then retry the physical-device location action."
     static let usbSudoPrompt: LocalizedStringResource =
         "Teleport requires administrator privileges for physical-device location simulation."
     static let usbAuthorizePrompt: LocalizedStringResource =
-        "Authorize USB location simulation for your physical device. Your password is handled by macOS and is not stored by Teleport."
+        "Authorize physical-device location simulation. Your password is handled by macOS and is not stored by Teleport."
     static let cancel: LocalizedStringResource = "Cancel"
     static let authorize: LocalizedStringResource = "Authorize"
     static let administratorPassword: LocalizedStringResource = "Administrator Password"
@@ -97,7 +101,7 @@ enum TeleportStrings {
     }
 
     static func usbHelperPython(_ path: String) -> LocalizedStringResource {
-        "USB helper Python: \(path)"
+        "Device helper Python: \(path)"
     }
 
     static func deviceSubtitle(kind: String, osVersion: String) -> LocalizedStringResource {

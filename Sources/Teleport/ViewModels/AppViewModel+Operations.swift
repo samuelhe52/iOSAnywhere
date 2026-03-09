@@ -7,7 +7,7 @@ extension AppViewModel {
     }
 
     var selectedDeviceRequiresAdministratorApproval: Bool {
-        selectedDevice?.kind == .physicalUSB
+        selectedDevice?.kind.isPhysicalDevice == true
     }
 
     var showsUSBApprovalReminder: Bool {
@@ -23,7 +23,7 @@ extension AppViewModel {
     }
 
     func refreshDevices() async {
-        TeleportLog.devices.info("Starting device discovery across simulator and USB services")
+        TeleportLog.devices.info("Starting device discovery across simulator and physical-device services")
         discoveryState = .discovering
         statusMessage = .localized(TeleportStrings.scanningDevices)
         let previousSelectionID = selectedDeviceID
@@ -123,7 +123,7 @@ extension AppViewModel {
 
     func simulateSelectedLocation() async {
         switch simulationState {
-        case .authorizing, .stopping:
+        case .starting, .stopping:
             TeleportLog.simulation.debug(
                 "Ignoring duplicate simulate request while a simulation action is already in progress")
             return
@@ -137,7 +137,7 @@ extension AppViewModel {
             return
         }
         let device: Device
-        if selectedDevice.kind == .physicalUSB && connectionState == .connected {
+        if selectedDevice.kind.isPhysicalDevice && connectionState == .connected {
             device = selectedDevice
         } else {
             guard let refreshedDevice = await refreshedDeviceForAction(selectedDevice, stateTarget: .simulation) else {
@@ -154,7 +154,8 @@ extension AppViewModel {
             )
             return
         }
-        guard let latitude = Double(latitudeText), let longitude = Double(longitudeText) else {
+        guard let latitude = Double(latitudeText),
+              let longitude = Double(longitudeText) else {
             let message = UserFacingText.localized(TeleportStrings.enterValidCoordinates)
             simulationState = .failed(message)
             statusMessage = message
@@ -164,11 +165,11 @@ extension AppViewModel {
             return
         }
 
-        if device.kind == .physicalUSB && showsUSBApprovalReminder {
+        if device.kind.isPhysicalDevice && showsUSBApprovalReminder {
             showsUSBPrivilegeNotice = true
             statusMessage = .localized(TeleportStrings.reviewAdministratorApproval)
             TeleportLog.simulation.info(
-                "Showing administrator approval reminder before USB simulation for \(device.logLabel, privacy: .public)"
+                "Showing administrator approval reminder before physical-device simulation for \(device.logLabel, privacy: .public)"
             )
             return
         }
@@ -186,17 +187,19 @@ extension AppViewModel {
             )
         }
         do {
-            if device.kind == .physicalUSB {
-                simulationState = .authorizing
-                statusMessage = .localized(TeleportStrings.waitingForAdministratorApproval)
+            if device.kind.isPhysicalDevice {
+                simulationState = .starting
+                statusMessage = .localized(TeleportStrings.startingPhysicalDeviceSimulation)
                 TeleportLog.simulation.info(
-                    "Waiting for administrator authorization for USB simulation on \(device.logLabel, privacy: .public)"
+                    "Starting physical-device simulation helper for \(device.logLabel, privacy: .public)"
                 )
             }
+            
             try await service.setLocation(simulationCoordinate)
             simulationState = .simulating(coordinate)
             showsPythonDependencyGuide = nil
             statusMessage = .localized(TeleportStrings.simulatingCoordinate(coordinate.formatted, on: device.name))
+            
             TeleportLog.simulation.info(
                 "Simulation active on \(device.logLabel, privacy: .public); displayed coordinate: \(coordinate.formatted, privacy: .private)"
             )
@@ -220,17 +223,21 @@ extension AppViewModel {
         let message = UserFacingText.localized(TeleportStrings.approvalCanceledBeforePrompt)
         simulationState = .failed(message)
         statusMessage = message
-        TeleportLog.simulation.warning("Administrator approval reminder was dismissed before USB simulation")
+        TeleportLog.simulation.warning("Administrator approval reminder was dismissed before physical-device simulation")
     }
 
     func clearSimulatedLocation() async {
+        guard case .simulating = simulationState else {
+            return
+        }
+
         guard let selectedDevice else {
             simulationState = .failed(.localized(TeleportStrings.selectDeviceFirst))
             TeleportLog.simulation.warning("Clear simulated location requested without a selected device")
             return
         }
         let device: Device
-        if selectedDevice.kind == .physicalUSB && connectionState == .connected {
+        if selectedDevice.kind.isPhysicalDevice && connectionState == .connected {
             device = selectedDevice
         } else {
             guard let refreshedDevice = await refreshedDeviceForAction(selectedDevice, stateTarget: .simulation) else {
@@ -289,21 +296,21 @@ extension AppViewModel {
     }
 
     func updateSelectedPythonRuntimeNote() async {
-        guard selectedDevice?.kind == .physicalUSB,
+        guard selectedDevice?.kind.isPhysicalDevice == true,
             let usbService = registry.service(for: .physicalUSB) as? USBDeviceLocationService,
             let path = await usbService.resolvedPythonExecutablePathForDisplay()
         else {
-            selectedUSBSetupGuide = selectedDevice?.kind == .physicalUSB ? USBSetupGuide(resolvedPythonPath: nil) : nil
+            selectedUSBSetupGuide = selectedDevice?.kind.isPhysicalDevice == true ? USBSetupGuide(resolvedPythonPath: nil) : nil
             selectedPythonRuntimeNote = nil
-            if selectedDevice?.kind == .physicalUSB {
-                TeleportLog.devices.debug("No resolved Python executable available for the selected USB device")
+            if selectedDevice?.kind.isPhysicalDevice == true {
+                TeleportLog.devices.debug("No resolved Python executable available for the selected physical device")
             }
             return
         }
 
         selectedUSBSetupGuide = USBSetupGuide(resolvedPythonPath: path)
         selectedPythonRuntimeNote = .localized(TeleportStrings.usbHelperPython(path))
-        TeleportLog.devices.debug("Resolved USB helper Python executable at \(path, privacy: .public)")
+        TeleportLog.devices.debug("Resolved physical-device helper Python executable at \(path, privacy: .public)")
     }
 
     private enum ActionStateTarget {
@@ -312,7 +319,7 @@ extension AppViewModel {
     }
 
     private func refreshedDeviceForAction(_ device: Device, stateTarget: ActionStateTarget) async -> Device? {
-        guard device.kind == .physicalUSB else {
+        guard device.kind.isPhysicalDevice else {
             return device
         }
 
@@ -322,7 +329,7 @@ extension AppViewModel {
 
         do {
             let refreshedUSBDevices = try await service.discoverDevices()
-            let nonUSBDevices = devices.filter { $0.kind != .physicalUSB }
+            let nonUSBDevices = devices.filter { !$0.kind.isPhysicalDevice }
             if let refreshedDevice = refreshedUSBDevices.first(where: { $0.id == device.id }),
                 refreshedDevice.isAvailable
             {
@@ -359,12 +366,16 @@ extension AppViewModel {
             kind: device.kind,
             osVersion: device.osVersion,
             isAvailable: false,
-            details: String(localized: TeleportStrings.usbDeviceUnavailableDetails)
+            details: String(
+                localized: device.kind == .physicalNetwork
+                    ? TeleportStrings.wifiDeviceUnavailableDetails
+                    : TeleportStrings.usbDeviceUnavailableDetails
+            )
         )
     }
 
     private func invalidateDisconnectedUSBDevice(_ device: Device, stateTarget: ActionStateTarget) async {
-        let message = UserFacingText.localized(TeleportStrings.selectedDeviceUnavailableOverUSB)
+        let message = UserFacingText.localized(TeleportStrings.selectedPhysicalDeviceUnavailable)
 
         if let service = registry.service(for: .physicalUSB) {
             await service.disconnect()
@@ -378,12 +389,12 @@ extension AppViewModel {
         switch stateTarget {
         case .connection:
             TeleportLog.devices.warning(
-                "USB device \(device.logLabel, privacy: .public) became unavailable before connect"
+                "Physical device \(device.logLabel, privacy: .public) became unavailable before connect"
             )
         case .simulation:
             simulationState = .failed(message)
             TeleportLog.simulation.warning(
-                "USB device \(device.logLabel, privacy: .public) became unavailable before simulation action"
+                "Physical device \(device.logLabel, privacy: .public) became unavailable before simulation action"
             )
         }
     }

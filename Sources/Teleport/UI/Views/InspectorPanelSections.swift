@@ -68,9 +68,15 @@ struct InspectorDeviceSectionView: View {
             return String(localized: TeleportStrings.chooseDeviceFromSidebar)
         }
 
-        let kind = String(
-            localized: device.kind == .simulator ? TeleportStrings.simulatorKind : TeleportStrings.usbDeviceKind
-        )
+        let kind: String
+        switch device.kind {
+        case .simulator:
+            kind = String(localized: TeleportStrings.simulatorKind)
+        case .physicalUSB:
+            kind = String(localized: TeleportStrings.usbDeviceKind)
+        case .physicalNetwork:
+            kind = String(localized: TeleportStrings.wifiDeviceKind)
+        }
         return String(localized: TeleportStrings.deviceSubtitle(kind: kind, osVersion: device.osVersion))
     }
 
@@ -80,6 +86,8 @@ struct InspectorDeviceSectionView: View {
             return "iphone.gen3"
         case .physicalUSB:
             return "cable.connector"
+        case .physicalNetwork:
+            return "wifi"
         case nil:
             return "iphone.slash"
         }
@@ -91,6 +99,8 @@ struct InspectorDeviceSectionView: View {
             return .blue
         case .physicalUSB:
             return .green
+        case .physicalNetwork:
+            return .teal
         case nil:
             return .secondary
         }
@@ -191,7 +201,7 @@ struct InspectorUSBApprovalNoticeView: View {
     var body: some View {
         InspectorPanelSection {
             VStack(alignment: .leading, spacing: 8) {
-                Label("Administrator approval is required for USB device simulation.", systemImage: "lock.shield")
+                Label("Administrator approval is required for physical-device simulation.", systemImage: "lock.shield")
                     .font(.subheadline.weight(.semibold))
 
                 Text(
@@ -218,9 +228,9 @@ struct InspectorAuthorizationProgressView: View {
                     .controlSize(.small)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Waiting for administrator approval")
+                    Text("Starting physical-device simulation")
                         .font(.footnote.weight(.semibold))
-                    Text("Complete the separate macOS password dialog to continue.")
+                    Text("Teleport is connecting to the device and preparing the helper.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -232,6 +242,14 @@ struct InspectorAuthorizationProgressView: View {
 
 struct InspectorActionsSectionView: View {
     @Bindable var viewModel: AppViewModel
+
+    private var isSimulating: Bool {
+        if case .simulating = viewModel.simulationState {
+            return true
+        }
+
+        return false
+    }
 
     var body: some View {
         InspectorPanelSection("Actions") {
@@ -280,7 +298,7 @@ struct InspectorActionsSectionView: View {
                     .disabled(
                         viewModel.connectionState != .connected
                             || viewModel.selectedDevice?.isAvailable == false
-                            || viewModel.simulationState == .authorizing
+                            || viewModel.simulationState == .starting
                             || viewModel.simulationState == .stopping
                     )
 
@@ -291,7 +309,11 @@ struct InspectorActionsSectionView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.bordered)
-                    .disabled(viewModel.connectionState != .connected || viewModel.selectedDevice?.isAvailable == false)
+                    .disabled(
+                        viewModel.connectionState != .connected
+                            || viewModel.selectedDevice?.isAvailable == false
+                            || !isSimulating
+                    )
                 }
             }
             .controlSize(.large)
@@ -385,7 +407,7 @@ extension SimulationRunState {
     fileprivate var inspectorLabel: UserFacingText {
         switch self {
         case .idle: return .localized(TeleportStrings.stateIdle)
-        case .authorizing: return .localized(TeleportStrings.stateAuthorizing)
+        case .starting: return .localized(TeleportStrings.stateStarting)
         case .simulating(let coordinate): return .verbatim(coordinate.formatted)
         case .stopping: return .localized(TeleportStrings.stateStopping)
         case .failed: return .localized(TeleportStrings.stateFailed)
@@ -396,7 +418,7 @@ extension SimulationRunState {
         switch self {
         case .idle:
             return .neutral
-        case .authorizing, .stopping:
+        case .starting, .stopping:
             return .active
         case .simulating:
             return .good
@@ -429,7 +451,7 @@ extension AppViewModel {
         switch simulationState {
         case .simulating:
             return "location.fill"
-        case .authorizing, .stopping:
+        case .starting, .stopping:
             return "clock.fill"
         case .failed:
             return "exclamationmark.triangle.fill"

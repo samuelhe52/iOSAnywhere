@@ -6,44 +6,75 @@ struct MapWorkspaceMapCanvasView: View {
     @Binding var cameraPosition: MapCameraPosition
 
     let simulationState: SimulationRunState
-    let highlightedCoordinate: LocationCoordinate?
-    let highlightedTitle: String?
+    let pickedCoordinate: LocationCoordinate?
     let onTapCoordinate: (CLLocationCoordinate2D) -> Void
     let onCameraChange: (MKCoordinateRegion) -> Void
+
+    private struct MapMarkerModel: Identifiable {
+        let id: String
+        let title: LocalizedStringResource
+        let coordinate: LocationCoordinate
+        let tint: Color
+    }
+
+    private var simulatedCoordinate: LocationCoordinate? {
+        guard case .simulating(let coordinate) = simulationState else {
+            return nil
+        }
+
+        return coordinate
+    }
+
+    private var mapMarkers: [MapMarkerModel] {
+        var markers: [MapMarkerModel] = []
+
+        if let simulatedCoordinate {
+            markers.append(
+                MapMarkerModel(
+                    id: "simulated",
+                    title: TeleportStrings.simulatedLocation,
+                    coordinate: simulatedCoordinate,
+                    tint: .red
+                )
+            )
+        }
+
+        if let pickedCoordinate,
+            !isSameVisiblePin(pickedCoordinate, simulatedCoordinate)
+        {
+            markers.append(
+                MapMarkerModel(
+                    id: "picked",
+                    title: TeleportStrings.pickedLocation,
+                    coordinate: pickedCoordinate,
+                    tint: .blue
+                )
+            )
+        }
+
+        return markers
+    }
+
+    private func isSameVisiblePin(_ lhs: LocationCoordinate?, _ rhs: LocationCoordinate?) -> Bool {
+        guard let lhs, let rhs else {
+            return false
+        }
+
+        return lhs.isApproximatelyEqual(to: rhs)
+    }
 
     var body: some View {
         MapReader { proxy in
             Map(position: $cameraPosition) {
-                if case .simulating(let coordinate) = simulationState {
+                ForEach(mapMarkers) { marker in
                     Marker(
-                        "Simulated Location",
+                        marker.title,
                         coordinate: CLLocationCoordinate2D(
-                            latitude: coordinate.latitude,
-                            longitude: coordinate.longitude
-                        ))
-                }
-
-                if let highlightedCoordinate {
-                    Group {
-                        if let highlightedTitle {
-                            Marker(
-                                highlightedTitle,
-                                coordinate: CLLocationCoordinate2D(
-                                    latitude: highlightedCoordinate.latitude,
-                                    longitude: highlightedCoordinate.longitude
-                                )
-                            )
-                        } else {
-                            Marker(
-                                "Selected Place",
-                                coordinate: CLLocationCoordinate2D(
-                                    latitude: highlightedCoordinate.latitude,
-                                    longitude: highlightedCoordinate.longitude
-                                )
-                            )
-                        }
-                    }
-                    .tint(.blue)
+                            latitude: marker.coordinate.latitude,
+                            longitude: marker.coordinate.longitude
+                        )
+                    )
+                    .tint(marker.tint)
                 }
             }
             .simultaneousGesture(

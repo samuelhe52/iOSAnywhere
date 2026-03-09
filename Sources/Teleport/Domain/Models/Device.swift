@@ -3,6 +3,11 @@ import Foundation
 enum DeviceKind: String, Codable, CaseIterable, Sendable {
     case simulator
     case physicalUSB
+    case physicalNetwork
+
+    var isPhysicalDevice: Bool {
+        self != .simulator
+    }
 }
 
 struct Device: Identifiable, Hashable, Codable, Sendable {

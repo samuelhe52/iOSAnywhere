@@ -51,7 +51,7 @@ struct PythonDependencyInstallSheet: View {
                         .font(.title3.weight(.semibold))
 
                     Text(
-                        "USB device simulation needs pymobiledevice3 in the exact Python interpreter selected for the helper."
+                        "Physical-device simulation needs pymobiledevice3 in the exact Python interpreter selected for the helper."
                     )
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
@@ -75,7 +75,7 @@ struct PythonDependencyInstallSheet: View {
                 SelectableCodeRow(text: guide.installCommand)
             }
 
-            Text("Run the command in Terminal, then return here and retry the USB location action.")
+            Text("Run the command in Terminal, then return here and retry the physical-device location action.")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -230,7 +230,7 @@ struct USBOnboardingSheet: View {
                 }
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("USB Device Setup")
+                    Text("Physical Device Setup")
                         .font(.title3.weight(.semibold))
                     Text(
                         "Before simulating location on a physical iPhone, confirm the device and host are ready."
@@ -256,12 +256,16 @@ struct USBOnboardingSheet: View {
                 )
                 SimpleSecurityRow(
                     icon: "shippingbox",
-                    text: "Install pymobiledevice3 into the same Python interpreter used by the USB helper."
+                    text: "Install pymobiledevice3 into the same Python interpreter used by the device helper."
+                )
+                SimpleSecurityRow(
+                    icon: "wifi",
+                    text: "For Wi-Fi discovery, connect once over USB first, accept pairing, then keep the iPhone unlocked on the same local network."
                 )
                 SimpleSecurityRow(
                     icon: "checkmark.shield",
                     text:
-                        "macOS will ask for your administrator password in a separate system dialog when the USB tunnel starts."
+                        "macOS will ask for your administrator password in a separate system dialog when the physical-device tunnel starts."
                 )
             }
             .padding(16)

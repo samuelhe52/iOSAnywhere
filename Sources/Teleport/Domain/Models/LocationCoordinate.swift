@@ -6,6 +6,11 @@ struct LocationCoordinate: Equatable, Hashable, Codable, Sendable {
 
     static let applePark = LocationCoordinate(latitude: 37.3346, longitude: -122.0090)
 
+    func isApproximatelyEqual(to other: LocationCoordinate, tolerance: Double = 0.00001) -> Bool {
+        abs(latitude - other.latitude) <= tolerance
+            && abs(longitude - other.longitude) <= tolerance
+    }
+
     var formatted: String {
         String(format: "%.5f, %.5f", latitude, longitude)
     }

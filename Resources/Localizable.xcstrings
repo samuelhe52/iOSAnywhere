@@ -21,6 +21,9 @@
         }
       }
     },
+    "`xcrun` is not guaranteed to be usable on a clean macOS install. If macOS reports missing developer tools, install them with `xcode-select --install`. If full Xcode is already installed but the active developer directory is wrong, run `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer`, then launch Xcode once to finish setup." : {
+
+    },
     "Actions" : {
       "localizations" : {
         "zh-Hans" : {
@@ -31,15 +34,8 @@
         }
       }
     },
-    "Administrator approval is required for USB device simulation." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "USB 设备模拟需要管理员授权。"
-          }
-        }
-      }
+    "Administrator approval is required for physical-device simulation." : {
+
     },
     "Administrator approval was canceled before the macOS password prompt." : {
       "localizations" : {
@@ -91,25 +87,8 @@
         }
       }
     },
-    "Authorize USB location simulation for your physical device. Your password is handled by macOS and is not stored by Teleport." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "为你的真机授权 USB 位置模拟。你的密码由 macOS 处理，Teleport 不会存储该密码。"
-          }
-        }
-      }
-    },
-    "Authorizing" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "授权中"
-          }
-        }
-      }
+    "Authorize physical-device location simulation. Your password is handled by macOS and is not stored by Teleport." : {
+
     },
     "Before simulating location on a physical iPhone, confirm the device and host are ready." : {
       "localizations" : {
@@ -131,15 +110,8 @@
         }
       }
     },
-    "Choose a USB device or simulator from the sidebar." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "请从侧边栏选择一个 USB 设备或模拟器。"
-          }
-        }
-      }
+    "Choose a physical device or simulator from the sidebar." : {
+
     },
     "Clear" : {
       "localizations" : {
@@ -177,16 +149,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "命令失败，退出代码为 %d。"
-          }
-        }
-      }
-    },
-    "Complete the separate macOS password dialog to continue." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "请完成单独弹出的 macOS 密码对话框以继续。"
           }
         }
       }
@@ -310,6 +272,12 @@
           }
         }
       }
+    },
+    "Developer Tools" : {
+
+    },
+    "Device helper Python: %@" : {
+
     },
     "Devices" : {
       "localizations" : {
@@ -461,6 +429,9 @@
         }
       }
     },
+    "For Wi-Fi discovery, connect once over USB first, accept pairing, then keep the iPhone unlocked on the same local network." : {
+
+    },
     "Found %lld device(s)." : {
       "localizations" : {
         "zh-Hans" : {
@@ -501,25 +472,11 @@
         }
       }
     },
-    "Install pymobiledevice3 for the selected Python interpreter to continue USB location simulation." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "请为所选 Python 解释器安装 pymobiledevice3，以继续进行 USB 位置模拟。"
-          }
-        }
-      }
+    "Install pymobiledevice3 for the selected Python interpreter to continue physical-device location simulation." : {
+
     },
-    "Install pymobiledevice3 into the same Python interpreter used by the USB helper." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "请将 pymobiledevice3 安装到 USB 辅助程序所使用的同一个 Python 解释器中。"
-          }
-        }
-      }
+    "Install pymobiledevice3 into the same Python interpreter used by the device helper." : {
+
     },
     "Install Python 3 on this Mac so `python3` resolves from your shell." : {
       "localizations" : {
@@ -530,6 +487,9 @@
           }
         }
       }
+    },
+    "Install Xcode and open it once so Apple's developer tools finish setup and `xcrun` can access device and simulator tooling." : {
+
     },
     "Latitude" : {
       "localizations" : {
@@ -551,15 +511,8 @@
         }
       }
     },
-    "macOS will ask for your administrator password in a separate system dialog when the USB tunnel starts." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "当 USB 隧道启动时，macOS 会在单独的系统对话框中请求你的管理员密码。"
-          }
-        }
-      }
+    "macOS will ask for your administrator password in a separate system dialog when the physical-device tunnel starts." : {
+
     },
     "Manual Coordinates" : {
       "localizations" : {
@@ -621,6 +574,12 @@
         }
       }
     },
+    "Physical Device Setup" : {
+
+    },
+    "Physical Devices" : {
+
+    },
     "Physical-device location simulation exited before reporting ready." : {
       "localizations" : {
         "zh-Hans" : {
@@ -630,6 +589,9 @@
           }
         }
       }
+    },
+    "Physical-device simulation needs pymobiledevice3 in the exact Python interpreter selected for the helper." : {
+
     },
     "Picked Location" : {
       "localizations" : {
@@ -641,15 +603,8 @@
         }
       }
     },
-    "pymobiledevice3 is missing for the Python executable used by USB device simulation." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "用于 USB 设备模拟的 Python 可执行文件缺少 pymobiledevice3。"
-          }
-        }
-      }
+    "pymobiledevice3 is missing for the Python executable used by physical-device simulation." : {
+
     },
     "python3 is not currently resolving from your shell. Install Python 3 first, then refresh devices." : {
       "localizations" : {
@@ -671,15 +626,8 @@
         }
       }
     },
-    "Ready to discover simulators and USB devices." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "准备好发现模拟器和 USB 设备。"
-          }
-        }
-      }
+    "Ready to discover simulators and physical devices." : {
+
     },
     "Recent Searches" : {
       "localizations" : {
@@ -741,25 +689,11 @@
         }
       }
     },
-    "Review the administrator approval note to continue with USB location simulation." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "请先查看管理员授权说明，再继续进行 USB 位置模拟。"
-          }
-        }
-      }
+    "Review the administrator approval note to continue with physical-device location simulation." : {
+
     },
-    "Run the command in Terminal, then return here and retry the USB location action." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "请在终端中运行该命令，然后返回这里重试 USB 位置操作。"
-          }
-        }
-      }
+    "Run the command in Terminal, then return here and retry the physical-device location action." : {
+
     },
     "Run the install command in Terminal if needed, then continue. You can copy the command directly from this sheet." : {
       "localizations" : {
@@ -781,15 +715,8 @@
         }
       }
     },
-    "Scanning for simulator and USB devices..." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在扫描模拟器和 USB 设备..."
-          }
-        }
-      }
+    "Scanning for simulator and physical devices..." : {
+
     },
     "Search for a place or address" : {
       "localizations" : {
@@ -821,15 +748,8 @@
         }
       }
     },
-    "Select a USB device to resolve the helper Python interpreter." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "请选择一个 USB 设备以解析辅助程序所用的 Python 解释器。"
-          }
-        }
-      }
+    "Select a physical device to resolve the helper Python interpreter." : {
+
     },
     "Selected Place" : {
       "localizations" : {
@@ -921,6 +841,15 @@
         }
       }
     },
+    "Starting" : {
+
+    },
+    "Starting physical-device location simulation. This can take a moment while Teleport connects to the device and prepares the helper." : {
+
+    },
+    "Starting physical-device simulation" : {
+
+    },
     "Status" : {
       "localizations" : {
         "zh-Hans" : {
@@ -950,6 +879,9 @@
           }
         }
       }
+    },
+    "Teleport is connecting to the device and preparing the helper." : {
+
     },
     "Teleport requires administrator privileges for physical-device location simulation." : {
       "localizations" : {
@@ -981,35 +913,14 @@
         }
       }
     },
-    "The selected device is not currently available over USB." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "所选设备当前无法通过 USB 使用。"
-          }
-        }
-      }
+    "The selected physical device is not currently reachable." : {
+
     },
-    "Then retry the USB location action." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "然后重试 USB 位置操作。"
-          }
-        }
-      }
+    "Then retry the physical-device location action." : {
+
     },
-    "Timed out waiting for administrator approval or helper startup while enabling physical-device location simulation." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "等待管理员授权或辅助程序启动超时，无法启用真机位置模拟。"
-          }
-        }
-      }
+    "Timed out while waiting for the physical-device helper to start location simulation." : {
+
     },
     "Unable to load that location from Apple Maps right now." : {
       "localizations" : {
@@ -1051,65 +962,11 @@
         }
       }
     },
-    "USB Device Setup" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "USB 设备设置"
-          }
-        }
-      }
+    "Wi-Fi · unavailable" : {
+
     },
-    "USB device simulation needs pymobiledevice3 in the exact Python interpreter selected for the helper." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "USB 设备模拟需要在辅助程序所选的确切 Python 解释器中安装 pymobiledevice3。"
-          }
-        }
-      }
-    },
-    "USB Devices" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "USB 设备"
-          }
-        }
-      }
-    },
-    "USB helper Python: %@" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "USB 辅助程序 Python：%@"
-          }
-        }
-      }
-    },
-    "Waiting for administrator approval" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "等待管理员授权"
-          }
-        }
-      }
-    },
-    "Waiting for macOS administrator approval. Your password is entered in a separate system dialog and is never stored by Teleport." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在等待 macOS 管理员授权。你的密码将在单独的系统对话框中输入，Teleport 永远不会存储该密码。"
-          }
-        }
-      }
+    "Wi-Fi Device" : {
+
     },
     "Your password is requested in a separate macOS dialog. Teleport does not store, display, or reuse that password." : {
       "localizations" : {

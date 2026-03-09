@@ -21,8 +21,7 @@ struct MapWorkspaceView: View {
             span: MKCoordinateSpan(latitudeDelta: 0.15, longitudeDelta: 0.15)
         )
     )
-    @State private var highlightedCoordinate: LocationCoordinate?
-    @State private var highlightedTitle: String?
+    @State private var pickedCoordinate: LocationCoordinate?
 
     private enum CoordinateSource {
         case appleMapDisplay
@@ -35,15 +34,13 @@ struct MapWorkspaceView: View {
                 MapWorkspaceMapCanvasView(
                     cameraPosition: $cameraPosition,
                     simulationState: viewModel.simulationState,
-                    highlightedCoordinate: highlightedCoordinate,
-                    highlightedTitle: highlightedTitle,
+                    pickedCoordinate: pickedCoordinate,
                     onTapCoordinate: { coordinate in
                         setPickedLocation(
                             LocationCoordinate(
                                 latitude: coordinate.latitude,
                                 longitude: coordinate.longitude
                             ),
-                            title: String(localized: TeleportStrings.pickedLocation),
                             source: .appleMapDisplay,
                             recenterMap: true,
                             debounceNanoseconds: 140_000_000,
@@ -110,7 +107,6 @@ struct MapWorkspaceView: View {
         let selectedCoordinate = LocationCoordinate(latitude: coordinate.latitude, longitude: coordinate.longitude)
         setPickedLocation(
             selectedCoordinate,
-            title: result.name ?? String(localized: TeleportStrings.selectedPlace),
             source: .appleMapDisplay,
             recenterMap: true,
             debounceNanoseconds: 0,
@@ -128,7 +124,6 @@ struct MapWorkspaceView: View {
     private func selectHistoryEntry(_ entry: LocationSearchHistoryEntry) {
         setPickedLocation(
             entry.coordinate,
-            title: entry.title,
             source: .appleMapDisplay,
             recenterMap: true,
             debounceNanoseconds: 0,
@@ -166,7 +161,7 @@ struct MapWorkspaceView: View {
             }
 
             await MainActor.run {
-                syncMap(to: coordinate, title: String(localized: TeleportStrings.manualCoordinates))
+                syncPickedCoordinate(to: coordinate)
             }
         }
     }
@@ -190,9 +185,8 @@ struct MapWorkspaceView: View {
             && !searchModel.history.isEmpty
     }
 
-    private func syncMap(to coordinate: LocationCoordinate, title: String, recenterMap: Bool = true) {
-        highlightedCoordinate = coordinate
-        highlightedTitle = title
+    private func syncPickedCoordinate(to coordinate: LocationCoordinate, recenterMap: Bool = true) {
+        pickedCoordinate = coordinate
         lastSyncedManualCoordinate = coordinate
         if recenterMap {
             updateCameraPosition(
@@ -210,7 +204,6 @@ struct MapWorkspaceView: View {
 
     private func setPickedLocation(
         _ coordinate: LocationCoordinate,
-        title: String,
         source: CoordinateSource,
         recenterMap: Bool,
         debounceNanoseconds: UInt64,
@@ -222,7 +215,7 @@ struct MapWorkspaceView: View {
         suppressedManualCoordinateSyncCallbacks = 2
         viewModel.latitudeText = String(format: "%.6f", displayedCoordinate.latitude)
         viewModel.longitudeText = String(format: "%.6f", displayedCoordinate.longitude)
-        syncMap(to: displayedCoordinate, title: title, recenterMap: false)
+        syncPickedCoordinate(to: displayedCoordinate, recenterMap: false)
 
         if recenterMap {
             updateCameraPosition(
@@ -276,7 +269,7 @@ struct MapWorkspaceView: View {
             return
         }
 
-        guard highlightedCoordinate == nil, lastSyncedManualCoordinate == nil else {
+        guard pickedCoordinate == nil, lastSyncedManualCoordinate == nil else {
             hasAppliedStartupLocation = true
             return
         }
@@ -284,7 +277,6 @@ struct MapWorkspaceView: View {
         hasAppliedStartupLocation = true
         setPickedLocation(
             LocationCoordinate(latitude: coordinate.latitude, longitude: coordinate.longitude),
-            title: String(localized: TeleportStrings.currentLocation),
             source: .coreLocation,
             recenterMap: true,
             debounceNanoseconds: 0,

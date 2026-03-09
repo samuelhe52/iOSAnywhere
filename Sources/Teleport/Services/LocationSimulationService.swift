@@ -11,7 +11,7 @@ enum TeleportLog {
 }
 
 protocol LocationSimulationService: Sendable {
-    var kind: DeviceKind { get }
+    var supportedKinds: [DeviceKind] { get }
     func discoverDevices() async throws -> [Device]
     func connect(to device: Device) async throws
     func disconnect() async

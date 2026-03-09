@@ -2,7 +2,7 @@ import Foundation
 import OSLog
 
 actor SimulatorLocationService: LocationSimulationService {
-    let kind: DeviceKind = .simulator
+    let supportedKinds: [DeviceKind] = [.simulator]
 
     private let xcrunURL = URL(fileURLWithPath: "/usr/bin/xcrun")
 

@@ -7,7 +7,7 @@ struct DeviceSidebarView: View {
     var body: some View {
         List(selection: $viewModel.selectedDeviceID) {
             if !physicalDevices.isEmpty {
-                Section("USB Devices") {
+                Section("Physical Devices") {
                     ForEach(physicalDevices) { device in
                         deviceRow(for: device)
                     }
@@ -36,7 +36,7 @@ struct DeviceSidebarView: View {
     }
 
     private var physicalDevices: [Device] {
-        viewModel.devices.filter { $0.kind == .physicalUSB }
+        viewModel.devices.filter { $0.kind.isPhysicalDevice }
     }
 
     private var simulatorDevices: [Device] {
@@ -61,7 +61,7 @@ struct DeviceSidebarView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             } else {
-                Text("USB Device")
+                Text(device.kind == .physicalNetwork ? "Wi-Fi Device" : "USB Device")
                     .font(.caption)
                     .foregroundStyle(device.isAvailable ? Color.secondary : Color.orange)
             }

@@ -14,7 +14,7 @@ struct InspectorPanelView: View {
                     InspectorUSBApprovalNoticeView()
                 }
 
-                if case .authorizing = viewModel.simulationState {
+                if case .starting = viewModel.simulationState {
                     InspectorAuthorizationProgressView()
                 }
 
