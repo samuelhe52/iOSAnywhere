@@ -20,9 +20,23 @@ Teleport 是一款原生 macOS 应用，用于在 iOS 模拟器和通过 USB 连
 ## 环境要求
 
 - macOS
-- 已安装 Xcode 及模拟器工具链
+- 已安装 Xcode，并至少启动过一次，使 `xcrun`、`simctl`、`xcdevice` 和 `devicectl` 可用
 - 真机调试需要：通过 USB 连接的 iPhone，且已开启开发者模式
 - 真机调试需要：`python3` 和 `pymobiledevice3`
+
+如果 macOS 提示缺少开发者工具，请先安装 Apple 的命令行开发者工具：
+
+```sh
+xcode-select --install
+```
+
+如果已经安装完整 Xcode，但 `xcrun` 仍然指向错误的开发者目录，请显式切换：
+
+```sh
+sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+```
+
+然后启动一次 Xcode，完成模拟器和真机工具链的首次初始化。
 
 使用以下命令安装 Python 依赖：
 

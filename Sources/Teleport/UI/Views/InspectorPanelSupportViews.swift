@@ -247,6 +247,10 @@ struct USBOnboardingSheet: View {
                     text: "Enable Developer Mode on the iPhone in Settings > Privacy & Security > Developer Mode."
                 )
                 SimpleSecurityRow(
+                    icon: "hammer",
+                    text: "Install Xcode and open it once so Apple's developer tools finish setup and `xcrun` can access device and simulator tooling."
+                )
+                SimpleSecurityRow(
                     icon: "terminal",
                     text: "Install Python 3 on this Mac so `python3` resolves from your shell."
                 )
@@ -265,6 +269,22 @@ struct USBOnboardingSheet: View {
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .fill(Color(NSColor.controlBackgroundColor))
             )
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Developer Tools")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+
+                SelectableCodeRow(text: "xcode-select --install")
+                SelectableCodeRow(text: "sudo xcode-select -s /Applications/Xcode.app/Contents/Developer")
+            }
+
+            Text(
+                "`xcrun` is not guaranteed to be usable on a clean macOS install. If macOS reports missing developer tools, install them with `xcode-select --install`. If full Xcode is already installed but the active developer directory is wrong, run `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer`, then launch Xcode once to finish setup."
+            )
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
 
             VStack(alignment: .leading, spacing: 8) {
                 Text("Resolved Python")

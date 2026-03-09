@@ -20,9 +20,23 @@ Built with SwiftUI and MapKit, it gives you a desktop workflow for picking a poi
 ## Requirements
 
 - macOS
-- Xcode with simulator tooling installed
+- Xcode installed and opened once so `xcrun`, `simctl`, `xcdevice`, and `devicectl` are available
 - For physical devices: a USB-connected iPhone with Developer Mode enabled
 - For physical devices: `python3` and `pymobiledevice3`
+
+If macOS reports that developer tools are missing, install Apple's command line developer tools first:
+
+```sh
+xcode-select --install
+```
+
+If full Xcode is installed but `xcrun` is still pointing at the wrong developer directory, switch it explicitly:
+
+```sh
+sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+```
+
+Then launch Xcode once to finish first-run setup for simulator and device tooling.
 
 Install the Python dependency with:
 
