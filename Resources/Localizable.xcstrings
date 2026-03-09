@@ -22,7 +22,14 @@
       }
     },
     "`xcrun` is not guaranteed to be usable on a clean macOS install. If macOS reports missing developer tools, install them with `xcode-select --install`. If full Xcode is already installed but the active developer directory is wrong, run `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer`, then launch Xcode once to finish setup." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在全新 macOS 安装上，`xcrun` 不一定可用。如果 macOS 提示缺少开发者工具，请运行 `xcode-select --install` 安装。如果已安装完整 Xcode 但当前开发者目录不正确，请运行 `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer`，然后启动一次 Xcode 以完成设置。"
+          }
+        }
+      }
     },
     "Actions" : {
       "localizations" : {
@@ -35,7 +42,14 @@
       }
     },
     "Administrator approval is required for physical-device simulation." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "真机模拟需要管理员授权。"
+          }
+        }
+      }
     },
     "Administrator approval was canceled before the macOS password prompt." : {
       "localizations" : {
@@ -88,7 +102,14 @@
       }
     },
     "Authorize physical-device location simulation. Your password is handled by macOS and is not stored by Teleport." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为真机位置模拟授权。你的密码由 macOS 处理，Teleport 不会存储该密码。"
+          }
+        }
+      }
     },
     "Before simulating location on a physical iPhone, confirm the device and host are ready." : {
       "localizations" : {
@@ -111,7 +132,14 @@
       }
     },
     "Choose a physical device or simulator from the sidebar." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请从侧边栏选择一个真机设备或模拟器。"
+          }
+        }
+      }
     },
     "Clear" : {
       "localizations" : {
@@ -274,10 +302,24 @@
       }
     },
     "Developer Tools" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开发者工具"
+          }
+        }
+      }
     },
     "Device helper Python: %@" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设备辅助程序 Python：%@"
+          }
+        }
+      }
     },
     "Devices" : {
       "localizations" : {
@@ -430,7 +472,14 @@
       }
     },
     "For Wi-Fi discovery, connect once over USB first, accept pairing, then keep the iPhone unlocked on the same local network." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要通过 Wi‑Fi 发现设备，请先通过 USB 连接一次并接受配对，然后保持 iPhone 解锁并连接到同一局域网。"
+          }
+        }
+      }
     },
     "Found %lld device(s)." : {
       "localizations" : {
@@ -473,10 +522,24 @@
       }
     },
     "Install pymobiledevice3 for the selected Python interpreter to continue physical-device location simulation." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请为所选 Python 解释器安装 pymobiledevice3，以继续进行真机位置模拟。"
+          }
+        }
+      }
     },
     "Install pymobiledevice3 into the same Python interpreter used by the device helper." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请将 pymobiledevice3 安装到设备辅助程序所使用的同一个 Python 解释器中。"
+          }
+        }
+      }
     },
     "Install Python 3 on this Mac so `python3` resolves from your shell." : {
       "localizations" : {
@@ -489,7 +552,14 @@
       }
     },
     "Install Xcode and open it once so Apple's developer tools finish setup and `xcrun` can access device and simulator tooling." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请安装 Xcode 并启动一次，以便 Apple 的开发者工具完成设置，并让 `xcrun` 可以访问真机和模拟器工具。"
+          }
+        }
+      }
     },
     "Latitude" : {
       "localizations" : {
@@ -512,7 +582,14 @@
       }
     },
     "macOS will ask for your administrator password in a separate system dialog when the physical-device tunnel starts." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当真机隧道启动时，macOS 会在单独的系统对话框中请求你的管理员密码。"
+          }
+        }
+      }
     },
     "Manual Coordinates" : {
       "localizations" : {
@@ -575,10 +652,24 @@
       }
     },
     "Physical Device Setup" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "真机设备设置"
+          }
+        }
+      }
     },
     "Physical Devices" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "真机设备"
+          }
+        }
+      }
     },
     "Physical-device location simulation exited before reporting ready." : {
       "localizations" : {
@@ -591,7 +682,14 @@
       }
     },
     "Physical-device simulation needs pymobiledevice3 in the exact Python interpreter selected for the helper." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "真机位置模拟需要在辅助程序所选的确切 Python 解释器中安装 pymobiledevice3。"
+          }
+        }
+      }
     },
     "Picked Location" : {
       "localizations" : {
@@ -604,7 +702,14 @@
       }
     },
     "pymobiledevice3 is missing for the Python executable used by physical-device simulation." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用于真机位置模拟的 Python 可执行文件缺少 pymobiledevice3。"
+          }
+        }
+      }
     },
     "python3 is not currently resolving from your shell. Install Python 3 first, then refresh devices." : {
       "localizations" : {
@@ -627,7 +732,14 @@
       }
     },
     "Ready to discover simulators and physical devices." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "准备好发现模拟器和真机设备。"
+          }
+        }
+      }
     },
     "Recent Searches" : {
       "localizations" : {
@@ -690,10 +802,24 @@
       }
     },
     "Review the administrator approval note to continue with physical-device location simulation." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请先查看管理员授权说明，再继续进行真机位置模拟。"
+          }
+        }
+      }
     },
     "Run the command in Terminal, then return here and retry the physical-device location action." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请在终端中运行该命令，然后返回这里重试真机位置操作。"
+          }
+        }
+      }
     },
     "Run the install command in Terminal if needed, then continue. You can copy the command directly from this sheet." : {
       "localizations" : {
@@ -716,7 +842,14 @@
       }
     },
     "Scanning for simulator and physical devices..." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在扫描模拟器和真机设备..."
+          }
+        }
+      }
     },
     "Search for a place or address" : {
       "localizations" : {
@@ -749,7 +882,14 @@
       }
     },
     "Select a physical device to resolve the helper Python interpreter." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请选择一个真机设备以解析辅助程序所用的 Python 解释器。"
+          }
+        }
+      }
     },
     "Selected Place" : {
       "localizations" : {
@@ -842,13 +982,34 @@
       }
     },
     "Starting" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启动中"
+          }
+        }
+      }
     },
     "Starting physical-device location simulation. This can take a moment while Teleport connects to the device and prepares the helper." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在启动真机位置模拟。Teleport 需要一点时间来连接设备并准备辅助程序。"
+          }
+        }
+      }
     },
     "Starting physical-device simulation" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在启动真机模拟"
+          }
+        }
+      }
     },
     "Status" : {
       "localizations" : {
@@ -881,7 +1042,14 @@
       }
     },
     "Teleport is connecting to the device and preparing the helper." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teleport 正在连接设备并准备辅助程序。"
+          }
+        }
+      }
     },
     "Teleport requires administrator privileges for physical-device location simulation." : {
       "localizations" : {
@@ -914,13 +1082,34 @@
       }
     },
     "The selected physical device is not currently reachable." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所选真机设备当前不可达。"
+          }
+        }
+      }
     },
     "Then retry the physical-device location action." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "然后重试真机位置操作。"
+          }
+        }
+      }
     },
     "Timed out while waiting for the physical-device helper to start location simulation." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "等待真机辅助程序启动位置模拟超时。"
+          }
+        }
+      }
     },
     "Unable to load that location from Apple Maps right now." : {
       "localizations" : {
@@ -963,10 +1152,24 @@
       }
     },
     "Wi-Fi · unavailable" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wi‑Fi · 不可用"
+          }
+        }
+      }
     },
     "Wi-Fi Device" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wi‑Fi 设备"
+          }
+        }
+      }
     },
     "Your password is requested in a separate macOS dialog. Teleport does not store, display, or reuse that password." : {
       "localizations" : {
