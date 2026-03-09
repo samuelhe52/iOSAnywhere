@@ -303,7 +303,7 @@ enum USBDeviceScript {
     ) -> [String] {
         var arguments = [
             "-c", pythonHelperScript, mode, device.id, device.osVersion, statusURL.path, stopURL.path,
-            device.kind.rawValue,
+            device.kind.rawValue
         ]
 
         if let coordinate {

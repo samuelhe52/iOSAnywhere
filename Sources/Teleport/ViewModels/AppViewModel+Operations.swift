@@ -155,7 +155,8 @@ extension AppViewModel {
             return
         }
         guard let latitude = Double(latitudeText),
-              let longitude = Double(longitudeText) else {
+            let longitude = Double(longitudeText)
+        else {
             let message = UserFacingText.localized(TeleportStrings.enterValidCoordinates)
             simulationState = .failed(message)
             statusMessage = message
@@ -194,12 +195,12 @@ extension AppViewModel {
                     "Starting physical-device simulation helper for \(device.logLabel, privacy: .public)"
                 )
             }
-            
+
             try await service.setLocation(simulationCoordinate)
             simulationState = .simulating(coordinate)
             showsPythonDependencyGuide = nil
             statusMessage = .localized(TeleportStrings.simulatingCoordinate(coordinate.formatted, on: device.name))
-            
+
             TeleportLog.simulation.info(
                 "Simulation active on \(device.logLabel, privacy: .public); displayed coordinate: \(coordinate.formatted, privacy: .private)"
             )
@@ -223,7 +224,8 @@ extension AppViewModel {
         let message = UserFacingText.localized(TeleportStrings.approvalCanceledBeforePrompt)
         simulationState = .failed(message)
         statusMessage = message
-        TeleportLog.simulation.warning("Administrator approval reminder was dismissed before physical-device simulation")
+        TeleportLog.simulation.warning(
+            "Administrator approval reminder was dismissed before physical-device simulation")
     }
 
     func clearSimulatedLocation() async {
@@ -300,7 +302,8 @@ extension AppViewModel {
             let usbService = registry.service(for: .physicalUSB) as? USBDeviceLocationService,
             let path = await usbService.resolvedPythonExecutablePathForDisplay()
         else {
-            selectedUSBSetupGuide = selectedDevice?.kind.isPhysicalDevice == true ? USBSetupGuide(resolvedPythonPath: nil) : nil
+            selectedUSBSetupGuide =
+                selectedDevice?.kind.isPhysicalDevice == true ? USBSetupGuide(resolvedPythonPath: nil) : nil
             selectedPythonRuntimeNote = nil
             if selectedDevice?.kind.isPhysicalDevice == true {
                 TeleportLog.devices.debug("No resolved Python executable available for the selected physical device")

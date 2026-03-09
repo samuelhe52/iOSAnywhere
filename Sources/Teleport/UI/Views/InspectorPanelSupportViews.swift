@@ -248,7 +248,8 @@ struct USBOnboardingSheet: View {
                 )
                 SimpleSecurityRow(
                     icon: "hammer",
-                    text: "Install Xcode and open it once so Apple's developer tools finish setup and `xcrun` can access device and simulator tooling."
+                    text:
+                        "Install Xcode and open it once so Apple's developer tools finish setup and `xcrun` can access device and simulator tooling."
                 )
                 SimpleSecurityRow(
                     icon: "terminal",
@@ -260,7 +261,8 @@ struct USBOnboardingSheet: View {
                 )
                 SimpleSecurityRow(
                     icon: "wifi",
-                    text: "For Wi-Fi discovery, connect once over USB first, accept pairing, then keep the iPhone unlocked on the same local network."
+                    text:
+                        "For Wi-Fi discovery, connect once over USB first, accept pairing, then keep the iPhone unlocked on the same local network."
                 )
                 SimpleSecurityRow(
                     icon: "checkmark.shield",

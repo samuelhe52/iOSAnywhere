@@ -37,7 +37,8 @@ enum TeleportStrings {
     static let manualCoordinates: LocalizedStringResource = "Manual Coordinates"
     static let currentLocation: LocalizedStringResource = "Current Location"
     static let simulatedLocation: LocalizedStringResource = "Simulated Location"
-    static let chooseDeviceFromSidebar: LocalizedStringResource = "Choose a physical device or simulator from the sidebar."
+    static let chooseDeviceFromSidebar: LocalizedStringResource =
+        "Choose a physical device or simulator from the sidebar."
     static let selectDeviceToBegin: LocalizedStringResource = "Select a device to begin"
     static let noDeviceSelected: LocalizedStringResource = "No device selected"
     static let simulatorKind: LocalizedStringResource = "Simulator"

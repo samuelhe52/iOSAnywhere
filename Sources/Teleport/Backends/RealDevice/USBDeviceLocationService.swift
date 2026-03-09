@@ -137,7 +137,8 @@ actor USBDeviceLocationService: LocationSimulationService {
 
         simulationHelper = helper
         activeCoordinate = coordinate
-        TeleportLog.simulation.info("Physical-device simulation active for \(connectedDevice.logLabel, privacy: .public)")
+        TeleportLog.simulation.info(
+            "Physical-device simulation active for \(connectedDevice.logLabel, privacy: .public)")
     }
 
     func clearLocation() async throws {
@@ -145,7 +146,8 @@ actor USBDeviceLocationService: LocationSimulationService {
             throw ServiceError.invalidSelection
         }
 
-        TeleportLog.simulation.info("Clearing physical-device simulated location for \(connectedDevice.logLabel, privacy: .public)")
+        TeleportLog.simulation.info(
+            "Clearing physical-device simulated location for \(connectedDevice.logLabel, privacy: .public)")
         if simulationHelper != nil {
             try await stopSimulationHelper()
             activeCoordinate = nil
@@ -156,7 +158,8 @@ actor USBDeviceLocationService: LocationSimulationService {
 
         try runOneShotHelper(mode: "clear", device: connectedDevice, coordinate: nil)
         activeCoordinate = nil
-        TeleportLog.simulation.info("Cleared physical-device simulated location for \(connectedDevice.logLabel, privacy: .public)")
+        TeleportLog.simulation.info(
+            "Cleared physical-device simulated location for \(connectedDevice.logLabel, privacy: .public)")
     }
 
     private func loadCoreDeviceDevices() throws -> [CoreDeviceRecord] {
@@ -210,7 +213,8 @@ actor USBDeviceLocationService: LocationSimulationService {
 
         let resolvedURL = URL(fileURLWithPath: path)
         resolvedPythonExecutableURL = resolvedURL
-        TeleportLog.devices.info("Resolved python3 executable for the physical-device helper at \(path, privacy: .public)")
+        TeleportLog.devices.info(
+            "Resolved python3 executable for the physical-device helper at \(path, privacy: .public)")
         return resolvedURL
     }
 
