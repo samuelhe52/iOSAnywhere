@@ -138,7 +138,11 @@ actor USBDeviceLocationService: LocationSimulationService {
         } catch {
             if helper.process.isRunning {
                 helper.process.terminate()
-                helper.process.waitUntilExit()
+                await USBDeviceProcessSupport.waitForProcessExit(helper.process, timeoutNanoseconds: 1_000_000_000)
+                if helper.process.isRunning {
+                    USBDeviceProcessSupport.forceTerminate(helper.process)
+                    helper.process.waitUntilExit()
+                }
             }
             let stdout = helper.stdout.fileHandleForReading.readDataToEndOfFile()
             let stderr = helper.stderr.fileHandleForReading.readDataToEndOfFile()
@@ -348,6 +352,11 @@ actor USBDeviceLocationService: LocationSimulationService {
 
         if simulationHelper.process.isRunning {
             simulationHelper.process.terminate()
+            await USBDeviceProcessSupport.waitForProcessExit(simulationHelper.process, timeoutNanoseconds: 1_000_000_000)
+        }
+
+        if simulationHelper.process.isRunning {
+            USBDeviceProcessSupport.forceTerminate(simulationHelper.process)
             simulationHelper.process.waitUntilExit()
         }
 

@@ -1,5 +1,9 @@
 import Foundation
 
+#if canImport(Darwin)
+import Darwin
+#endif
+
 struct USBSimulationHelper {
     let process: Process
     let stdin: FileHandle
@@ -23,6 +27,14 @@ enum USBDeviceProcessSupport {
         while process.isRunning && DispatchTime.now().uptimeNanoseconds < deadline {
             try? await Task.sleep(nanoseconds: 100_000_000)
         }
+    }
+
+    static func forceTerminate(_ process: Process) {
+        guard process.isRunning else {
+            return
+        }
+
+        _ = kill(process.processIdentifier, SIGKILL)
     }
 }
 
@@ -152,7 +164,7 @@ enum USBDeviceScript {
                         continue
 
                     if not line:
-                        continue
+                        break
 
                     command = line.decode("utf-8").strip()
                     if not command:

@@ -4,6 +4,13 @@
 
 All notable changes to Teleport are documented in this file.
 
+## v0.2.2 - 2026-03-11
+
+### Fixed
+
+- Fixed the physical-device Python helper so it exits cleanly when the app disappears unexpectedly instead of looping forever on a closed stdin pipe.
+- Fixed physical-device helper shutdown to escalate from cooperative stop to forceful termination when the backend process becomes stuck, preventing app quit from hanging indefinitely.
+
 ## v0.2.1 - 2026-03-11
 
 ### Added
