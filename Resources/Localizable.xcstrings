@@ -191,6 +191,16 @@
         }
       }
     },
+    "Connect to a device before using the movement wheel." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用移动控制轮之前，请先连接设备。"
+          }
+        }
+      }
+    },
     "Connected" : {
       "localizations" : {
         "zh-Hans" : {
@@ -411,12 +421,32 @@
         }
       }
     },
+    "Drag the control wheel to move the simulated point. Push farther to move faster, up to the configured speed. Release to stop." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拖动控制轮以移动模拟点。推得越远，移动速度越快，最高可达设定速度。松开即可停止。"
+          }
+        }
+      }
+    },
     "Enable Developer Mode on the iPhone in Settings > Privacy & Security > Developer Mode." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "请在 iPhone 的“设置 > 隐私与安全性 > 开发者模式”中启用开发者模式。"
+          }
+        }
+      }
+    },
+    "Enter valid coordinates before starting movement." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始移动前请输入有效坐标。"
           }
         }
       }
@@ -487,6 +517,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已找到 %lld 台设备。"
+          }
+        }
+      }
+    },
+    "Highway" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "高速"
           }
         }
       }
@@ -607,6 +647,42 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "缺少 Python 依赖"
+          }
+        }
+      }
+    },
+    "Movement" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移动"
+          }
+        }
+      }
+    },
+    "Moving" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移动中"
+          }
+        }
+      }
+    },
+    "Moving through %@ on %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Moving through %1$@ on %2$@."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在 %2$@ 上移动经过 %1$@。"
           }
         }
       }
@@ -981,6 +1057,26 @@
         }
       }
     },
+    "Speed" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "速度"
+          }
+        }
+      }
+    },
+    "Start simulation on the physical device before using the movement wheel." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用移动控制轮之前，请先在真机设备上启动模拟。"
+          }
+        }
+      }
+    },
     "Starting" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1071,6 +1167,16 @@
         }
       }
     },
+    "The movement wheel is available for connected simulators and for physical devices after simulation has started." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移动控制轮适用于已连接的模拟器，以及已启动模拟后的真机设备。"
+          }
+        }
+      }
+    },
     "The physical-device helper reported an invalid startup state." : {
       "localizations" : {
         "zh-Hans" : {
@@ -1131,6 +1237,16 @@
         }
       }
     },
+    "Update Interval" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新间隔"
+          }
+        }
+      }
+    },
     "USB · unavailable" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1147,6 +1263,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "USB 设备"
+          }
+        }
+      }
+    },
+    "Walking" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "步行"
           }
         }
       }
