@@ -29,6 +29,21 @@ enum TeleportStrings {
     static let stateDisconnecting: LocalizedStringResource = "Disconnecting"
     static let stateStarting: LocalizedStringResource = "Starting"
     static let stateStopping: LocalizedStringResource = "Stopping"
+    static let movementSectionTitle: LocalizedStringResource = "Movement"
+    static let movementWheelHint: LocalizedStringResource =
+        "Drag the control wheel to continuously move the simulated point at a fixed speed. Release to stop."
+    static let movementAvailableForSimulatorOnly: LocalizedStringResource =
+        "The movement wheel is currently available for connected simulators only."
+    static let movementRequiresConnection: LocalizedStringResource =
+        "Connect to a simulator before using the movement wheel."
+    static let movementRequiresValidCoordinates: LocalizedStringResource =
+        "Enter valid coordinates before starting movement."
+    static let movementSpeedLabel: LocalizedStringResource = "Speed"
+    static let movementUpdateIntervalLabel: LocalizedStringResource = "Update Interval"
+    static let movementWalkingSpeed: LocalizedStringResource = "Walking"
+    static let movementHighwaySpeed: LocalizedStringResource = "Highway"
+    static let movementActive: LocalizedStringResource = "Moving"
+    static let movementIdle: LocalizedStringResource = "Ready"
     static let searchUnavailable: LocalizedStringResource = "Apple location search is temporarily unavailable."
     static let searchNoResult: LocalizedStringResource = "No map result was returned for that place."
     static let searchUnableToLoad: LocalizedStringResource = "Unable to load that location from Apple Maps right now."
@@ -95,6 +110,10 @@ enum TeleportStrings {
 
     static func simulatingCoordinate(_ coordinate: String, on deviceName: String) -> LocalizedStringResource {
         "Simulating \(coordinate) on \(deviceName)."
+    }
+
+    static func movingCoordinate(_ coordinate: String, on deviceName: String) -> LocalizedStringResource {
+        "Moving through \(coordinate) on \(deviceName)."
     }
 
     static func clearedSimulatedLocation(on deviceName: String) -> LocalizedStringResource {

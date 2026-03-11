@@ -105,6 +105,8 @@ extension AppViewModel {
     }
 
     func disconnectSelectedDevice() async {
+        stopMovementControl(commitCurrentCoordinateToTextFields: false)
+
         guard let device = selectedDevice, let service = registry.service(for: device.kind) else {
             connectionState = .disconnected
             TeleportLog.devices.debug("Disconnect requested without an active device/service")
@@ -122,6 +124,8 @@ extension AppViewModel {
     }
 
     func simulateSelectedLocation() async {
+        stopMovementControl(commitCurrentCoordinateToTextFields: false)
+
         switch simulationState {
         case .starting, .stopping:
             TeleportLog.simulation.debug(
@@ -196,14 +200,7 @@ extension AppViewModel {
                 )
             }
 
-            try await service.setLocation(simulationCoordinate)
-            simulationState = .simulating(coordinate)
-            showsPythonDependencyGuide = nil
-            statusMessage = .localized(TeleportStrings.simulatingCoordinate(coordinate.formatted, on: device.name))
-
-            TeleportLog.simulation.info(
-                "Simulation active on \(device.logLabel, privacy: .public); displayed coordinate: \(coordinate.formatted, privacy: .private)"
-            )
+            try await applyDisplayedSimulationCoordinate(coordinate, on: device, using: service)
         } catch {
             handleSimulationError(error)
         }
@@ -229,6 +226,8 @@ extension AppViewModel {
     }
 
     func clearSimulatedLocation() async {
+        stopMovementControl(commitCurrentCoordinateToTextFields: false)
+
         guard case .simulating = simulationState else {
             return
         }
@@ -268,7 +267,59 @@ extension AppViewModel {
         }
     }
 
+    func updateMovementControl(_ vector: MovementControlVector) {
+        guard movementControlSupportedForSelection else {
+            movementControlVector = .zero
+            statusMessage = .localized(TeleportStrings.movementAvailableForSimulatorOnly)
+            return
+        }
+
+        guard movementControlAvailable else {
+            movementControlVector = .zero
+            statusMessage = .localized(TeleportStrings.movementRequiresConnection)
+            return
+        }
+
+        guard !vector.isZero else {
+            stopMovementControl()
+            return
+        }
+
+        guard currentMovementAnchorCoordinate != nil else {
+            movementControlVector = .zero
+            statusMessage = .localized(TeleportStrings.movementRequiresValidCoordinates)
+            return
+        }
+
+        suppressPickedLocationPin = true
+        movementControlVector = vector
+
+        guard movementLoopTask == nil else {
+            return
+        }
+
+        movementLoopTask = Task {
+            await runMovementLoop()
+        }
+    }
+
+    func stopMovementControl(commitCurrentCoordinateToTextFields: Bool = true) {
+        movementControlVector = .zero
+        movementLoopTask?.cancel()
+        movementLoopTask = nil
+
+        guard commitCurrentCoordinateToTextFields,
+            case .simulating(let coordinate) = simulationState
+        else {
+            return
+        }
+
+        latitudeText = String(format: "%.6f", coordinate.latitude)
+        longitudeText = String(format: "%.6f", coordinate.longitude)
+    }
+
     func prepareForTermination() async {
+        stopMovementControl(commitCurrentCoordinateToTextFields: false)
         TeleportLog.devices.info("Preparing services for application termination")
         await registry.shutdownAll()
         connectionState = .disconnected
@@ -282,6 +333,7 @@ extension AppViewModel {
     }
 
     private func handleSimulationError(_ error: Error) {
+        stopMovementControl(commitCurrentCoordinateToTextFields: false)
         let message = error.localizedDescription
         TeleportLog.simulation.error("Simulation failed: \(message, privacy: .public)")
 
@@ -319,6 +371,119 @@ extension AppViewModel {
     private enum ActionStateTarget {
         case connection
         case simulation
+    }
+
+    private var currentMovementAnchorCoordinate: LocationCoordinate? {
+        if case .simulating(let coordinate) = simulationState {
+            return coordinate
+        }
+
+        guard let latitude = Double(latitudeText),
+            let longitude = Double(longitudeText),
+            (-90.0...90.0).contains(latitude),
+            (-180.0...180.0).contains(longitude)
+        else {
+            return nil
+        }
+
+        return LocationCoordinate(latitude: latitude, longitude: longitude)
+    }
+
+    private func runMovementLoop() async {
+        guard let device = selectedDevice,
+            let service = registry.service(for: device.kind),
+            movementControlAvailable,
+            movementControlSupportedForSelection,
+            var coordinate = currentMovementAnchorCoordinate
+        else {
+            movementLoopTask = nil
+            movementControlVector = .zero
+            return
+        }
+
+        TeleportLog.simulation.info(
+            "Starting movement loop on \(device.logLabel, privacy: .public) at \(coordinate.formatted, privacy: .private)"
+        )
+
+        defer {
+            movementLoopTask = nil
+            movementControlVector = .zero
+        }
+
+        do {
+            if case .simulating = simulationState {
+                // Keep the active simulated location as the movement origin.
+            } else {
+                try await applyDisplayedSimulationCoordinate(coordinate, on: device, using: service)
+            }
+
+            var lastStepStartedAt = Date()
+
+            while !Task.isCancelled {
+                let vector = movementControlVector
+                guard !vector.isZero else {
+                    break
+                }
+
+                let stepStartedAt = Date()
+                let direction = vector.normalized
+                let elapsedSinceLastStep = max(
+                    stepStartedAt.timeIntervalSince(lastStepStartedAt),
+                    movementTickIntervalSeconds
+                )
+                lastStepStartedAt = stepStartedAt
+                let stepDistance = movementSpeedMetersPerSecond * elapsedSinceLastStep
+                coordinate = coordinate.offsetBy(
+                    northMeters: -direction.y * stepDistance,
+                    eastMeters: direction.x * stepDistance
+                )
+
+                try await applyDisplayedSimulationCoordinate(
+                    coordinate,
+                    on: device,
+                    using: service,
+                    moving: true
+                )
+
+                let remainingDelay = movementTickIntervalSeconds - Date().timeIntervalSince(stepStartedAt)
+                if remainingDelay > 0 {
+                    try await Task.sleep(
+                        nanoseconds: UInt64(remainingDelay * 1_000_000_000)
+                    )
+                }
+            }
+
+            TeleportLog.simulation.info(
+                "Stopped movement loop on \(device.logLabel, privacy: .public) at \(coordinate.formatted, privacy: .private)"
+            )
+        } catch is CancellationError {
+            TeleportLog.simulation.debug("Movement loop cancelled")
+        } catch {
+            handleSimulationError(error)
+        }
+    }
+
+    private func applyDisplayedSimulationCoordinate(
+        _ coordinate: LocationCoordinate,
+        on device: Device,
+        using service: LocationSimulationService,
+        moving: Bool = false
+    ) async throws {
+        let simulationCoordinate = ChinaCoordinateTransform.simulationCoordinate(fromDisplayed: coordinate)
+
+        try await service.setLocation(simulationCoordinate)
+        simulationState = .simulating(coordinate)
+        showsPythonDependencyGuide = nil
+        statusMessage =
+            moving
+            ? .localized(TeleportStrings.movingCoordinate(coordinate.formatted, on: device.name))
+            : .localized(TeleportStrings.simulatingCoordinate(coordinate.formatted, on: device.name))
+
+        if !moving {
+            TeleportLog.simulation.info(
+                "Simulation active on \(device.logLabel, privacy: .public); displayed coordinate: \(coordinate.formatted, privacy: .private)"
+            )
+        }
     }
 
     private func refreshedDeviceForAction(_ device: Device, stateTarget: ActionStateTarget) async -> Device? {

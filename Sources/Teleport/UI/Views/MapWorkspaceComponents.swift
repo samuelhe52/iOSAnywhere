@@ -7,6 +7,7 @@ struct MapWorkspaceMapCanvasView: View {
 
     let simulationState: SimulationRunState
     let pickedCoordinate: LocationCoordinate?
+    let showsPickedCoordinate: Bool
     let onTapCoordinate: (CLLocationCoordinate2D) -> Void
     let onCameraChange: (MKCoordinateRegion) -> Void
 
@@ -39,7 +40,8 @@ struct MapWorkspaceMapCanvasView: View {
             )
         }
 
-        if let pickedCoordinate,
+        if showsPickedCoordinate,
+            let pickedCoordinate,
             !isSameVisiblePin(pickedCoordinate, simulatedCoordinate)
         {
             markers.append(

@@ -4,6 +4,42 @@ enum AppViewModelPreferences {
     static let suppressUSBPrivilegeNotice = "suppressUSBPrivilegeNotice"
 }
 
+struct MovementControlVector: Equatable, Sendable {
+    var x: Double
+    var y: Double
+
+    static let zero = MovementControlVector(x: 0, y: 0)
+
+    init(x: Double, y: Double) {
+        let magnitude = sqrt(x * x + y * y)
+
+        if magnitude > 1, magnitude > 0 {
+            self.x = x / magnitude
+            self.y = y / magnitude
+        } else {
+            self.x = x
+            self.y = y
+        }
+    }
+
+    var magnitude: Double {
+        min(1, sqrt(x * x + y * y))
+    }
+
+    var isZero: Bool {
+        magnitude < 0.001
+    }
+
+    var normalized: MovementControlVector {
+        let magnitude = magnitude
+        guard magnitude >= 0.001 else {
+            return .zero
+        }
+
+        return MovementControlVector(x: x / magnitude, y: y / magnitude)
+    }
+}
+
 struct USBSetupGuide: Equatable {
     let resolvedPythonPath: String?
 

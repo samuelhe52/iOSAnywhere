@@ -35,6 +35,7 @@ struct MapWorkspaceView: View {
                     cameraPosition: $cameraPosition,
                     simulationState: viewModel.simulationState,
                     pickedCoordinate: pickedCoordinate,
+                    showsPickedCoordinate: viewModel.showsPickedLocationPin,
                     onTapCoordinate: { coordinate in
                         setPickedLocation(
                             LocationCoordinate(
@@ -161,6 +162,7 @@ struct MapWorkspaceView: View {
             }
 
             await MainActor.run {
+                viewModel.suppressPickedLocationPin = false
                 syncPickedCoordinate(to: coordinate)
             }
         }
@@ -212,6 +214,7 @@ struct MapWorkspaceView: View {
         let displayedCoordinate = displayCoordinate(for: coordinate, source: source)
 
         pendingCoordinateSyncTask?.cancel()
+        viewModel.suppressPickedLocationPin = false
         suppressedManualCoordinateSyncCallbacks = 2
         viewModel.latitudeText = String(format: "%.6f", displayedCoordinate.latitude)
         viewModel.longitudeText = String(format: "%.6f", displayedCoordinate.longitude)

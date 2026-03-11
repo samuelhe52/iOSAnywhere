@@ -4,6 +4,8 @@ struct LocationCoordinate: Equatable, Hashable, Codable, Sendable {
     var latitude: Double
     var longitude: Double
 
+    private static let metersPerLatitudeDegree = 111_320.0
+
     static let applePark = LocationCoordinate(latitude: 37.3346, longitude: -122.0090)
 
     func isApproximatelyEqual(to other: LocationCoordinate, tolerance: Double = 0.00001) -> Bool {
@@ -13,6 +15,35 @@ struct LocationCoordinate: Equatable, Hashable, Codable, Sendable {
 
     var formatted: String {
         String(format: "%.5f, %.5f", latitude, longitude)
+    }
+
+    func offsetBy(northMeters: Double, eastMeters: Double) -> LocationCoordinate {
+        let latitudeDelta = northMeters / Self.metersPerLatitudeDegree
+        let longitudeScale = max(cos(latitude * .pi / 180.0), 0.01)
+        let longitudeDelta = eastMeters / (Self.metersPerLatitudeDegree * longitudeScale)
+
+        return LocationCoordinate(
+            latitude: max(-90.0, min(90.0, latitude + latitudeDelta)),
+            longitude: normalizedLongitude(longitude + longitudeDelta)
+        )
+    }
+
+    private func normalizedLongitude(_ value: Double) -> Double {
+        guard value < -180.0 || value > 180.0 else {
+            return value
+        }
+
+        var longitude = value
+
+        while longitude < -180.0 {
+            longitude += 360.0
+        }
+
+        while longitude > 180.0 {
+            longitude -= 360.0
+        }
+
+        return longitude
     }
 }
 
