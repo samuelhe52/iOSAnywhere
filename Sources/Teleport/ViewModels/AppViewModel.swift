@@ -37,6 +37,8 @@ final class AppViewModel {
     var movementSpeedMetersPerSecond: Double = 4.0
     var movementTickIntervalSeconds: Double = 0.25
     var suppressPickedLocationPin: Bool = false
+    var loadedRoute: SimulatedRoute?
+    var routePlaybackState: RoutePlaybackState = .idle
 
     @ObservationIgnored var movementLoopTask: Task<Void, Never>?
 
@@ -86,6 +88,18 @@ final class AppViewModel {
 
     var showsPickedLocationPin: Bool {
         !suppressPickedLocationPin
+    }
+
+    var hasLoadedRoute: Bool {
+        loadedRoute != nil
+    }
+
+    var loadedRouteWaypointCount: Int {
+        loadedRoute?.pointCount ?? 0
+    }
+
+    var loadedRouteDistanceMeters: Double {
+        loadedRoute?.totalDistanceMeters ?? 0
     }
 
     var movementSpeedPresetValues: [Double] {

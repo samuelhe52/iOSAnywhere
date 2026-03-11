@@ -17,6 +17,7 @@
 		9FF151F82F5D80350025CED2 /* MapWorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151EA2F5D80350025CED2 /* MapWorkspaceView.swift */; };
 		9FF151F92F5D80350025CED2 /* InspectorPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151E92F5D80350025CED2 /* InspectorPanelView.swift */; };
 		9FF151FA2F5D80350025CED2 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151DF2F5D80350025CED2 /* Device.swift */; };
+		9FF151FA2F5D80350025CED3 /* RouteModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151DF2F5D80350025CED3 /* RouteModels.swift */; };
 		9FF151FB2F5D80350025CED2 /* SimulationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151E12F5D80350025CED2 /* SimulationState.swift */; };
 		9FF151FC2F5D80350025CED2 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151ED2F5D80350025CED2 /* AppViewModel.swift */; };
 		9FF151FD2F5D80350025CED2 /* LocationSimulationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151E62F5D80350025CED2 /* LocationSimulationService.swift */; };
@@ -37,6 +38,7 @@
 		9FF151DA2F5D80350025CED2 /* USBDeviceLocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USBDeviceLocationService.swift; sourceTree = "<group>"; };
 		9FF151DC2F5D80350025CED2 /* SimulatorLocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatorLocationService.swift; sourceTree = "<group>"; };
 		9FF151DF2F5D80350025CED2 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
+		9FF151DF2F5D80350025CED3 /* RouteModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteModels.swift; sourceTree = "<group>"; };
 		9FF151E02F5D80350025CED2 /* LocationCoordinate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationCoordinate.swift; sourceTree = "<group>"; };
 		9FF151E12F5D80350025CED2 /* SimulationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulationState.swift; sourceTree = "<group>"; };
 		9FF151E42F5D80350025CED2 /* CommandRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandRunner.swift; sourceTree = "<group>"; };
@@ -147,6 +149,7 @@
 			isa = PBXGroup;
 			children = (
 				9FF151DF2F5D80350025CED2 /* Device.swift */,
+				9FF151DF2F5D80350025CED3 /* RouteModels.swift */,
 				9FF151E02F5D80350025CED2 /* LocationCoordinate.swift */,
 				9FF151E12F5D80350025CED2 /* SimulationState.swift */,
 			);
@@ -311,6 +314,7 @@
 				9FF151F92F5D80350025CED2 /* InspectorPanelView.swift in Sources */,
 				9FF152052F5D80350025CED2 /* InspectorPanelSupportViews.swift in Sources */,
 				9FF151FA2F5D80350025CED2 /* Device.swift in Sources */,
+				9FF151FA2F5D80350025CED3 /* RouteModels.swift in Sources */,
 				9FF151FB2F5D80350025CED2 /* SimulationState.swift in Sources */,
 				9FF151FC2F5D80350025CED2 /* AppViewModel.swift in Sources */,
 				B2C3D4E52F5EA0010025CED2 /* AppViewModelSupport.swift in Sources */,
