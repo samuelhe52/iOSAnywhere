@@ -113,6 +113,7 @@ enum USBDeviceScript {
 
     static let pythonHelperScript = #"""
         import asyncio
+        import os
         import re
         import shlex
         import sys
@@ -134,15 +135,42 @@ enum USBDeviceScript {
             write_status(status_path, "READY")
 
 
-        async def hold_simulation(simulation, stop_path):
+        async def session_command_loop(simulation, stop_path):
+            loop = asyncio.get_running_loop()
+            reader = asyncio.StreamReader()
+            protocol = asyncio.StreamReaderProtocol(reader)
+            transport, _ = await loop.connect_read_pipe(lambda: protocol, sys.stdin)
+
             try:
                 while True:
+                    if os.path.exists(stop_path):
+                        break
+
                     try:
-                        with open(stop_path, "r", encoding="utf-8"):
-                            break
-                    except FileNotFoundError:
-                        await asyncio.sleep(0.1)
+                        line = await asyncio.wait_for(reader.readline(), timeout=0.1)
+                    except asyncio.TimeoutError:
+                        continue
+
+                    if not line:
+                        continue
+
+                    command = line.decode("utf-8").strip()
+                    if not command:
+                        continue
+
+                    parts = command.split()
+                    action = parts[0].upper()
+
+                    if action == "SET" and len(parts) == 3:
+                        await simulation.set(float(parts[1]), float(parts[2]))
+                    elif action == "CLEAR":
+                        await simulation.clear()
+                    elif action == "STOP":
+                        break
+                    else:
+                        print(f"Unsupported helper command: {command}", file=sys.stderr)
             finally:
+                transport.close()
                 await simulation.clear()
 
 
@@ -161,7 +189,7 @@ enum USBDeviceScript {
                     if mode == "set":
                         await simulation.set(latitude, longitude)
                         mark_ready(status_path)
-                        await hold_simulation(simulation, stop_path)
+                        await session_command_loop(simulation, stop_path)
                     else:
                         await simulation.clear()
             finally:
@@ -200,7 +228,7 @@ enum USBDeviceScript {
                             if mode == "set":
                                 await simulation.set(latitude, longitude)
                                 mark_ready(status_path)
-                                await hold_simulation(simulation, stop_path)
+                                await session_command_loop(simulation, stop_path)
                             else:
                                 await simulation.clear()
             finally:
@@ -232,7 +260,7 @@ enum USBDeviceScript {
                             if mode == "set":
                                 await simulation.set(latitude, longitude)
                                 mark_ready(status_path)
-                                await hold_simulation(simulation, stop_path)
+                                await session_command_loop(simulation, stop_path)
                             else:
                                 await simulation.clear()
             finally:
@@ -302,7 +330,7 @@ enum USBDeviceScript {
         stopURL: URL
     ) -> [String] {
         var arguments = [
-            "-c", pythonHelperScript, mode, device.id, device.osVersion, statusURL.path, stopURL.path,
+            "-u", "-c", pythonHelperScript, mode, device.id, device.osVersion, statusURL.path, stopURL.path,
             device.kind.rawValue
         ]
 

@@ -33,11 +33,13 @@ enum TeleportStrings {
     static let movementWheelHint: LocalizedStringResource =
         "Drag the control wheel to continuously move the simulated point at a fixed speed. Release to stop."
     static let movementAvailableForSimulatorOnly: LocalizedStringResource =
-        "The movement wheel is currently available for connected simulators only."
+        "The movement wheel is available for connected simulators and for physical devices after simulation has started."
     static let movementRequiresConnection: LocalizedStringResource =
-        "Connect to a simulator before using the movement wheel."
+        "Connect to a device before using the movement wheel."
     static let movementRequiresValidCoordinates: LocalizedStringResource =
         "Enter valid coordinates before starting movement."
+    static let movementRequiresActivePhysicalSimulation: LocalizedStringResource =
+        "Start simulation on the physical device before using the movement wheel."
     static let movementSpeedLabel: LocalizedStringResource = "Speed"
     static let movementUpdateIntervalLabel: LocalizedStringResource = "Update Interval"
     static let movementWalkingSpeed: LocalizedStringResource = "Walking"

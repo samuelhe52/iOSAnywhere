@@ -432,7 +432,8 @@ extension AppViewModel {
                     movementTickIntervalSeconds
                 )
                 lastStepStartedAt = stepStartedAt
-                let stepDistance = movementSpeedMetersPerSecond * elapsedSinceLastStep
+                let effectiveSpeed = movementSpeedMetersPerSecond * vector.magnitude
+                let stepDistance = effectiveSpeed * elapsedSinceLastStep
                 coordinate = coordinate.offsetBy(
                     northMeters: -direction.y * stepDistance,
                     eastMeters: direction.x * stepDistance

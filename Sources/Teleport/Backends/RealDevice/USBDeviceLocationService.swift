@@ -83,10 +83,32 @@ actor USBDeviceLocationService: LocationSimulationService {
             throw ServiceError.invalidSelection
         }
 
+        if let simulationHelper {
+            if simulationHelper.process.isRunning {
+                TeleportLog.simulation.info(
+                    "Updating physical-device location simulation for \(connectedDevice.logLabel, privacy: .public) to \(coordinate.formatted, privacy: .private)"
+                )
+                do {
+                    try sendCoordinateUpdate(coordinate, to: simulationHelper)
+                    activeCoordinate = coordinate
+                    return
+                } catch {
+                    TeleportLog.simulation.error(
+                        "Failed to stream coordinate update to physical-device helper for \(connectedDevice.logLabel, privacy: .public): \(error.localizedDescription, privacy: .public)"
+                    )
+                    try? await stopSimulationHelper()
+                }
+            } else {
+                TeleportLog.simulation.warning(
+                    "Physical-device helper was no longer running for \(connectedDevice.logLabel, privacy: .public); starting a new session"
+                )
+                try? await stopSimulationHelper()
+            }
+        }
+
         TeleportLog.simulation.info(
             "Starting physical-device location simulation for \(connectedDevice.logLabel, privacy: .public) at \(coordinate.formatted, privacy: .private)"
         )
-        try? await stopSimulationHelper()
 
         let (helper, administratorPassword) = try makeSimulationHelper(
             mode: "set",
@@ -99,7 +121,6 @@ actor USBDeviceLocationService: LocationSimulationService {
             if let administratorPassword {
                 try helper.stdin.write(contentsOf: Data((administratorPassword + "\n").utf8))
             }
-            helper.stdin.closeFile()
             TeleportLog.simulation.debug(
                 "Launched physical-device simulation helper for \(connectedDevice.logLabel, privacy: .public)")
         } catch {
@@ -304,6 +325,15 @@ actor USBDeviceLocationService: LocationSimulationService {
         )
     }
 
+    private func sendCoordinateUpdate(_ coordinate: LocationCoordinate, to helper: USBSimulationHelper) throws {
+        guard helper.process.isRunning else {
+            throw ServiceError.unavailable(String(localized: TeleportStrings.physicalHelperExitedBeforeReady))
+        }
+
+        let command = "SET \(coordinate.latitude) \(coordinate.longitude)\n"
+        try helper.stdin.write(contentsOf: Data(command.utf8))
+    }
+
     private func stopSimulationHelper() async throws {
         guard let simulationHelper else {
             return
@@ -311,6 +341,8 @@ actor USBDeviceLocationService: LocationSimulationService {
 
         TeleportLog.simulation.debug("Stopping active physical-device simulation helper")
         self.simulationHelper = nil
+        try? simulationHelper.stdin.write(contentsOf: Data("STOP\n".utf8))
+        try? simulationHelper.stdin.close()
         FileManager.default.createFile(atPath: simulationHelper.stopURL.path, contents: Data(), attributes: nil)
         await USBDeviceProcessSupport.waitForProcessExit(simulationHelper.process, timeoutNanoseconds: 5_000_000_000)
 

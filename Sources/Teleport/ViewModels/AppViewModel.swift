@@ -49,15 +49,39 @@ final class AppViewModel {
     }
 
     var movementControlAvailable: Bool {
-        selectedDevice?.kind == .simulator && connectionState == .connected
+        guard connectionState == .connected, let selectedDevice else {
+            return false
+        }
+
+        if selectedDevice.kind == .simulator {
+            return true
+        }
+
+        guard selectedDevice.kind.isPhysicalDevice else {
+            return false
+        }
+
+        if case .simulating = simulationState {
+            return true
+        }
+
+        return false
     }
 
     var movementControlSupportedForSelection: Bool {
-        selectedDevice?.kind == .simulator
+        guard let selectedDevice else {
+            return false
+        }
+
+        return selectedDevice.kind == .simulator || selectedDevice.kind.isPhysicalDevice
     }
 
     var isMovementControlActive: Bool {
         !movementControlVector.isZero
+    }
+
+    var effectiveMovementSpeedMetersPerSecond: Double {
+        movementSpeedMetersPerSecond * movementControlVector.magnitude
     }
 
     var showsPickedLocationPin: Bool {

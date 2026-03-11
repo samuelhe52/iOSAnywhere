@@ -291,7 +291,8 @@ struct InspectorMovementControlsView: View {
 
                 Text(
                     String(
-                        format: "%.1f m/s · %.2fs", viewModel.movementSpeedMetersPerSecond,
+                        format: "%.1f / %.1f m/s · %.2fs", viewModel.effectiveMovementSpeedMetersPerSecond,
+                        viewModel.movementSpeedMetersPerSecond,
                         viewModel.movementTickIntervalSeconds)
                 )
                 .font(.caption.monospacedDigit())
@@ -357,6 +358,12 @@ struct InspectorMovementControlsView: View {
 
         if !viewModel.movementControlSupportedForSelection {
             return TeleportStrings.movementAvailableForSimulatorOnly
+        }
+
+        if viewModel.selectedDevice?.kind.isPhysicalDevice == true,
+            viewModel.connectionState == .connected
+        {
+            return TeleportStrings.movementRequiresActivePhysicalSimulation
         }
 
         return TeleportStrings.movementRequiresConnection
