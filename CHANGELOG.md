@@ -4,6 +4,18 @@
 
 All notable changes to Teleport are documented in this file.
 
+## v0.2.1 - 2026-03-11
+
+### Added
+
+- Added joystick movement controls for nudging the simulated location directly from the app on both simulators and real devices.
+- Added variable-speed movement handling so joystick-driven movement responds to control intensity and configured speed presets.
+
+### Changed
+
+- Updated English and Simplified Chinese localization coverage for the new movement controls and related UI text.
+- Refined the README device support and download guidance to match current simulator and physical-device capabilities.
+
 ## v0.2.0 - 2026-03-09
 
 ### Added

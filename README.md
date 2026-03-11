@@ -98,6 +98,3 @@ Teleport was originally developed under the name iOSAnywhere and later renamed.
 
 If you are using Teleport from mainland China, Apple Maps search results may be limited to locations inside China or may fail for places outside China. In practice, searching for overseas places may require a VPN. You can still navigate the map directly to other regions and pick a location manually without search.
 
-## Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for release notes, including [v0.2.0](CHANGELOG.md#v020---2026-03-09).

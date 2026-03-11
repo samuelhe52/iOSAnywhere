@@ -98,6 +98,3 @@ Teleport 最初以 iOSAnywhere 为名开发，后续更名为 Teleport。
 
 如果你在中国大陆使用 Teleport，Apple 地图搜索结果可能仅限中国境内地点，或者无法返回海外地点。实际使用中，搜索海外地点可能需要 VPN。即便搜索不可用，你仍然可以直接拖动地图到其他区域并手动选择位置。
 
-## 更新日志
-
-发布说明见 [CHANGELOG.md](CHANGELOG.md)，其中包括 [v0.2.0](CHANGELOG.md#v020---2026-03-09)。
