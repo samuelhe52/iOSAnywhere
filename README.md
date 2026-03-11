@@ -2,7 +2,7 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-Teleport is a native macOS app for simulating iPhone location on iOS Simulators and USB-connected physical devices.
+Teleport is a native macOS app for simulating iOS device location on iOS Simulators and physical devices connected over USB or Wi-Fi.
 
 Built with SwiftUI and MapKit, it gives you a desktop workflow for picking a point on a map, searching for a place, and pushing that location to your test target.
 
@@ -18,7 +18,8 @@ By using this project for any non-development or otherwise unintended purpose, y
 
 - Native macOS three-pane UI for device selection, map interaction, and session controls
 - iOS Simulator support for set and clear location flows
-- USB iPhone support for physical-device location simulation
+- USB and Wi-Fi physical-device support for location simulation
+- Stable simulator and physical-device simulation flows
 - Map-based point selection with manual latitude/longitude entry
 - Apple Maps search with recent-search history
 - Clear session status and stop/reset controls
@@ -26,9 +27,10 @@ By using this project for any non-development or otherwise unintended purpose, y
 ## Requirements
 
 - macOS
-- Xcode installed and opened once so `xcrun`, `simctl`, `xcdevice`, and `devicectl` are available
-- For physical devices: a USB-connected iPhone with Developer Mode enabled
+- Xcode installed and opened once so `xcrun`, `simctl`, and `devicectl` are available
+- For physical devices: a USB- or Wi-Fi-connected physical iOS device with Developer Mode enabled
 - For physical devices: `python3` and `pymobiledevice3`
+- For Wi-Fi physical devices: connect once over USB first to create a pairing record, then keep the device unlocked on the same local network
 
 If macOS reports that developer tools are missing, install Apple's command line developer tools first:
 
@@ -44,7 +46,7 @@ sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
 Then launch Xcode once to finish first-run setup for simulator and device tooling.
 
-Install the Python dependency with:
+Install the Python dependency into the same `python3` interpreter that Teleport resolves from your shell:
 
 ```sh
 python3 -m pip install pymobiledevice3
@@ -73,17 +75,17 @@ xcodebuild -project Teleport.xcodeproj -scheme Teleport -destination 'platform=m
 ## How It Works
 
 1. Launch Teleport.
-2. Select a simulator or USB-connected iPhone.
+2. Select a simulator or physical iOS device.
 3. Connect to the device.
 4. Pick a location from the map, search, or manual coordinates.
 5. Click `Simulate` to apply the location.
 6. Click `Stop` to clear it.
 
-For physical devices, Teleport may ask for administrator approval and will guide you if a required Python dependency is missing.
+For physical devices, Teleport may ask for administrator approval, guide you if a required Python dependency is missing, and require an initial USB pairing step before Wi-Fi discovery works.
 
 ## Status
 
-Teleport already covers the core teleport workflow for simulators and USB devices. Route playback, GPX import, and movement tooling are not part of the current app yet.
+Teleport already covers the core teleport workflow for simulators and physical devices over USB or Wi-Fi. Route playback, GPX import, and movement tooling are not part of the current app yet.
 
 ## Development
 
@@ -98,4 +100,4 @@ If you are using Teleport from mainland China, Apple Maps search results may be 
 
 ## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for release notes, including [v0.1.1](CHANGELOG.md#v011---2026-03-09).
+See [CHANGELOG.md](CHANGELOG.md) for release notes, including [v0.2.0](CHANGELOG.md#v020---2026-03-09).
