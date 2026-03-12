@@ -28,6 +28,23 @@ struct LocationCoordinate: Equatable, Hashable, Codable, Sendable {
         )
     }
 
+    func interpolated(to other: LocationCoordinate, fraction: Double) -> LocationCoordinate {
+        let clampedFraction = min(max(fraction, 0), 1)
+        let latitudeValue = latitude + (other.latitude - latitude) * clampedFraction
+
+        var longitudeDelta = other.longitude - longitude
+        if longitudeDelta > 180 {
+            longitudeDelta -= 360
+        } else if longitudeDelta < -180 {
+            longitudeDelta += 360
+        }
+
+        return LocationCoordinate(
+            latitude: latitudeValue,
+            longitude: normalizedLongitude(longitude + longitudeDelta * clampedFraction)
+        )
+    }
+
     private func normalizedLongitude(_ value: Double) -> Double {
         guard value < -180.0 || value > 180.0 else {
             return value

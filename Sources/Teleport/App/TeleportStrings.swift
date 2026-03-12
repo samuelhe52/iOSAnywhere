@@ -44,6 +44,28 @@ enum TeleportStrings {
     static let routePlaybackPlaying: LocalizedStringResource = "Playing"
     static let routePlaybackPaused: LocalizedStringResource = "Paused"
     static let routePlaybackCompleted: LocalizedStringResource = "Completed"
+    static let routePlaybackPlay: LocalizedStringResource = "Play"
+    static let routePlaybackPause: LocalizedStringResource = "Pause"
+    static let routePlaybackStop: LocalizedStringResource = "Stop"
+    static let routePlaybackResume: LocalizedStringResource = "Resume"
+    static let routePlaybackReplay: LocalizedStringResource = "Replay"
+    static let routePlaybackProgressLabel: LocalizedStringResource = "Progress"
+    static let routePlaybackCurrentPointLabel: LocalizedStringResource = "Current Point"
+    static let routeRecordedTimeLabel: LocalizedStringResource = "Recorded Time"
+    static let routeTotalTimeLabel: LocalizedStringResource = "Replay Time"
+    static let routeTimingModeLabel: LocalizedStringResource = "Timing"
+    static let routeTimingRecorded: LocalizedStringResource = "Recorded"
+    static let routeTimingFixed: LocalizedStringResource = "Fixed"
+    static let routeTimingSpeed: LocalizedStringResource = "Speed"
+    static let routeReplaySpeedLabel: LocalizedStringResource = "Replay Speed"
+    static let routeFixedIntervalLabel: LocalizedStringResource = "Fixed Interval"
+    static let routeTravelSpeedLabel: LocalizedStringResource = "Travel Speed"
+    static let routePacingHintRecorded: LocalizedStringResource =
+        "Use GPX timing when present, but compress long pauses for practical replay."
+    static let routePacingHintFixed: LocalizedStringResource =
+        "Advance every waypoint on a fixed clock regardless of GPX timestamps."
+    static let routePacingHintSpeed: LocalizedStringResource =
+        "Convert segment distance into delay using a target speed. Best for planned routes with no timing data."
     static let routePreviewStart: LocalizedStringResource = "Route Start"
     static let routePreviewEnd: LocalizedStringResource = "Route End"
     static let movementSectionTitle: LocalizedStringResource = "Movement"
@@ -110,6 +132,9 @@ enum TeleportStrings {
     static let cancel: LocalizedStringResource = "Cancel"
     static let authorize: LocalizedStringResource = "Authorize"
     static let administratorPassword: LocalizedStringResource = "Administrator Password"
+    static let noRouteLoaded: LocalizedStringResource = "Load a route before starting playback."
+    static let routeRequiresAtLeastTwoPoints: LocalizedStringResource = "The loaded route needs at least two points for playback."
+    static let routePlaybackRequiresConnection: LocalizedStringResource = "Connect to an available device before starting route playback."
 
     static func foundDevices(_ count: Int) -> LocalizedStringResource {
         "Found \(count) device(s)."
@@ -141,6 +166,22 @@ enum TeleportStrings {
 
     static func failedToImportGPX(_ details: String) -> LocalizedStringResource {
         "Failed to import GPX: \(details)"
+    }
+
+    static func playingRoute(_ name: String, pointNumber: Int, totalPoints: Int) -> LocalizedStringResource {
+        "Playing route \(name) · point \(pointNumber) of \(totalPoints)."
+    }
+
+    static func pausedRoute(_ name: String) -> LocalizedStringResource {
+        "Paused route \(name)."
+    }
+
+    static func stoppedRoute(_ name: String) -> LocalizedStringResource {
+        "Stopped route \(name)."
+    }
+
+    static func completedRoute(_ name: String) -> LocalizedStringResource {
+        "Completed route \(name)."
     }
 
     static let clearedLoadedRoute: LocalizedStringResource = "Cleared the loaded route preview."

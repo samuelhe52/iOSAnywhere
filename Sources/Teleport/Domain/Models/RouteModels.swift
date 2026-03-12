@@ -6,6 +6,12 @@ enum RouteSource: String, CaseIterable, Codable, Sendable {
     case navigation
 }
 
+enum RoutePlaybackTimingMode: String, CaseIterable, Codable, Sendable {
+    case recorded
+    case fixedInterval
+    case fixedSpeed
+}
+
 struct RouteWaypoint: Identifiable, Equatable, Hashable, Codable, Sendable {
     let id: UUID
     var coordinate: LocationCoordinate
@@ -67,6 +73,37 @@ struct SimulatedRoute: Identifiable, Equatable, Hashable, Codable, Sendable {
             total + pair.0.coordinate.distance(to: pair.1.coordinate)
         }
     }
+
+    var recordedDurationSeconds: TimeInterval? {
+        guard waypoints.count > 1 else {
+            return nil
+        }
+
+        var totalDuration: TimeInterval = 0
+        var hasTimingData = false
+
+        for (start, end) in zip(waypoints, waypoints.dropFirst()) {
+            if let startTimestamp = start.timestamp,
+                let endTimestamp = end.timestamp
+            {
+                let timestampDelta = endTimestamp.timeIntervalSince(startTimestamp)
+                if timestampDelta > 0 {
+                    totalDuration += timestampDelta
+                    hasTimingData = true
+                    continue
+                }
+            }
+
+            if let expectedTravelTime = end.expectedTravelTime,
+                expectedTravelTime > 0
+            {
+                totalDuration += expectedTravelTime
+                hasTimingData = true
+            }
+        }
+
+        return hasTimingData ? totalDuration : nil
+    }
 }
 
 struct RoutePlaybackProgress: Equatable, Sendable {
@@ -75,8 +112,13 @@ struct RoutePlaybackProgress: Equatable, Sendable {
     var waypointCount: Int
     var currentCoordinate: LocationCoordinate?
     var traveledDistanceMeters: Double
+    var totalDistanceMeters: Double
 
     var fractionCompleted: Double {
+        if totalDistanceMeters > 0 {
+            return min(max(traveledDistanceMeters / totalDistanceMeters, 0), 1)
+        }
+
         guard waypointCount > 1 else {
             return waypointCount == 1 ? 1 : 0
         }
@@ -99,7 +141,7 @@ enum RoutePlaybackState: Equatable, Sendable {
     case failed(UserFacingText)
 }
 
-private extension LocationCoordinate {
+extension LocationCoordinate {
     func distance(to other: LocationCoordinate) -> Double {
         let earthRadiusMeters = 6_371_000.0
         let latitude1 = latitude * .pi / 180.0

@@ -29,6 +29,11 @@ enum GPXRouteParserError: LocalizedError {
 }
 
 private final class GPXDocumentParser: NSObject, XMLParserDelegate {
+    struct RouteCandidate {
+        var name: String?
+        var points: [ParsedPoint]
+    }
+
     struct ParsedPoint {
         var coordinate: LocationCoordinate
         var timestamp: Date?
@@ -49,12 +54,14 @@ private final class GPXDocumentParser: NSObject, XMLParserDelegate {
     private var currentPointKind: PointKind?
     private var currentPoint: ParsedPoint?
 
-    private var trackName: String?
-    private var routeName: String?
     private var metadataName: String?
+    private var currentTrackName: String?
+    private var currentRouteName: String?
+    private var currentTrackPoints: [ParsedPoint] = []
+    private var currentRoutePoints: [ParsedPoint] = []
 
-    private var trackPoints: [ParsedPoint] = []
-    private var routePoints: [ParsedPoint] = []
+    private var trackCandidates: [RouteCandidate] = []
+    private var routeCandidates: [RouteCandidate] = []
     private var waypointPoints: [ParsedPoint] = []
 
     var error: Error?
@@ -67,20 +74,20 @@ private final class GPXDocumentParser: NSObject, XMLParserDelegate {
     }
 
     func makeRoute() throws -> SimulatedRoute {
-        let selectedPoints: [ParsedPoint]
+        let selectedCandidate: RouteCandidate?
 
-        if trackPoints.count > 1 {
-            selectedPoints = trackPoints
-        } else if routePoints.count > 1 {
-            selectedPoints = routePoints
+        if let trackCandidate = trackCandidates.first(where: { $0.points.count > 1 }) {
+            selectedCandidate = trackCandidate
+        } else if let routeCandidate = routeCandidates.first(where: { $0.points.count > 1 }) {
+            selectedCandidate = routeCandidate
         } else if waypointPoints.count > 1 {
-            selectedPoints = waypointPoints
+            selectedCandidate = RouteCandidate(name: nil, points: waypointPoints)
         } else {
             throw GPXRouteParserError.noUsablePoints
         }
 
-        let routeName = preferredName
-        let waypoints = selectedPoints.map {
+        let routeName = selectedCandidate?.name ?? preferredName
+        let waypoints = (selectedCandidate?.points ?? []).map {
             RouteWaypoint(coordinate: $0.coordinate, timestamp: $0.timestamp)
         }
 
@@ -98,6 +105,12 @@ private final class GPXDocumentParser: NSObject, XMLParserDelegate {
         currentText = ""
 
         switch elementName {
+        case "trk":
+            currentTrackName = nil
+            currentTrackPoints = []
+        case "rte":
+            currentRouteName = nil
+            currentRoutePoints = []
         case "trkpt":
             currentPointKind = .track
             currentPoint = parsedPoint(from: attributeDict)
@@ -127,10 +140,10 @@ private final class GPXDocumentParser: NSObject, XMLParserDelegate {
 
         if elementName == "name", !trimmedText.isEmpty {
             switch parentElement {
-            case "trk" where trackName == nil:
-                trackName = trimmedText
-            case "rte" where routeName == nil:
-                routeName = trimmedText
+            case "trk" where currentTrackName == nil:
+                currentTrackName = trimmedText
+            case "rte" where currentRouteName == nil:
+                currentRouteName = trimmedText
             case "metadata" where metadataName == nil:
                 metadataName = trimmedText
             default:
@@ -143,15 +156,27 @@ private final class GPXDocumentParser: NSObject, XMLParserDelegate {
         }
 
         switch elementName {
+        case "trk":
+            if currentTrackPoints.count > 1 {
+                trackCandidates.append(RouteCandidate(name: currentTrackName, points: currentTrackPoints))
+            }
+            currentTrackName = nil
+            currentTrackPoints = []
+        case "rte":
+            if currentRoutePoints.count > 1 {
+                routeCandidates.append(RouteCandidate(name: currentRouteName, points: currentRoutePoints))
+            }
+            currentRouteName = nil
+            currentRoutePoints = []
         case "trkpt":
             if let currentPoint {
-                trackPoints.append(currentPoint)
+                currentTrackPoints.append(currentPoint)
             }
             currentPoint = nil
             currentPointKind = nil
         case "rtept":
             if let currentPoint {
-                routePoints.append(currentPoint)
+                currentRoutePoints.append(currentPoint)
             }
             currentPoint = nil
             currentPointKind = nil
@@ -176,7 +201,10 @@ private final class GPXDocumentParser: NSObject, XMLParserDelegate {
     }
 
     private var preferredName: String {
-        trackName ?? routeName ?? metadataName ?? fallbackName
+        trackCandidates.first?.name
+            ?? routeCandidates.first?.name
+            ?? metadataName
+            ?? fallbackName
     }
 
     private func parsedPoint(from attributes: [String: String]) -> ParsedPoint? {
