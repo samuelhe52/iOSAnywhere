@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "" : {
+
+    },
     "%@ · iOS %@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -21,12 +24,68 @@
         }
       }
     },
+    "%lld / %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld / %2$lld"
+          }
+          },
+          "zh-Hans" : {
+            "stringUnit" : {
+              "state" : "translated",
+              "value" : "%1$lld / %2$lld"
+            }
+        }
+      }
+    },
     "`xcrun` is not guaranteed to be usable on a clean macOS install. If macOS reports missing developer tools, install them with `xcode-select --install`. If full Xcode is already installed but the active developer directory is wrong, run `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer`, then launch Xcode once to finish setup." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "在全新 macOS 安装上，`xcrun` 不一定可用。如果 macOS 提示缺少开发者工具，请运行 `xcode-select --install` 安装。如果已安装完整 Xcode 但当前开发者目录不正确，请运行 `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer`，然后启动一次 Xcode 以完成设置。"
+          }
+        }
+      }
+    },
+    "0.10s" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0.10s"
+          }
+        }
+      }
+    },
+    "1x" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1x"
+          }
+        }
+      }
+    },
+    "2.00s" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2.00s"
+          }
+        }
+      }
+    },
+    "32x" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "32x"
           }
         }
       }
@@ -77,6 +136,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "管理员密码"
+          }
+        }
+      }
+    },
+    "Advance every waypoint on a fixed clock regardless of GPX timestamps." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无论 GPX 时间戳如何，都按固定时间间隔推进每个航点。"
           }
         }
       }
@@ -151,12 +220,32 @@
         }
       }
     },
+    "Clear Route" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清除路线"
+          }
+        }
+      }
+    },
     "Cleared simulated location on %@." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "已清除 %@ 上的模拟位置。"
+          }
+        }
+      }
+    },
+    "Cleared the loaded route preview." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已清除已加载路线的预览。"
           }
         }
       }
@@ -181,6 +270,26 @@
         }
       }
     },
+    "Completed" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已完成"
+          }
+        }
+      }
+    },
+    "Completed route %@." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已完成路线 %@。"
+          }
+        }
+      }
+    },
     "Connect" : {
       "localizations" : {
         "zh-Hans" : {
@@ -197,6 +306,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "使用移动控制轮之前，请先连接设备。"
+          }
+        }
+      }
+    },
+    "Connect to an available device before starting route playback." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始路线回放前，请先连接可用设备。"
           }
         }
       }
@@ -261,6 +380,16 @@
         }
       }
     },
+    "Convert segment distance into delay using a target speed. Best for planned routes with no timing data." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按目标速度将路段距离换算为延迟。最适合没有时间数据的规划路线。"
+          }
+        }
+      }
+    },
     "Copied" : {
       "localizations" : {
         "zh-Hans" : {
@@ -307,6 +436,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "当前位置"
+          }
+        }
+      }
+    },
+    "Current Point" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前点"
           }
         }
       }
@@ -411,6 +550,16 @@
         }
       }
     },
+    "Distance" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "距离"
+          }
+        }
+      }
+    },
     "Don't show this again" : {
       "localizations" : {
         "zh-Hans" : {
@@ -427,6 +576,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "拖动控制轮以移动模拟点。推得越远，移动速度越快，最高可达设定速度。松开即可停止。"
+          }
+        }
+      }
+    },
+    "Drawn" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "绘制"
           }
         }
       }
@@ -481,6 +640,16 @@
         }
       }
     },
+    "Failed to import GPX: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导入 GPX 失败：%@"
+          }
+        }
+      }
+    },
     "Failed to launch %@: %@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -497,6 +666,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法启动真机辅助程序：%@"
+          }
+        }
+      }
+    },
+    "Fixed" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "固定"
+          }
+        }
+      }
+    },
+    "Fixed Interval" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "固定间隔"
           }
         }
       }
@@ -521,6 +710,16 @@
         }
       }
     },
+    "GPX" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPX"
+          }
+        }
+      }
+    },
     "Highway" : {
       "localizations" : {
         "zh-Hans" : {
@@ -537,6 +736,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "空闲"
+          }
+        }
+      }
+    },
+    "Import a GPX route to preview it on the map and prepare playback." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导入 GPX 路线以在地图上预览并为回放做好准备。"
+          }
+        }
+      }
+    },
+    "Import GPX" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导入 GPX"
           }
         }
       }
@@ -607,6 +826,32 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "纬度"
+          }
+        }
+      }
+    },
+    "Load a route before starting playback." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始回放前请先加载路线。"
+          }
+        }
+      }
+    },
+    "Loaded route %@ with %lld point(s)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Loaded route %1$@ with %2$lld point(s)."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已加载路线 %1$@，共 %2$lld 个点。"
           }
         }
       }
@@ -687,6 +932,16 @@
         }
       }
     },
+    "Navigation" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导航"
+          }
+        }
+      }
+    },
     "No device selected" : {
       "localizations" : {
         "zh-Hans" : {
@@ -723,6 +978,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "没有适用于 %@ 的服务。"
+          }
+        }
+      }
+    },
+    "Pause" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暂停"
+          }
+        }
+      }
+    },
+    "Paused" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已暂停"
+          }
+        }
+      }
+    },
+    "Paused route %@." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已暂停路线 %@。"
           }
         }
       }
@@ -777,6 +1062,72 @@
         }
       }
     },
+    "Play" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "播放"
+          }
+        }
+      }
+    },
+    "Playback" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "回放"
+          }
+        }
+      }
+    },
+    "Playing" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "播放中"
+          }
+        }
+      }
+    },
+    "Playing route %@ · point %lld of %lld." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Playing route %1$@ · point %2$lld of %3$lld."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在播放路线 %1$@ · 第 %2$lld / %3$lld 个点。"
+          }
+        }
+      }
+    },
+    "Points" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "点"
+          }
+        }
+      }
+    },
+    "Progress" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "进度"
+          }
+        }
+      }
+    },
     "pymobiledevice3 is missing for the Python executable used by physical-device simulation." : {
       "localizations" : {
         "zh-Hans" : {
@@ -827,6 +1178,26 @@
         }
       }
     },
+    "Recorded" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "记录"
+          }
+        }
+      }
+    },
+    "Recorded Time" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "记录时长"
+          }
+        }
+      }
+    },
     "Refresh Devices" : {
       "localizations" : {
         "zh-Hans" : {
@@ -843,6 +1214,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "从最近搜索中移除"
+          }
+        }
+      }
+    },
+    "Replay" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重播"
+          }
+        }
+      }
+    },
+    "Replay Speed" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "回放速度"
+          }
+        }
+      }
+    },
+    "Replay Time" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "回放时长"
           }
         }
       }
@@ -877,12 +1278,52 @@
         }
       }
     },
+    "Resume" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "继续"
+          }
+        }
+      }
+    },
     "Review the administrator approval note to continue with physical-device location simulation." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "请先查看管理员授权说明，再继续进行真机位置模拟。"
+          }
+        }
+      }
+    },
+    "Route" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "路线"
+          }
+        }
+      }
+    },
+    "Route End" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "路线终点"
+          }
+        }
+      }
+    },
+    "Route Start" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "路线起点"
           }
         }
       }
@@ -1057,6 +1498,16 @@
         }
       }
     },
+    "Source" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "来源"
+          }
+        }
+      }
+    },
     "Speed" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1127,6 +1578,16 @@
         }
       }
     },
+    "Stopped route %@." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已停止路线 %@。"
+          }
+        }
+      }
+    },
     "Stopping" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1163,6 +1624,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "管理员密码不正确。请检查密码后重试。"
+          }
+        }
+      }
+    },
+    "The loaded route needs at least two points for playback." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已加载的路线至少需要两个点才能回放。"
           }
         }
       }
@@ -1217,6 +1688,26 @@
         }
       }
     },
+    "Timing" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "时序"
+          }
+        }
+      }
+    },
+    "Travel Speed" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行进速度"
+          }
+        }
+      }
+    },
     "Unable to load that location from Apple Maps right now." : {
       "localizations" : {
         "zh-Hans" : {
@@ -1263,6 +1754,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "USB 设备"
+          }
+        }
+      }
+    },
+    "Use GPX timing when present, but compress long pauses for practical replay." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如果 GPX 提供了时间信息则优先使用，但会压缩较长停顿以便实际回放。"
           }
         }
       }
