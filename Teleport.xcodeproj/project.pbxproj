@@ -25,6 +25,7 @@
 		9FF152012F5D80350025CED2 /* MapWorkspaceSearchSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151FF2F5D80350025CED2 /* MapWorkspaceSearchSupport.swift */; };
 		9FF152042F5D80350025CED2 /* InspectorPanelSections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF152022F5D80350025CED2 /* InspectorPanelSections.swift */; };
 		9FF152052F5D80350025CED2 /* InspectorPanelSupportViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF152032F5D80350025CED2 /* InspectorPanelSupportViews.swift */; };
+		C4D5E6F82F6A20010025CED2 /* GPXRouteParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4D5E6F72F6A20010025CED2 /* GPXRouteParser.swift */; };
 		A1B2C3D42F5E90010025CED2 /* USBDeviceLocationSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D32F5E90010025CED2 /* USBDeviceLocationSupport.swift */; };
 		A7B8C9D02F5F11010025CED2 /* TeleportStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B8C9CE2F5F11010025CED2 /* TeleportStrings.swift */; };
 		A7B8C9D12F5F11010025CED2 /* UserFacingText.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B8C9CF2F5F11010025CED2 /* UserFacingText.swift */; };
@@ -52,6 +53,7 @@
 		9FF151FF2F5D80350025CED2 /* MapWorkspaceSearchSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapWorkspaceSearchSupport.swift; sourceTree = "<group>"; };
 		9FF152022F5D80350025CED2 /* InspectorPanelSections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorPanelSections.swift; sourceTree = "<group>"; };
 		9FF152032F5D80350025CED2 /* InspectorPanelSupportViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorPanelSupportViews.swift; sourceTree = "<group>"; };
+		C4D5E6F72F6A20010025CED2 /* GPXRouteParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPXRouteParser.swift; sourceTree = "<group>"; };
 		A1B2C3D32F5E90010025CED2 /* USBDeviceLocationSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USBDeviceLocationSupport.swift; sourceTree = "<group>"; };
 		A7B8C9CE2F5F11010025CED2 /* TeleportStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeleportStrings.swift; sourceTree = "<group>"; };
 		A7B8C9CF2F5F11010025CED2 /* UserFacingText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserFacingText.swift; sourceTree = "<group>"; };
@@ -169,6 +171,7 @@
 			children = (
 				9FF151E42F5D80350025CED2 /* CommandRunner.swift */,
 				9FF151E52F5D80350025CED2 /* DeviceRegistry.swift */,
+				C4D5E6F72F6A20010025CED2 /* GPXRouteParser.swift */,
 				9FF151E62F5D80350025CED2 /* LocationSimulationService.swift */,
 			);
 			path = Services;
@@ -319,6 +322,7 @@
 				9FF151FC2F5D80350025CED2 /* AppViewModel.swift in Sources */,
 				B2C3D4E52F5EA0010025CED2 /* AppViewModelSupport.swift in Sources */,
 				B2C3D4E62F5EA0010025CED2 /* AppViewModel+Operations.swift in Sources */,
+				C4D5E6F82F6A20010025CED2 /* GPXRouteParser.swift in Sources */,
 				9FF151FD2F5D80350025CED2 /* LocationSimulationService.swift in Sources */,
 				9FF152002F5D80350025CED2 /* MapWorkspaceComponents.swift in Sources */,
 				9FF152012F5D80350025CED2 /* MapWorkspaceSearchSupport.swift in Sources */,

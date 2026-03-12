@@ -8,6 +8,9 @@ struct MapWorkspaceMapCanvasView: View {
     let simulationState: SimulationRunState
     let pickedCoordinate: LocationCoordinate?
     let showsPickedCoordinate: Bool
+    let routePreviewCoordinates: [LocationCoordinate]
+    let routeStartCoordinate: LocationCoordinate?
+    let routeEndCoordinate: LocationCoordinate?
     let onTapCoordinate: (CLLocationCoordinate2D) -> Void
     let onCameraChange: (MKCoordinateRegion) -> Void
 
@@ -40,6 +43,35 @@ struct MapWorkspaceMapCanvasView: View {
             )
         }
 
+        if let routeStartCoordinate,
+            !isSameVisiblePin(routeStartCoordinate, simulatedCoordinate),
+            !isSameVisiblePin(routeStartCoordinate, pickedCoordinate)
+        {
+            markers.append(
+                MapMarkerModel(
+                    id: "route-start",
+                    title: TeleportStrings.routePreviewStart,
+                    coordinate: routeStartCoordinate,
+                    tint: .green
+                )
+            )
+        }
+
+        if let routeEndCoordinate,
+            !isSameVisiblePin(routeEndCoordinate, simulatedCoordinate),
+            !isSameVisiblePin(routeEndCoordinate, pickedCoordinate),
+            !isSameVisiblePin(routeEndCoordinate, routeStartCoordinate)
+        {
+            markers.append(
+                MapMarkerModel(
+                    id: "route-end",
+                    title: TeleportStrings.routePreviewEnd,
+                    coordinate: routeEndCoordinate,
+                    tint: .orange
+                )
+            )
+        }
+
         if showsPickedCoordinate,
             let pickedCoordinate,
             !isSameVisiblePin(pickedCoordinate, simulatedCoordinate)
@@ -68,13 +100,15 @@ struct MapWorkspaceMapCanvasView: View {
     var body: some View {
         MapReader { proxy in
             Map(position: $cameraPosition) {
+                if routePreviewCoordinates.count > 1 {
+                    MapPolyline(coordinates: routePreviewCoordinates.map(\.clLocationCoordinate))
+                        .stroke(Color.accentColor, style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round))
+                }
+
                 ForEach(mapMarkers) { marker in
                     Marker(
                         marker.title,
-                        coordinate: CLLocationCoordinate2D(
-                            latitude: marker.coordinate.latitude,
-                            longitude: marker.coordinate.longitude
-                        )
+                        coordinate: marker.coordinate.clLocationCoordinate
                     )
                     .tint(marker.tint)
                 }
@@ -96,6 +130,12 @@ struct MapWorkspaceMapCanvasView: View {
             .clipShape(RoundedRectangle(cornerRadius: 18))
             .frame(minHeight: 420)
         }
+    }
+}
+
+private extension LocationCoordinate {
+    var clLocationCoordinate: CLLocationCoordinate2D {
+        CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
 }
 

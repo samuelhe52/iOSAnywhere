@@ -269,6 +269,50 @@ extension AppViewModel {
         }
     }
 
+    func importGPXRoute(from url: URL) async {
+        let accessedSecurityScope = url.startAccessingSecurityScopedResource()
+        defer {
+            if accessedSecurityScope {
+                url.stopAccessingSecurityScopedResource()
+            }
+        }
+
+        do {
+            let data = try Data(contentsOf: url)
+            let parser = GPXRouteParser()
+            let route = try parser.parse(
+                data: data,
+                fallbackName: url.deletingPathExtension().lastPathComponent
+            )
+
+            loadedRoute = route
+            routePlaybackState = .ready
+
+            if let startCoordinate = loadedRouteStartDisplayCoordinate {
+                suppressPickedLocationPin = false
+                latitudeText = String(format: "%.6f", startCoordinate.latitude)
+                longitudeText = String(format: "%.6f", startCoordinate.longitude)
+            }
+
+            statusMessage = .localized(
+                TeleportStrings.loadedRoute(route.name, pointCount: route.pointCount)
+            )
+        } catch {
+            loadedRoute = nil
+            let message = UserFacingText.localized(
+                TeleportStrings.failedToImportGPX(error.localizedDescription)
+            )
+            routePlaybackState = .failed(message)
+            statusMessage = message
+        }
+    }
+
+    func clearLoadedRoute() {
+        loadedRoute = nil
+        routePlaybackState = .idle
+        statusMessage = .localized(TeleportStrings.clearedLoadedRoute)
+    }
+
     func updateMovementControl(_ vector: MovementControlVector) {
         guard movementControlSupportedForSelection else {
             movementControlVector = .zero

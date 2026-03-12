@@ -36,6 +36,9 @@ struct MapWorkspaceView: View {
                     simulationState: viewModel.simulationState,
                     pickedCoordinate: pickedCoordinate,
                     showsPickedCoordinate: viewModel.showsPickedLocationPin,
+                    routePreviewCoordinates: viewModel.loadedRoutePreviewCoordinates,
+                    routeStartCoordinate: viewModel.loadedRouteStartDisplayCoordinate,
+                    routeEndCoordinate: viewModel.loadedRouteEndDisplayCoordinate,
                     onTapCoordinate: { coordinate in
                         setPickedLocation(
                             LocationCoordinate(
@@ -96,6 +99,9 @@ struct MapWorkspaceView: View {
         }
         .onReceive(startupLocationModel.$startupCoordinate.compactMap { $0 }) { coordinate in
             applyStartupLocationIfNeeded(coordinate)
+        }
+        .onChange(of: viewModel.loadedRoute?.id) { _, _ in
+            focusLoadedRoutePreviewIfNeeded()
         }
     }
 
@@ -294,6 +300,48 @@ struct MapWorkspaceView: View {
         case .coreLocation:
             return ChinaCoordinateTransform.displayCoordinate(for: coordinate)
         }
+    }
+
+    private func focusLoadedRoutePreviewIfNeeded() {
+        let coordinates = viewModel.loadedRoutePreviewCoordinates
+        guard let region = routeBoundingRegion(for: coordinates) else {
+            return
+        }
+
+        currentCameraSpan = region.span
+        updateCameraPosition(region, debounceNanoseconds: 0)
+    }
+
+    private func routeBoundingRegion(for coordinates: [LocationCoordinate]) -> MKCoordinateRegion? {
+        guard let firstCoordinate = coordinates.first else {
+            return nil
+        }
+
+        var minimumLatitude = firstCoordinate.latitude
+        var maximumLatitude = firstCoordinate.latitude
+        var minimumLongitude = firstCoordinate.longitude
+        var maximumLongitude = firstCoordinate.longitude
+
+        for coordinate in coordinates.dropFirst() {
+            minimumLatitude = min(minimumLatitude, coordinate.latitude)
+            maximumLatitude = max(maximumLatitude, coordinate.latitude)
+            minimumLongitude = min(minimumLongitude, coordinate.longitude)
+            maximumLongitude = max(maximumLongitude, coordinate.longitude)
+        }
+
+        let latitudePadding = max((maximumLatitude - minimumLatitude) * 0.2, 0.01)
+        let longitudePadding = max((maximumLongitude - minimumLongitude) * 0.2, 0.01)
+
+        return MKCoordinateRegion(
+            center: CLLocationCoordinate2D(
+                latitude: (minimumLatitude + maximumLatitude) / 2,
+                longitude: (minimumLongitude + maximumLongitude) / 2
+            ),
+            span: MKCoordinateSpan(
+                latitudeDelta: max((maximumLatitude - minimumLatitude) + latitudePadding, 0.02),
+                longitudeDelta: max((maximumLongitude - minimumLongitude) + longitudePadding, 0.02)
+            )
+        )
     }
 
 }

@@ -1,7 +1,9 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct InspectorPanelView: View {
     @Bindable var viewModel: AppViewModel
+    @State private var showsGPXImporter = false
 
     var body: some View {
         ScrollView {
@@ -19,6 +21,12 @@ struct InspectorPanelView: View {
                 }
 
                 InspectorActionsSectionView(viewModel: viewModel)
+                InspectorRouteSectionView(
+                    viewModel: viewModel,
+                    importGPXAction: {
+                        showsGPXImporter = true
+                    }
+                )
                 InspectorStatusSectionView(viewModel: viewModel)
             }
             .padding(20)
@@ -43,5 +51,31 @@ struct InspectorPanelView: View {
                 }
             )
         }
+        .fileImporter(
+            isPresented: $showsGPXImporter,
+            allowedContentTypes: [.gpx, .xml],
+            allowsMultipleSelection: false
+        ) { result in
+            switch result {
+            case .success(let urls):
+                guard let url = urls.first else {
+                    return
+                }
+
+                Task {
+                    await viewModel.importGPXRoute(from: url)
+                }
+            case .failure(let error):
+                let message = UserFacingText.localized(
+                    TeleportStrings.failedToImportGPX(error.localizedDescription)
+                )
+                viewModel.routePlaybackState = .failed(message)
+                viewModel.statusMessage = message
+            }
+        }
     }
+}
+
+private extension UTType {
+    static let gpx = UTType(filenameExtension: "gpx") ?? .xml
 }

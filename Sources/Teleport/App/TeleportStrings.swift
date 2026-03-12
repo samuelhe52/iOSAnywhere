@@ -29,6 +29,23 @@ enum TeleportStrings {
     static let stateDisconnecting: LocalizedStringResource = "Disconnecting"
     static let stateStarting: LocalizedStringResource = "Starting"
     static let stateStopping: LocalizedStringResource = "Stopping"
+    static let routeSectionTitle: LocalizedStringResource = "Route"
+    static let routeImportGPX: LocalizedStringResource = "Import GPX"
+    static let routeClear: LocalizedStringResource = "Clear Route"
+    static let routePlaybackLabel: LocalizedStringResource = "Playback"
+    static let routePointsLabel: LocalizedStringResource = "Points"
+    static let routeDistanceLabel: LocalizedStringResource = "Distance"
+    static let routeSourceLabel: LocalizedStringResource = "Source"
+    static let routeEmptyHint: LocalizedStringResource = "Import a GPX route to preview it on the map and prepare playback."
+    static let routeSourceGPX: LocalizedStringResource = "GPX"
+    static let routeSourceDrawn: LocalizedStringResource = "Drawn"
+    static let routeSourceNavigation: LocalizedStringResource = "Navigation"
+    static let routePlaybackReady: LocalizedStringResource = "Ready"
+    static let routePlaybackPlaying: LocalizedStringResource = "Playing"
+    static let routePlaybackPaused: LocalizedStringResource = "Paused"
+    static let routePlaybackCompleted: LocalizedStringResource = "Completed"
+    static let routePreviewStart: LocalizedStringResource = "Route Start"
+    static let routePreviewEnd: LocalizedStringResource = "Route End"
     static let movementSectionTitle: LocalizedStringResource = "Movement"
     static let movementWheelHint: LocalizedStringResource =
         "Drag the control wheel to move the simulated point. Push farther to move faster, up to the configured speed. Release to stop."
@@ -117,6 +134,16 @@ enum TeleportStrings {
     static func movingCoordinate(_ coordinate: String, on deviceName: String) -> LocalizedStringResource {
         "Moving through \(coordinate) on \(deviceName)."
     }
+
+    static func loadedRoute(_ name: String, pointCount: Int) -> LocalizedStringResource {
+        "Loaded route \(name) with \(pointCount) point(s)."
+    }
+
+    static func failedToImportGPX(_ details: String) -> LocalizedStringResource {
+        "Failed to import GPX: \(details)"
+    }
+
+    static let clearedLoadedRoute: LocalizedStringResource = "Cleared the loaded route preview."
 
     static func clearedSimulatedLocation(on deviceName: String) -> LocalizedStringResource {
         "Cleared simulated location on \(deviceName)."

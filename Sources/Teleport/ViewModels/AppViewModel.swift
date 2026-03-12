@@ -102,6 +102,20 @@ final class AppViewModel {
         loadedRoute?.totalDistanceMeters ?? 0
     }
 
+    var loadedRoutePreviewCoordinates: [LocationCoordinate] {
+        loadedRoute?.waypoints.map {
+            ChinaCoordinateTransform.displayCoordinate(for: $0.coordinate)
+        } ?? []
+    }
+
+    var loadedRouteStartDisplayCoordinate: LocationCoordinate? {
+        loadedRoute?.startCoordinate.map(ChinaCoordinateTransform.displayCoordinate(for:))
+    }
+
+    var loadedRouteEndDisplayCoordinate: LocationCoordinate? {
+        loadedRoute?.endCoordinate.map(ChinaCoordinateTransform.displayCoordinate(for:))
+    }
+
     var movementSpeedPresetValues: [Double] {
         Self.movementSpeedPresets
     }

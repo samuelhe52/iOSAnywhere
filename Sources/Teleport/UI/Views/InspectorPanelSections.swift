@@ -110,9 +110,10 @@ struct InspectorDeviceSectionView: View {
 
 struct InspectorSessionStateSectionView: View {
     @Bindable var viewModel: AppViewModel
+    @State private var isExpanded = true
 
     var body: some View {
-        InspectorPanelSection("Status") {
+        InspectorPanelSection("Status", isExpanded: $isExpanded) {
             VStack(alignment: .leading, spacing: 12) {
                 StatusRow(
                     title: "Discovery",
@@ -243,6 +244,12 @@ struct InspectorAuthorizationProgressView: View {
 
 struct InspectorMovementControlsView: View {
     @Bindable var viewModel: AppViewModel
+    let showsSectionTitle: Bool
+
+    init(viewModel: AppViewModel, showsSectionTitle: Bool = true) {
+        self.viewModel = viewModel
+        self.showsSectionTitle = showsSectionTitle
+    }
 
     private var movementSpeedPresetBinding: Binding<Double> {
         Binding(
@@ -257,8 +264,10 @@ struct InspectorMovementControlsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(TeleportStrings.movementSectionTitle)
-                .font(.subheadline.weight(.semibold))
+            if showsSectionTitle {
+                Text(TeleportStrings.movementSectionTitle)
+                    .font(.subheadline.weight(.semibold))
+            }
 
             MovementWheelView(
                 isEnabled: viewModel.movementControlAvailable,
@@ -467,6 +476,7 @@ fileprivate struct MovementWheelView: View {
 
 struct InspectorActionsSectionView: View {
     @Bindable var viewModel: AppViewModel
+    @State private var showsMovementControls = false
 
     private var isSimulating: Bool {
         if case .simulating = viewModel.simulationState {
@@ -544,18 +554,103 @@ struct InspectorActionsSectionView: View {
 
                 Divider()
 
-                InspectorMovementControlsView(viewModel: viewModel)
+                InspectorInlineDisclosure(title: TeleportStrings.movementSectionTitle, isExpanded: $showsMovementControls) {
+                    InspectorMovementControlsView(viewModel: viewModel, showsSectionTitle: false)
+                }
             }
             .controlSize(.large)
         }
     }
 }
 
-struct InspectorStatusSectionView: View {
+struct InspectorRouteSectionView: View {
     @Bindable var viewModel: AppViewModel
+    let importGPXAction: () -> Void
+    @State private var isExpanded = false
 
     var body: some View {
-        InspectorPanelSection("Session Log") {
+        InspectorPanelSection(TeleportStrings.routeSectionTitle, isExpanded: $isExpanded) {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 10) {
+                    Button(action: importGPXAction) {
+                        Label(TeleportStrings.routeImportGPX, systemImage: "square.and.arrow.down")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+
+                    Button {
+                        viewModel.clearLoadedRoute()
+                    } label: {
+                        Label(TeleportStrings.routeClear, systemImage: "trash")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
+                    .disabled(!viewModel.hasLoadedRoute)
+                }
+                .controlSize(.large)
+
+                if let route = viewModel.loadedRoute {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text(route.name)
+                            .font(.headline)
+
+                        StatusRow(
+                            title: TeleportStrings.routePlaybackLabel,
+                            value: viewModel.routePlaybackState.inspectorLabel,
+                            tone: viewModel.routePlaybackState.inspectorTone
+                        )
+
+                        LabeledContent {
+                            Text(route.source.inspectorName)
+                                .foregroundStyle(.secondary)
+                        } label: {
+                            Text(TeleportStrings.routeSourceLabel)
+                                .font(.caption.weight(.medium))
+                        }
+
+                        LabeledContent {
+                            Text("\(viewModel.loadedRouteWaypointCount)")
+                                .monospacedDigit()
+                                .foregroundStyle(.secondary)
+                        } label: {
+                            Text(TeleportStrings.routePointsLabel)
+                                .font(.caption.weight(.medium))
+                        }
+
+                        LabeledContent {
+                            Text(formattedDistance(viewModel.loadedRouteDistanceMeters))
+                                .monospacedDigit()
+                                .foregroundStyle(.secondary)
+                        } label: {
+                            Text(TeleportStrings.routeDistanceLabel)
+                                .font(.caption.weight(.medium))
+                        }
+                    }
+                } else {
+                    Text(TeleportStrings.routeEmptyHint)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+    }
+
+    private func formattedDistance(_ meters: Double) -> String {
+        if meters >= 1_000 {
+            return String(format: "%.2f km", meters / 1_000)
+        }
+
+        return String(format: "%.0f m", meters)
+    }
+}
+
+struct InspectorStatusSectionView: View {
+    @Bindable var viewModel: AppViewModel
+    @State private var isExpanded = true
+
+    var body: some View {
+        InspectorPanelSection("Session Log", isExpanded: $isExpanded) {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(alignment: .center, spacing: 10) {
                     Image(systemName: viewModel.inspectorStatusSymbol)
@@ -654,6 +749,51 @@ extension SimulationRunState {
             return .good
         case .failed:
             return .error
+        }
+    }
+}
+
+extension RoutePlaybackState {
+    fileprivate var inspectorLabel: UserFacingText {
+        switch self {
+        case .idle:
+            return .localized(TeleportStrings.stateIdle)
+        case .ready:
+            return .localized(TeleportStrings.routePlaybackReady)
+        case .playing:
+            return .localized(TeleportStrings.routePlaybackPlaying)
+        case .paused:
+            return .localized(TeleportStrings.routePlaybackPaused)
+        case .completed:
+            return .localized(TeleportStrings.routePlaybackCompleted)
+        case .failed:
+            return .localized(TeleportStrings.stateFailed)
+        }
+    }
+
+    fileprivate var inspectorTone: StatusTone {
+        switch self {
+        case .idle:
+            return .neutral
+        case .ready, .paused:
+            return .active
+        case .playing, .completed:
+            return .good
+        case .failed:
+            return .error
+        }
+    }
+}
+
+extension RouteSource {
+    fileprivate var inspectorName: String {
+        switch self {
+        case .gpx:
+            return String(localized: TeleportStrings.routeSourceGPX)
+        case .drawn:
+            return String(localized: TeleportStrings.routeSourceDrawn)
+        case .navigation:
+            return String(localized: TeleportStrings.routeSourceNavigation)
         }
     }
 }
