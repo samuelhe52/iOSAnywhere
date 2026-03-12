@@ -192,7 +192,9 @@ extension AppViewModel {
             )
         }
         do {
-            if device.kind.isPhysicalDevice {
+            let hasActiveSimulationSession = await service.hasActiveSimulationSession()
+            let needsPhysicalDeviceStartup = device.kind.isPhysicalDevice && !hasActiveSimulationSession
+            if needsPhysicalDeviceStartup {
                 simulationState = .starting
                 statusMessage = .localized(TeleportStrings.startingPhysicalDeviceSimulation)
                 TeleportLog.simulation.info(

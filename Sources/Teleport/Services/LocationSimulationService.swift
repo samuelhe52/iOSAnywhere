@@ -15,8 +15,15 @@ protocol LocationSimulationService: Sendable {
     func discoverDevices() async throws -> [Device]
     func connect(to device: Device) async throws
     func disconnect() async
+    func hasActiveSimulationSession() async -> Bool
     func setLocation(_ coordinate: LocationCoordinate) async throws
     func clearLocation() async throws
+}
+
+extension LocationSimulationService {
+    func hasActiveSimulationSession() async -> Bool {
+        false
+    }
 }
 
 enum ServiceError: LocalizedError, Equatable {

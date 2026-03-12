@@ -78,6 +78,14 @@ actor USBDeviceLocationService: LocationSimulationService {
         activeCoordinate = nil
     }
 
+    func hasActiveSimulationSession() async -> Bool {
+        guard let simulationHelper else {
+            return false
+        }
+
+        return simulationHelper.process.isRunning
+    }
+
     func setLocation(_ coordinate: LocationCoordinate) async throws {
         guard let connectedDevice else {
             throw ServiceError.invalidSelection
