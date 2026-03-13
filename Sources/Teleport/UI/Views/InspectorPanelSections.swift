@@ -519,7 +519,10 @@ struct InspectorActionsSectionView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.bordered)
-                    .disabled(viewModel.connectionState == .disconnected)
+                    .disabled(
+                        viewModel.connectionState == .disconnected
+                            || viewModel.isSimulationActionInFlight
+                    )
                 }
 
 
@@ -534,6 +537,7 @@ struct InspectorActionsSectionView: View {
                     .disabled(
                         viewModel.connectionState != .connected
                             || viewModel.selectedDevice?.isAvailable == false
+                            || viewModel.isSimulationActionInFlight
                             || viewModel.simulationState == .starting
                             || viewModel.simulationState == .stopping
                     )
@@ -548,6 +552,7 @@ struct InspectorActionsSectionView: View {
                     .disabled(
                         viewModel.connectionState != .connected
                             || viewModel.selectedDevice?.isAvailable == false
+                            || viewModel.isSimulationActionInFlight
                             || !isSimulating
                     )
                 }

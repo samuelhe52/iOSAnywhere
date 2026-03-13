@@ -37,6 +37,7 @@ final class AppViewModel {
     var latitudeText: String = "37.3346"
     var longitudeText: String = "-122.0090"
     var statusMessage: UserFacingText = .localized(TeleportStrings.readyToDiscoverDevices)
+    var isSimulationActionInFlight: Bool = false
     var suppressUSBPrivilegeNotice: Bool
     var selectedUSBSetupGuide: USBSetupGuide?
     var selectedPythonRuntimeNote: UserFacingText?

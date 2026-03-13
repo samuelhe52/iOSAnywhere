@@ -128,6 +128,13 @@ extension AppViewModel {
         stopMovementControl(commitCurrentCoordinateToTextFields: false)
         stopRoutePlayback(resetToReadyState: true)
 
+        guard beginSimulationAction(kind: "simulate") else {
+            return
+        }
+        defer {
+            isSimulationActionInFlight = false
+        }
+
         switch simulationState {
         case .starting, .stopping:
             TeleportLog.simulation.debug(
@@ -232,6 +239,13 @@ extension AppViewModel {
     func clearSimulatedLocation() async {
         stopMovementControl(commitCurrentCoordinateToTextFields: false)
         stopRoutePlayback(resetToReadyState: true)
+
+        guard beginSimulationAction(kind: "clear") else {
+            return
+        }
+        defer {
+            isSimulationActionInFlight = false
+        }
 
         guard case .simulating = simulationState else {
             return
@@ -506,6 +520,18 @@ extension AppViewModel {
         selectedUSBSetupGuide = USBSetupGuide(resolvedPythonPath: path)
         selectedPythonRuntimeNote = .localized(TeleportStrings.usbHelperPython(path))
         TeleportLog.devices.debug("Resolved physical-device helper Python executable at \(path, privacy: .public)")
+    }
+
+    private func beginSimulationAction(kind: StaticString) -> Bool {
+        guard !isSimulationActionInFlight else {
+            TeleportLog.simulation.debug(
+                "Ignoring duplicate simulation control request while another control action is in progress: \(kind)"
+            )
+            return false
+        }
+
+        isSimulationActionInFlight = true
+        return true
     }
 
     private enum ActionStateTarget {

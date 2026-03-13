@@ -29,12 +29,30 @@ enum USBDeviceProcessSupport {
         }
     }
 
+    static func requestTerminate(_ process: Process) {
+        guard process.isRunning else {
+            return
+        }
+
+        let processIdentifier = process.processIdentifier
+        guard processIdentifier > 0 else {
+            return
+        }
+
+        _ = kill(processIdentifier, SIGTERM)
+    }
+
     static func forceTerminate(_ process: Process) {
         guard process.isRunning else {
             return
         }
 
-        _ = kill(process.processIdentifier, SIGKILL)
+        let processIdentifier = process.processIdentifier
+        guard processIdentifier > 0 else {
+            return
+        }
+
+        _ = kill(processIdentifier, SIGKILL)
     }
 }
 
