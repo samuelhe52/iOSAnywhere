@@ -36,6 +36,7 @@ struct SimulatedRoute: Identifiable, Equatable, Hashable, Codable, Sendable {
     var name: String
     var source: RouteSource
     var waypoints: [RouteWaypoint]
+    var navigationStops: [LocationCoordinate]?
     var createdAt: Date
 
     init(
@@ -43,13 +44,34 @@ struct SimulatedRoute: Identifiable, Equatable, Hashable, Codable, Sendable {
         name: String,
         source: RouteSource,
         waypoints: [RouteWaypoint],
+        navigationStops: [LocationCoordinate]? = nil,
         createdAt: Date = .now
     ) {
         self.id = id
         self.name = name
         self.source = source
         self.waypoints = waypoints
+        self.navigationStops = navigationStops
         self.createdAt = createdAt
+    }
+
+    var routeBuilderStops: [LocationCoordinate] {
+        switch source {
+        case .navigation:
+            if let navigationStops, !navigationStops.isEmpty {
+                return navigationStops
+            }
+
+            if let startCoordinate, let endCoordinate {
+                return startCoordinate.isApproximatelyEqual(to: endCoordinate)
+                    ? [startCoordinate]
+                    : [startCoordinate, endCoordinate]
+            }
+
+            return waypoints.map(\.coordinate)
+        case .gpx, .drawn:
+            return waypoints.map(\.coordinate)
+        }
     }
 
     var startCoordinate: LocationCoordinate? {

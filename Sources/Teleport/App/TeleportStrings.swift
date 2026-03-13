@@ -35,6 +35,7 @@ enum TeleportStrings {
     static let routeSaveInApp: LocalizedStringResource = "Save in App"
     static let routeUpdateSaved: LocalizedStringResource = "Update Saved"
     static let routeSaveAsNew: LocalizedStringResource = "Save As New"
+    static let routeEdit: LocalizedStringResource = "Edit"
     static let routeExportGPX: LocalizedStringResource = "Export GPX"
     static let routeClear: LocalizedStringResource = "Clear Route"
     static let savedRoutesTitle: LocalizedStringResource = "Saved Routes"
@@ -65,9 +66,12 @@ enum TeleportStrings {
         "Navigation mode asks Apple Maps for a suggested road route between each tapped stop."
     static let routeBuilderAlternativesHint: LocalizedStringResource =
         "Only the latest leg shows alternate routes to keep the builder compact. Undo to revise earlier legs."
+    static let routeBuilderEditHint: LocalizedStringResource =
+        "Tap the map to append waypoints to this saved route. Update to overwrite, or Save As New to branch it."
     static let routeBuilderUndo: LocalizedStringResource = "Undo"
     static let routeBuilderSave: LocalizedStringResource = "Save"
     static let routeBuilderCancel: LocalizedStringResource = "Cancel"
+    static let routeBuilderDiscardEdit: LocalizedStringResource = "Discard Edit"
     static let routeBuilderDefaultName: LocalizedStringResource = "Waypoint Route"
     static let routeSourceGPX: LocalizedStringResource = "GPX"
     static let routeSourceDrawn: LocalizedStringResource = "Drawn"
@@ -178,6 +182,8 @@ enum TeleportStrings {
         "Finding a navigation route between the selected stops."
     static let routeBuilderNavigationInProgress: LocalizedStringResource =
         "Wait for the current navigation segment to finish loading."
+    static let routeBuilderEditOnlyUserCreated: LocalizedStringResource =
+        "Editing is only available for user-created routes."
     static let saveRoutePromptTitle: LocalizedStringResource = "Save Route in App"
     static let saveRoutePromptMessage: LocalizedStringResource = "Choose a name for the saved route."
     static let renameRoutePromptTitle: LocalizedStringResource = "Rename Saved Route"
@@ -281,6 +287,10 @@ enum TeleportStrings {
 
     static func routeBuilderSelectedAlternative(_ index: Int, totalCount: Int) -> LocalizedStringResource {
         "Selected route option \(index) of \(totalCount) for the latest leg."
+    }
+
+    static func routeBuilderEditingSavedRoute(_ name: String) -> LocalizedStringResource {
+        "Editing saved route \(name)."
     }
 
     static let clearedLoadedRoute: LocalizedStringResource = "Cleared the loaded route preview."

@@ -33,27 +33,7 @@ struct RouteLibraryControlsView: View {
 
     @ViewBuilder
     private var saveAndExportControls: some View {
-        if viewModel.loadedRouteIsSavedInApp {
-            HStack(spacing: 10) {
-                Button {
-                    viewModel.updateCurrentSavedRouteInApp()
-                } label: {
-                    Label(TeleportStrings.routeUpdateSaved, systemImage: "arrow.triangle.2.circlepath")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.bordered)
-                .disabled(!viewModel.currentRouteCanUpdateSavedRoute)
-
-                Button {
-                    viewModel.saveCurrentRouteToAppAsNew()
-                } label: {
-                    Label(TeleportStrings.routeSaveAsNew, systemImage: "plus.square.on.square")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.bordered)
-                .disabled(!viewModel.currentRouteCanSaveAsNew)
-            }
-        } else {
+        if !viewModel.loadedRouteIsSavedInApp {
             HStack(spacing: 10) {
                 Button {
                     viewModel.saveCurrentRouteToApp()
@@ -116,20 +96,47 @@ struct RouteBuilderControlsView: View {
                 .disabled(!viewModel.routeBuilderCanUndo)
 
                 Button {
-                    viewModel.finalizeRouteBuilder()
+                    if viewModel.isRouteBuilderEditingSavedRoute {
+                        viewModel.updateEditedSavedRouteInApp()
+                    } else {
+                        viewModel.finalizeRouteBuilder()
+                    }
                 } label: {
-                    Label(TeleportStrings.routeBuilderSave, systemImage: "checkmark")
-                        .frame(maxWidth: .infinity)
+                    Label(
+                        viewModel.isRouteBuilderEditingSavedRoute
+                            ? TeleportStrings.routeUpdateSaved
+                            : TeleportStrings.routeBuilderSave,
+                        systemImage: viewModel.isRouteBuilderEditingSavedRoute
+                            ? "arrow.triangle.2.circlepath"
+                            : "checkmark"
+                    )
+                    .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
+                .disabled(!viewModel.routeBuilderCanFinalize)
+            }
+
+            if viewModel.isRouteBuilderEditingSavedRoute {
+                Button {
+                    viewModel.saveEditedRouteAsNewInApp()
+                } label: {
+                    Label(TeleportStrings.routeSaveAsNew, systemImage: "plus.square.on.square")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
                 .disabled(!viewModel.routeBuilderCanFinalize)
             }
 
             Button {
                 viewModel.cancelRouteBuilder()
             } label: {
-                Label(TeleportStrings.routeBuilderCancel, systemImage: "xmark")
-                    .frame(maxWidth: .infinity)
+                Label(
+                    viewModel.isRouteBuilderEditingSavedRoute
+                        ? TeleportStrings.routeBuilderDiscardEdit
+                        : TeleportStrings.routeBuilderCancel,
+                    systemImage: "xmark"
+                )
+                .frame(maxWidth: .infinity)
             }
             .buttonStyle(.bordered)
         }
@@ -145,10 +152,13 @@ struct RouteBuilderContentView: View {
             Text(TeleportStrings.routeBuilderTitle)
                 .font(.headline)
 
-            Text(TeleportStrings.routeBuilderHint)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
+            Text(
+                viewModel.isRouteBuilderEditingSavedRoute
+                    ? TeleportStrings.routeBuilderEditHint : TeleportStrings.routeBuilderHint
+            )
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
 
             LabeledContent {
                 Picker(selection: routeBuilderModeBinding) {
@@ -159,7 +169,7 @@ struct RouteBuilderContentView: View {
                 } label: {
                 }
                 .pickerStyle(.segmented)
-                .disabled(viewModel.isRouteBuilderResolvingNavigation)
+                .disabled(viewModel.isRouteBuilderResolvingNavigation || viewModel.isRouteBuilderEditingSavedRoute)
             } label: {
                 Text(TeleportStrings.routeBuilderModeLabel)
                     .font(.caption.weight(.medium))

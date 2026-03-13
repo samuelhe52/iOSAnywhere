@@ -72,6 +72,7 @@ final class AppViewModel {
     var routeBuilderLatestSegmentAlternatives: [RouteBuilderNavigationAlternative] = []
     var routeBuilderSelectedAlternativeIndex: Int = 0
     var routeBuilderLatestSegmentPrefixWaypointCount: Int = 0
+    var routeBuilderEditingSavedRouteID: UUID?
     var savedRoutes: [SimulatedRoute] = []
     var isRouteBuilderActive: Bool = false
     var routeBuilderMode: RouteBuilderMode = .straightLine
@@ -170,6 +171,14 @@ final class AppViewModel {
         loadedRoute != nil
     }
 
+    var loadedRouteCanEnterEditPanel: Bool {
+        guard let route = loadedRoute, loadedRouteIsSavedInApp else {
+            return false
+        }
+
+        return canEditRouteInApp(route)
+    }
+
     var currentRouteCanBeExportedAsGPX: Bool {
         guard let loadedRoute else {
             return false
@@ -204,6 +213,14 @@ final class AppViewModel {
 
     var routeBuilderHasMultipleAlternatives: Bool {
         routeBuilderLatestSegmentAlternatives.count > 1
+    }
+
+    var isRouteBuilderEditingSavedRoute: Bool {
+        routeBuilderEditingSavedRouteID != nil
+    }
+
+    func canEditRouteInApp(_ route: SimulatedRoute) -> Bool {
+        route.source != .gpx
     }
 
     var routePreviewPointCount: Int {

@@ -123,6 +123,7 @@ extension AppViewModel {
         routeBuilderLatestSegmentAlternatives = []
         routeBuilderSelectedAlternativeIndex = 0
         routeBuilderLatestSegmentPrefixWaypointCount = 0
+        routeBuilderEditingSavedRouteID = nil
         isRouteBuilderActive = keepingBuilderActive
     }
 
@@ -296,7 +297,8 @@ extension AppViewModel {
         let route = SimulatedRoute(
             name: String(localized: TeleportStrings.routeBuilderDefaultName),
             source: routeBuilderMode == .navigation ? .navigation : .drawn,
-            waypoints: draftRouteWaypoints
+            waypoints: draftRouteWaypoints,
+            navigationStops: routeBuilderMode == .navigation ? routeBuilderStops : nil
         )
 
         loadedRoute = route

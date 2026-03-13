@@ -7,6 +7,107 @@ extension UTType {
 }
 
 extension AppViewModel {
+    func startEditingLoadedSavedRoute() {
+        guard let route = loadedRoute else {
+            return
+        }
+
+        startEditingSavedRoute(route)
+    }
+
+    func startEditingSavedRoute(_ route: SimulatedRoute) {
+        guard canEditRouteInApp(route), savedRoutes.contains(where: { $0.id == route.id }) else {
+            statusMessage = .localized(TeleportStrings.routeBuilderEditOnlyUserCreated)
+            return
+        }
+
+        stopRoutePlayback(resetToReadyState: false)
+        loadedRoute = route
+        clearRouteBuilderDraft(keepingBuilderActive: true)
+        routeBuilderEditingSavedRouteID = route.id
+        routeBuilderMode = route.source == .navigation ? .navigation : .straightLine
+        draftRouteWaypoints = route.waypoints
+        routeBuilderStops = route.routeBuilderStops
+        routeBuilderLatestSegmentPrefixWaypointCount = routeBuilderStops.count
+        routePlaybackState = .idle
+        statusMessage = .localized(TeleportStrings.routeBuilderEditingSavedRoute(route.name))
+    }
+
+    func updateEditedSavedRouteInApp() {
+        guard
+            let editingID = routeBuilderEditingSavedRouteID,
+            routeBuilderCanFinalize,
+            let existingIndex = savedRoutes.firstIndex(where: { $0.id == editingID })
+        else {
+            statusMessage = .localized(TeleportStrings.routeBuilderNeedsTwoPoints)
+            return
+        }
+
+        let existingRoute = savedRoutes[existingIndex]
+        let updatedRoute = SimulatedRoute(
+            id: existingRoute.id,
+            name: existingRoute.name,
+            source: routeBuilderMode == .navigation ? .navigation : .drawn,
+            waypoints: draftRouteWaypoints,
+            navigationStops: routeBuilderMode == .navigation ? routeBuilderStops : nil,
+            createdAt: existingRoute.createdAt
+        )
+
+        savedRoutes[existingIndex] = updatedRoute
+        loadedRoute = updatedRoute
+        persistSavedRoutes()
+        clearRouteBuilderDraft()
+        routePlaybackState = .ready
+
+        if let startCoordinate = loadedRouteStartDisplayCoordinate {
+            suppressPickedLocationPin = false
+            latitudeText = String(format: "%.6f", startCoordinate.latitude)
+            longitudeText = String(format: "%.6f", startCoordinate.longitude)
+        }
+
+        statusMessage = .localized(TeleportStrings.updatedSavedRouteInApp(updatedRoute.name))
+    }
+
+    func saveEditedRouteAsNewInApp() {
+        guard routeBuilderCanFinalize else {
+            statusMessage = .localized(TeleportStrings.routeBuilderNeedsTwoPoints)
+            return
+        }
+
+        let defaultName = suggestedDuplicateRouteName(for: loadedRoute?.name ?? "Route")
+        guard
+            let routeName = promptForRouteName(
+                title: TeleportStrings.saveRoutePromptTitle,
+                message: TeleportStrings.saveRoutePromptMessage,
+                defaultName: defaultName,
+                actionTitle: TeleportStrings.routeSaveAsNew
+            )
+        else {
+            return
+        }
+
+        let savedRoute = SimulatedRoute(
+            name: routeName,
+            source: routeBuilderMode == .navigation ? .navigation : .drawn,
+            waypoints: draftRouteWaypoints,
+            navigationStops: routeBuilderMode == .navigation ? routeBuilderStops : nil
+        )
+
+        loadedRoute = savedRoute
+        upsertSavedRoute(savedRoute)
+        persistSavedRoutes()
+        clearRouteBuilderDraft()
+        routePlaybackState = .ready
+
+        if let startCoordinate = loadedRouteStartDisplayCoordinate {
+            suppressPickedLocationPin = false
+            latitudeText = String(format: "%.6f", startCoordinate.latitude)
+            longitudeText = String(format: "%.6f", startCoordinate.longitude)
+        }
+
+        statusMessage = .localized(TeleportStrings.savedRouteAsNewCopy(savedRoute.name))
+    }
+
     func saveCurrentRouteToApp() {
         guard let loadedRoute else {
             return
@@ -47,7 +148,8 @@ extension AppViewModel {
         let savedRoute = SimulatedRoute(
             name: routeName,
             source: loadedRoute.source,
-            waypoints: loadedRoute.waypoints
+            waypoints: loadedRoute.waypoints,
+            navigationStops: loadedRoute.navigationStops
         )
 
         self.loadedRoute = savedRoute

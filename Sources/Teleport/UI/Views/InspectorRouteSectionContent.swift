@@ -388,13 +388,10 @@ fileprivate struct SavedRouteCardView: View {
             HStack(spacing: 12) {
                 Text("\(route.pointCount) pts")
                 Text(RouteInspectorFormatting.formattedDistance(route.totalDistanceMeters))
+                Text(RouteInspectorFormatting.formattedSavedRouteAge(route.createdAt))
             }
             .font(.caption)
             .foregroundStyle(.secondary)
-
-            Text(RouteInspectorFormatting.formattedSavedRouteAge(route.createdAt))
-                .font(.caption2)
-                .foregroundStyle(.tertiary)
 
             HStack(spacing: 10) {
                 Button {
@@ -414,13 +411,24 @@ fileprivate struct SavedRouteCardView: View {
                 .buttonStyle(.bordered)
             }
 
-            Button(role: .destructive) {
-                viewModel.deleteSavedRoute(route)
-            } label: {
-                Label(TeleportStrings.savedRouteDelete, systemImage: "trash")
-                    .frame(maxWidth: .infinity)
+            HStack(spacing: 10) {
+                Button {
+                    viewModel.startEditingSavedRoute(route)
+                } label: {
+                    Label(TeleportStrings.routeEdit, systemImage: "pencil.and.scribble")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .disabled(!viewModel.canEditRouteInApp(route))
+
+                Button(role: .destructive) {
+                    viewModel.deleteSavedRoute(route)
+                } label: {
+                    Label(TeleportStrings.savedRouteDelete, systemImage: "trash")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
             }
-            .buttonStyle(.bordered)
         }
         .padding(12)
         .background(
