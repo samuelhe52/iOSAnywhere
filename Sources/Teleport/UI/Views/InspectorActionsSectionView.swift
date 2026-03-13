@@ -318,7 +318,9 @@ struct InspectorActionsSectionView: View {
 
                 Divider()
 
-                InspectorInlineDisclosure(title: TeleportStrings.movementSectionTitle, isExpanded: $showsMovementControls) {
+                InspectorInlineDisclosure(
+                    title: TeleportStrings.movementSectionTitle, isExpanded: $showsMovementControls
+                ) {
                     InspectorMovementControlsView(viewModel: viewModel, showsSectionTitle: false)
                 }
             }

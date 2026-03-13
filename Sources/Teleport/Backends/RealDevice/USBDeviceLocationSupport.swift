@@ -1,7 +1,7 @@
 import Foundation
 
 #if canImport(Darwin)
-import Darwin
+    import Darwin
 #endif
 
 struct USBSimulationHelper {

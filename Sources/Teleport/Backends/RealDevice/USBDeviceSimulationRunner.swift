@@ -267,7 +267,8 @@ final class USBDeviceSimulationRunner {
 
         if simulationHelper.process.isRunning {
             USBDeviceProcessSupport.requestTerminate(simulationHelper.process)
-            await USBDeviceProcessSupport.waitForProcessExit(simulationHelper.process, timeoutNanoseconds: 1_000_000_000)
+            await USBDeviceProcessSupport.waitForProcessExit(
+                simulationHelper.process, timeoutNanoseconds: 1_000_000_000)
         }
 
         if simulationHelper.process.isRunning {
