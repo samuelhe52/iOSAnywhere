@@ -56,8 +56,15 @@ enum TeleportStrings {
     static let routeBuilderModeStraight: LocalizedStringResource = "Straight"
     static let routeBuilderModeNavigation: LocalizedStringResource = "Navigation"
     static let routeBuilderStopsLabel: LocalizedStringResource = "Stops"
+    static let routeBuilderTransportLabel: LocalizedStringResource = "Travel Mode"
+    static let routeBuilderTransportDriving: LocalizedStringResource = "Driving"
+    static let routeBuilderTransportCycling: LocalizedStringResource = "Cycling"
+    static let routeBuilderTransportWalking: LocalizedStringResource = "Walking"
+    static let routeBuilderLatestLegLabel: LocalizedStringResource = "Latest Leg"
     static let routeBuilderNavigationHint: LocalizedStringResource =
         "Navigation mode asks Apple Maps for a suggested road route between each tapped stop."
+    static let routeBuilderAlternativesHint: LocalizedStringResource =
+        "Only the latest leg shows alternate routes to keep the builder compact. Undo to revise earlier legs."
     static let routeBuilderUndo: LocalizedStringResource = "Undo"
     static let routeBuilderSave: LocalizedStringResource = "Save"
     static let routeBuilderCancel: LocalizedStringResource = "Cancel"
@@ -270,6 +277,10 @@ enum TeleportStrings {
 
     static func routeBuilderNavigationFailed(_ details: String) -> LocalizedStringResource {
         "Failed to get a navigation route: \(details)"
+    }
+
+    static func routeBuilderSelectedAlternative(_ index: Int, totalCount: Int) -> LocalizedStringResource {
+        "Selected route option \(index) of \(totalCount) for the latest leg."
     }
 
     static let clearedLoadedRoute: LocalizedStringResource = "Cleared the loaded route preview."

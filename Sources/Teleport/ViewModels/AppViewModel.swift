@@ -7,6 +7,18 @@ enum RouteBuilderMode: String, CaseIterable, Sendable {
     case navigation
 }
 
+enum RouteBuilderNavigationTransport: String, CaseIterable, Sendable {
+    case driving
+    case cycling
+    case walking
+}
+
+struct RouteBuilderNavigationAlternative: Equatable, Sendable {
+    var waypoints: [RouteWaypoint]
+    var distanceMeters: Double
+    var expectedTravelTime: TimeInterval?
+}
+
 @Observable
 @MainActor
 final class AppViewModel {
@@ -56,6 +68,10 @@ final class AppViewModel {
     var loadedRoute: SimulatedRoute?
     var draftRouteWaypoints: [RouteWaypoint] = []
     var routeBuilderStops: [LocationCoordinate] = []
+    var routeBuilderNavigationTransport: RouteBuilderNavigationTransport = .driving
+    var routeBuilderLatestSegmentAlternatives: [RouteBuilderNavigationAlternative] = []
+    var routeBuilderSelectedAlternativeIndex: Int = 0
+    var routeBuilderLatestSegmentPrefixWaypointCount: Int = 0
     var savedRoutes: [SimulatedRoute] = []
     var isRouteBuilderActive: Bool = false
     var routeBuilderMode: RouteBuilderMode = .straightLine
@@ -184,6 +200,10 @@ final class AppViewModel {
 
     var routeBuilderDistanceMeters: Double {
         routeDistanceMeters(for: draftRouteWaypoints)
+    }
+
+    var routeBuilderHasMultipleAlternatives: Bool {
+        routeBuilderLatestSegmentAlternatives.count > 1
     }
 
     var routePreviewPointCount: Int {

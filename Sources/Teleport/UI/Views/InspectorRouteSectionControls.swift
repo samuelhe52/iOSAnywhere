@@ -170,6 +170,23 @@ struct RouteBuilderContentView: View {
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
                     .fixedSize(horizontal: false, vertical: true)
+
+                LabeledContent {
+                    Picker(selection: routeBuilderTransportBinding) {
+                        Text(TeleportStrings.routeBuilderTransportDriving)
+                            .tag(RouteBuilderNavigationTransport.driving)
+                        Text(TeleportStrings.routeBuilderTransportCycling)
+                            .tag(RouteBuilderNavigationTransport.cycling)
+                        Text(TeleportStrings.routeBuilderTransportWalking)
+                            .tag(RouteBuilderNavigationTransport.walking)
+                    } label: {
+                    }
+                    .pickerStyle(.segmented)
+                    .disabled(viewModel.isRouteBuilderResolvingNavigation)
+                } label: {
+                    Text(TeleportStrings.routeBuilderTransportLabel)
+                        .font(.caption.weight(.medium))
+                }
             }
 
             if viewModel.isRouteBuilderResolvingNavigation {
@@ -190,6 +207,29 @@ struct RouteBuilderContentView: View {
                 } label: {
                     Text(TeleportStrings.routeBuilderStopsLabel)
                         .font(.caption.weight(.medium))
+                }
+
+                if viewModel.routeBuilderHasMultipleAlternatives {
+                    LabeledContent {
+                        Picker(selection: latestAlternativeBinding) {
+                            ForEach(Array(viewModel.routeBuilderLatestSegmentAlternatives.enumerated()), id: \.offset) {
+                                index, alternative in
+                                Text(latestAlternativeLabel(for: alternative, index: index))
+                                    .tag(index)
+                            }
+                        } label: {
+                        }
+                        .pickerStyle(.menu)
+                        .disabled(viewModel.isRouteBuilderResolvingNavigation)
+                    } label: {
+                        Text(TeleportStrings.routeBuilderLatestLegLabel)
+                            .font(.caption.weight(.medium))
+                    }
+
+                    Text(TeleportStrings.routeBuilderAlternativesHint)
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
 
@@ -218,6 +258,30 @@ struct RouteBuilderContentView: View {
             get: { viewModel.routeBuilderMode },
             set: { viewModel.setRouteBuilderMode($0) }
         )
+    }
+
+    private var routeBuilderTransportBinding: Binding<RouteBuilderNavigationTransport> {
+        Binding(
+            get: { viewModel.routeBuilderNavigationTransport },
+            set: { viewModel.setRouteBuilderNavigationTransport($0) }
+        )
+    }
+
+    private var latestAlternativeBinding: Binding<Int> {
+        Binding(
+            get: { viewModel.routeBuilderSelectedAlternativeIndex },
+            set: { viewModel.selectLatestRouteBuilderAlternative(index: $0) }
+        )
+    }
+
+    private func latestAlternativeLabel(for alternative: RouteBuilderNavigationAlternative, index: Int) -> String {
+        let distance = RouteInspectorFormatting.formattedDistance(alternative.distanceMeters)
+        if let expectedTravelTime = alternative.expectedTravelTime {
+            let duration = RouteInspectorFormatting.formattedDuration(expectedTravelTime)
+            return "Option \(index + 1) · \(distance) · \(duration)"
+        }
+
+        return "Option \(index + 1) · \(distance)"
     }
 }
 
