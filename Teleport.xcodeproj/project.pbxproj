@@ -11,8 +11,6 @@
 		9FF151F22F5D80350025CED2 /* DeviceSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151E82F5D80350025CED2 /* DeviceSidebarView.swift */; };
 		9FF151F32F5D80350025CED2 /* LocationCoordinate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151E02F5D80350025CED2 /* LocationCoordinate.swift */; };
 		9FF151F42F5D80350025CED2 /* USBDeviceLocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151DA2F5D80350025CED2 /* USBDeviceLocationService.swift */; };
-		C1D2E3F42F7001010025CED2 /* USBDeviceHelperScripts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D2E3F32F7001010025CED2 /* USBDeviceHelperScripts.swift */; };
-		E2F3A4122F7002010025CED2 /* USBDeviceSimulationRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F3A4112F7002010025CED2 /* USBDeviceSimulationRunner.swift */; };
 		9FF151F52F5D80350025CED2 /* CommandRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151E42F5D80350025CED2 /* CommandRunner.swift */; };
 		9FF151F62F5D80350025CED2 /* TeleportApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151D82F5D80350025CED2 /* TeleportApp.swift */; };
 		9FF151F72F5D80350025CED2 /* SimulatorLocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151DC2F5D80350025CED2 /* SimulatorLocationService.swift */; };
@@ -27,16 +25,18 @@
 		9FF152012F5D80350025CED2 /* MapWorkspaceSearchSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151FF2F5D80350025CED2 /* MapWorkspaceSearchSupport.swift */; };
 		9FF152042F5D80350025CED2 /* InspectorPanelSections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF152022F5D80350025CED2 /* InspectorPanelSections.swift */; };
 		9FF152052F5D80350025CED2 /* InspectorPanelSupportViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF152032F5D80350025CED2 /* InspectorPanelSupportViews.swift */; };
-		C4D5E6F82F6A20010025CED2 /* GPXRouteParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4D5E6F72F6A20010025CED2 /* GPXRouteParser.swift */; };
 		A1B2C3D42F5E90010025CED2 /* USBDeviceLocationSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D32F5E90010025CED2 /* USBDeviceLocationSupport.swift */; };
 		A7B8C9D02F5F11010025CED2 /* TeleportStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B8C9CE2F5F11010025CED2 /* TeleportStrings.swift */; };
 		A7B8C9D12F5F11010025CED2 /* UserFacingText.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B8C9CF2F5F11010025CED2 /* UserFacingText.swift */; };
 		B2C3D4E52F5EA0010025CED2 /* AppViewModelSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E32F5EA0010025CED2 /* AppViewModelSupport.swift */; };
 		B2C3D4E62F5EA0010025CED2 /* AppViewModel+Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E42F5EA0010025CED2 /* AppViewModel+Operations.swift */; };
+		C1D2E3F42F7001010025CED2 /* USBDeviceHelperScripts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D2E3F32F7001010025CED2 /* USBDeviceHelperScripts.swift */; };
+		C4D5E6F82F6A20010025CED2 /* GPXRouteParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4D5E6F72F6A20010025CED2 /* GPXRouteParser.swift */; };
 		D1E2F3122F7000010025CED2 /* AppViewModel+Movement.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E2F3112F7000010025CED2 /* AppViewModel+Movement.swift */; };
 		D1E2F3222F7000010025CED2 /* AppViewModel+RoutePlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E2F3212F7000010025CED2 /* AppViewModel+RoutePlayback.swift */; };
 		D1E2F3322F7000010025CED2 /* InspectorActionsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E2F3312F7000010025CED2 /* InspectorActionsSectionView.swift */; };
 		D1E2F3422F7000010025CED2 /* InspectorRouteSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E2F3412F7000010025CED2 /* InspectorRouteSectionView.swift */; };
+		E2F3A4122F7002010025CED2 /* USBDeviceSimulationRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F3A4112F7002010025CED2 /* USBDeviceSimulationRunner.swift */; };
 		F1A100012F7100010025CED2 /* AppViewModel+RouteBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A100002F7100010025CED2 /* AppViewModel+RouteBuilder.swift */; };
 		F1A100032F7100010025CED2 /* AppViewModel+SavedRoutes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A100022F7100010025CED2 /* AppViewModel+SavedRoutes.swift */; };
 		F1A100052F7100010025CED2 /* InspectorRouteSectionControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A100042F7100010025CED2 /* InspectorRouteSectionControls.swift */; };
@@ -47,8 +47,6 @@
 		9FF14F6E2F5D7D6C0025CED2 /* Teleport.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Teleport.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FF151D82F5D80350025CED2 /* TeleportApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeleportApp.swift; sourceTree = "<group>"; };
 		9FF151DA2F5D80350025CED2 /* USBDeviceLocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USBDeviceLocationService.swift; sourceTree = "<group>"; };
-		C1D2E3F32F7001010025CED2 /* USBDeviceHelperScripts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USBDeviceHelperScripts.swift; sourceTree = "<group>"; };
-		E2F3A4112F7002010025CED2 /* USBDeviceSimulationRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USBDeviceSimulationRunner.swift; sourceTree = "<group>"; };
 		9FF151DC2F5D80350025CED2 /* SimulatorLocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatorLocationService.swift; sourceTree = "<group>"; };
 		9FF151DF2F5D80350025CED2 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		9FF151DF2F5D80350025CED3 /* RouteModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteModels.swift; sourceTree = "<group>"; };
@@ -65,16 +63,18 @@
 		9FF151FF2F5D80350025CED2 /* MapWorkspaceSearchSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapWorkspaceSearchSupport.swift; sourceTree = "<group>"; };
 		9FF152022F5D80350025CED2 /* InspectorPanelSections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorPanelSections.swift; sourceTree = "<group>"; };
 		9FF152032F5D80350025CED2 /* InspectorPanelSupportViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorPanelSupportViews.swift; sourceTree = "<group>"; };
-		C4D5E6F72F6A20010025CED2 /* GPXRouteParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPXRouteParser.swift; sourceTree = "<group>"; };
 		A1B2C3D32F5E90010025CED2 /* USBDeviceLocationSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USBDeviceLocationSupport.swift; sourceTree = "<group>"; };
 		A7B8C9CE2F5F11010025CED2 /* TeleportStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeleportStrings.swift; sourceTree = "<group>"; };
 		A7B8C9CF2F5F11010025CED2 /* UserFacingText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserFacingText.swift; sourceTree = "<group>"; };
 		B2C3D4E32F5EA0010025CED2 /* AppViewModelSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelSupport.swift; sourceTree = "<group>"; };
 		B2C3D4E42F5EA0010025CED2 /* AppViewModel+Operations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppViewModel+Operations.swift"; sourceTree = "<group>"; };
+		C1D2E3F32F7001010025CED2 /* USBDeviceHelperScripts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USBDeviceHelperScripts.swift; sourceTree = "<group>"; };
+		C4D5E6F72F6A20010025CED2 /* GPXRouteParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPXRouteParser.swift; sourceTree = "<group>"; };
 		D1E2F3112F7000010025CED2 /* AppViewModel+Movement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppViewModel+Movement.swift"; sourceTree = "<group>"; };
 		D1E2F3212F7000010025CED2 /* AppViewModel+RoutePlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppViewModel+RoutePlayback.swift"; sourceTree = "<group>"; };
 		D1E2F3312F7000010025CED2 /* InspectorActionsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorActionsSectionView.swift; sourceTree = "<group>"; };
 		D1E2F3412F7000010025CED2 /* InspectorRouteSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorRouteSectionView.swift; sourceTree = "<group>"; };
+		E2F3A4112F7002010025CED2 /* USBDeviceSimulationRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USBDeviceSimulationRunner.swift; sourceTree = "<group>"; };
 		F1A100002F7100010025CED2 /* AppViewModel+RouteBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppViewModel+RouteBuilder.swift"; sourceTree = "<group>"; };
 		F1A100022F7100010025CED2 /* AppViewModel+SavedRoutes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppViewModel+SavedRoutes.swift"; sourceTree = "<group>"; };
 		F1A100042F7100010025CED2 /* InspectorRouteSectionControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorRouteSectionControls.swift; sourceTree = "<group>"; };
@@ -522,7 +522,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.2.2;
+				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.samuelhe.Teleport;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -569,7 +569,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.2.2;
+				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.samuelhe.Teleport;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
