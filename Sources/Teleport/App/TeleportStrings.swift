@@ -52,6 +52,12 @@ enum TeleportStrings {
     static let routeBuilderTitle: LocalizedStringResource = "Waypoint Route"
     static let routeBuilderHint: LocalizedStringResource =
         "Tap the map to add waypoints. Then replay the route with a fixed interval or travel speed."
+    static let routeBuilderModeLabel: LocalizedStringResource = "Path Style"
+    static let routeBuilderModeStraight: LocalizedStringResource = "Straight"
+    static let routeBuilderModeNavigation: LocalizedStringResource = "Navigation"
+    static let routeBuilderStopsLabel: LocalizedStringResource = "Stops"
+    static let routeBuilderNavigationHint: LocalizedStringResource =
+        "Navigation mode asks Apple Maps for a suggested road route between each tapped stop."
     static let routeBuilderUndo: LocalizedStringResource = "Undo"
     static let routeBuilderSave: LocalizedStringResource = "Save"
     static let routeBuilderCancel: LocalizedStringResource = "Cancel"
@@ -161,6 +167,10 @@ enum TeleportStrings {
     static let routeBuilderNeedsTwoPoints: LocalizedStringResource =
         "Add at least two waypoints before saving the route."
     static let routeBuilderEmpty: LocalizedStringResource = "The route builder is empty."
+    static let routeBuilderRoutingSegment: LocalizedStringResource =
+        "Finding a navigation route between the selected stops."
+    static let routeBuilderNavigationInProgress: LocalizedStringResource =
+        "Wait for the current navigation segment to finish loading."
     static let saveRoutePromptTitle: LocalizedStringResource = "Save Route in App"
     static let saveRoutePromptMessage: LocalizedStringResource = "Choose a name for the saved route."
     static let renameRoutePromptTitle: LocalizedStringResource = "Rename Saved Route"
@@ -252,6 +262,14 @@ enum TeleportStrings {
 
     static func routeBuilderUpdated(_ pointCount: Int) -> LocalizedStringResource {
         "Route builder now has \(pointCount) waypoint(s)."
+    }
+
+    static func routeBuilderAddedNavigationStop(_ stopCount: Int, pointCount: Int) -> LocalizedStringResource {
+        "Added stop \(stopCount). The suggested route now has \(pointCount) point(s)."
+    }
+
+    static func routeBuilderNavigationFailed(_ details: String) -> LocalizedStringResource {
+        "Failed to get a navigation route: \(details)"
     }
 
     static let clearedLoadedRoute: LocalizedStringResource = "Cleared the loaded route preview."

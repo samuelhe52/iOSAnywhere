@@ -58,8 +58,7 @@ extension AppViewModel {
 
     func loadSavedRoute(_ route: SimulatedRoute) {
         stopRoutePlayback(resetToReadyState: false)
-        isRouteBuilderActive = false
-        draftRouteWaypoints = []
+        clearRouteBuilderDraft()
         loadedRoute = route
         routePlaybackState = .ready
 

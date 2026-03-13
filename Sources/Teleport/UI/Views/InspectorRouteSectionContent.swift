@@ -169,10 +169,11 @@ struct LoadedRouteDetailsView: View {
             Text(TeleportStrings.routeTimingModeLabel)
                 .font(.caption.weight(.medium))
 
-            Picker("", selection: $viewModel.routePlaybackTimingMode) {
+            Picker(selection: $viewModel.routePlaybackTimingMode) {
                 Text(TeleportStrings.routeTimingRecorded).tag(RoutePlaybackTimingMode.recorded)
                 Text(TeleportStrings.routeTimingFixed).tag(RoutePlaybackTimingMode.fixedInterval)
                 Text(TeleportStrings.routeTimingSpeed).tag(RoutePlaybackTimingMode.fixedSpeed)
+            } label: {
             }
             .pickerStyle(.segmented)
 

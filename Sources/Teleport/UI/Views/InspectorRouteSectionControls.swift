@@ -113,7 +113,7 @@ struct RouteBuilderControlsView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(!viewModel.hasDraftRoute)
+                .disabled(!viewModel.routeBuilderCanUndo)
 
                 Button {
                     viewModel.finalizeRouteBuilder()
@@ -151,6 +151,49 @@ struct RouteBuilderContentView: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             LabeledContent {
+                Picker(selection: routeBuilderModeBinding) {
+                    Text(TeleportStrings.routeBuilderModeStraight)
+                        .tag(RouteBuilderMode.straightLine)
+                    Text(TeleportStrings.routeBuilderModeNavigation)
+                        .tag(RouteBuilderMode.navigation)
+                } label: {
+                }
+                .pickerStyle(.segmented)
+                .disabled(viewModel.isRouteBuilderResolvingNavigation)
+            } label: {
+                Text(TeleportStrings.routeBuilderModeLabel)
+                    .font(.caption.weight(.medium))
+            }
+
+            if viewModel.routeBuilderMode == .navigation {
+                Text(TeleportStrings.routeBuilderNavigationHint)
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            if viewModel.isRouteBuilderResolvingNavigation {
+                HStack(spacing: 8) {
+                    ProgressView()
+                        .controlSize(.small)
+                    Text(TeleportStrings.routeBuilderRoutingSegment)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            if viewModel.routeBuilderMode == .navigation {
+                LabeledContent {
+                    Text("\(viewModel.routeBuilderStopCount)")
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                } label: {
+                    Text(TeleportStrings.routeBuilderStopsLabel)
+                        .font(.caption.weight(.medium))
+                }
+            }
+
+            LabeledContent {
                 Text("\(viewModel.routeBuilderWaypointCount)")
                     .monospacedDigit()
                     .foregroundStyle(.secondary)
@@ -168,6 +211,13 @@ struct RouteBuilderContentView: View {
                     .font(.caption.weight(.medium))
             }
         }
+    }
+
+    private var routeBuilderModeBinding: Binding<RouteBuilderMode> {
+        Binding(
+            get: { viewModel.routeBuilderMode },
+            set: { viewModel.setRouteBuilderMode($0) }
+        )
     }
 }
 

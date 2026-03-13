@@ -2,6 +2,11 @@ import Foundation
 import OSLog
 import Observation
 
+enum RouteBuilderMode: String, CaseIterable, Sendable {
+    case straightLine
+    case navigation
+}
+
 @Observable
 @MainActor
 final class AppViewModel {
@@ -50,8 +55,11 @@ final class AppViewModel {
     var suppressPickedLocationPin: Bool = false
     var loadedRoute: SimulatedRoute?
     var draftRouteWaypoints: [RouteWaypoint] = []
+    var routeBuilderStops: [LocationCoordinate] = []
     var savedRoutes: [SimulatedRoute] = []
     var isRouteBuilderActive: Bool = false
+    var routeBuilderMode: RouteBuilderMode = .straightLine
+    var isRouteBuilderResolvingNavigation: Bool = false
     var routePlaybackState: RoutePlaybackState = .idle
     var routePlaybackTimingMode: RoutePlaybackTimingMode = .recorded
     var routePlaybackSpeedMultiplier: Double = 8.0
@@ -60,6 +68,7 @@ final class AppViewModel {
 
     @ObservationIgnored var movementLoopTask: Task<Void, Never>?
     @ObservationIgnored var routePlaybackTask: Task<Void, Never>?
+    @ObservationIgnored var routeBuilderNavigationTask: Task<Void, Never>?
 
     init(registry: DeviceRegistry, defaults: UserDefaults = .standard) {
         self.registry = registry
@@ -157,12 +166,20 @@ final class AppViewModel {
         !draftRouteWaypoints.isEmpty
     }
 
+    var routeBuilderCanUndo: Bool {
+        !routeBuilderStops.isEmpty && !isRouteBuilderResolvingNavigation
+    }
+
     var routeBuilderCanFinalize: Bool {
-        draftRouteWaypoints.count > 1
+        draftRouteWaypoints.count > 1 && !isRouteBuilderResolvingNavigation
     }
 
     var routeBuilderWaypointCount: Int {
         draftRouteWaypoints.count
+    }
+
+    var routeBuilderStopCount: Int {
+        routeBuilderStops.count
     }
 
     var routeBuilderDistanceMeters: Double {

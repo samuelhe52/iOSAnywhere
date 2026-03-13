@@ -4,8 +4,7 @@ import OSLog
 extension AppViewModel {
     func importGPXRoute(from url: URL) async {
         stopRoutePlayback(resetToReadyState: false)
-        isRouteBuilderActive = false
-        draftRouteWaypoints = []
+        clearRouteBuilderDraft()
 
         let accessedSecurityScope = url.startAccessingSecurityScopedResource()
         defer {
@@ -47,8 +46,7 @@ extension AppViewModel {
     func clearLoadedRoute() {
         stopRoutePlayback(resetToReadyState: false)
         loadedRoute = nil
-        draftRouteWaypoints = []
-        isRouteBuilderActive = false
+        clearRouteBuilderDraft()
         routePlaybackState = .idle
         statusMessage = .localized(TeleportStrings.clearedLoadedRoute)
     }

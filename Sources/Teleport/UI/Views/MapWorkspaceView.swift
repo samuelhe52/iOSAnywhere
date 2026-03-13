@@ -46,7 +46,7 @@ struct MapWorkspaceView: View {
                         )
 
                         if viewModel.isRouteBuilderActive {
-                            viewModel.addRouteBuilderWaypoint(pickedLocation)
+                            viewModel.handleRouteBuilderTap(pickedLocation)
                         }
 
                         setPickedLocation(
