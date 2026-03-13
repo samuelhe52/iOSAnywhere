@@ -11,6 +11,7 @@
 		9FF151F22F5D80350025CED2 /* DeviceSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151E82F5D80350025CED2 /* DeviceSidebarView.swift */; };
 		9FF151F32F5D80350025CED2 /* LocationCoordinate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151E02F5D80350025CED2 /* LocationCoordinate.swift */; };
 		9FF151F42F5D80350025CED2 /* USBDeviceLocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151DA2F5D80350025CED2 /* USBDeviceLocationService.swift */; };
+		C1D2E3F42F7001010025CED2 /* USBDeviceHelperScripts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D2E3F32F7001010025CED2 /* USBDeviceHelperScripts.swift */; };
 		9FF151F52F5D80350025CED2 /* CommandRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151E42F5D80350025CED2 /* CommandRunner.swift */; };
 		9FF151F62F5D80350025CED2 /* TeleportApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151D82F5D80350025CED2 /* TeleportApp.swift */; };
 		9FF151F72F5D80350025CED2 /* SimulatorLocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FF151DC2F5D80350025CED2 /* SimulatorLocationService.swift */; };
@@ -41,6 +42,7 @@
 		9FF14F6E2F5D7D6C0025CED2 /* Teleport.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Teleport.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FF151D82F5D80350025CED2 /* TeleportApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeleportApp.swift; sourceTree = "<group>"; };
 		9FF151DA2F5D80350025CED2 /* USBDeviceLocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USBDeviceLocationService.swift; sourceTree = "<group>"; };
+		C1D2E3F32F7001010025CED2 /* USBDeviceHelperScripts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USBDeviceHelperScripts.swift; sourceTree = "<group>"; };
 		9FF151DC2F5D80350025CED2 /* SimulatorLocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatorLocationService.swift; sourceTree = "<group>"; };
 		9FF151DF2F5D80350025CED2 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		9FF151DF2F5D80350025CED3 /* RouteModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteModels.swift; sourceTree = "<group>"; };
@@ -132,6 +134,7 @@
 		9FF151DB2F5D80350025CED2 /* RealDevice */ = {
 			isa = PBXGroup;
 			children = (
+				C1D2E3F32F7001010025CED2 /* USBDeviceHelperScripts.swift */,
 				9FF151DA2F5D80350025CED2 /* USBDeviceLocationService.swift */,
 				A1B2C3D32F5E90010025CED2 /* USBDeviceLocationSupport.swift */,
 			);
@@ -318,6 +321,7 @@
 				9FF151F22F5D80350025CED2 /* DeviceSidebarView.swift in Sources */,
 				9FF151F32F5D80350025CED2 /* LocationCoordinate.swift in Sources */,
 				9FF151F42F5D80350025CED2 /* USBDeviceLocationService.swift in Sources */,
+				C1D2E3F42F7001010025CED2 /* USBDeviceHelperScripts.swift in Sources */,
 				A1B2C3D42F5E90010025CED2 /* USBDeviceLocationSupport.swift in Sources */,
 				9FF151F52F5D80350025CED2 /* CommandRunner.swift in Sources */,
 				9FF151F62F5D80350025CED2 /* TeleportApp.swift in Sources */,
