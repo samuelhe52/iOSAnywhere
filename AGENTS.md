@@ -10,3 +10,4 @@
 - Before commit, run `make format`.
 - Validate changes with the VS Code `Build Teleport` task.
 - When using Copilot tooling to inspect large task output, check the temporary `content.txt` artifact that `get_task_output` may create in VS Code workspace storage.
+- When creating new files, make sure that Xcode includes them in the target membership for the `Teleport` app target. Otherwise the build will fail.
