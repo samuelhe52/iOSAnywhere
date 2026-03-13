@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 import Observation
 
 @Observable
@@ -13,7 +14,9 @@ final class AppViewModel {
     private static let maximumRouteStepDistanceMeters = 25.0
     private static let defaultRoutePlaybackSpeedMultiplier = 8.0
     private static let routePlaybackSpeedMultipliers: [Double] = [1, 2, 4, 8, 16, 32]
-    private static let routePlaybackFixedIntervalPresets: [Double] = [0.10, 0.15, 0.20, 0.25, 0.35, 0.50, 0.75, 1.00, 1.50, 2.00]
+    private static let routePlaybackFixedIntervalPresets: [Double] = [
+        0.10, 0.15, 0.20, 0.25, 0.35, 0.50, 0.75, 1.00, 1.50, 2.00
+    ]
     private static let defaultRoutePlaybackTravelSpeedMetersPerSecond = 5.0
     private static let movementSpeedPresets: [Double] = [
         1.5, 2.0, 2.5, 3.5, 5.0, 7.0, 9.5, 13.0, 17.5, 23.5, 31.0, 40.0
@@ -46,6 +49,9 @@ final class AppViewModel {
     var movementTickIntervalSeconds: Double = 0.25
     var suppressPickedLocationPin: Bool = false
     var loadedRoute: SimulatedRoute?
+    var draftRouteWaypoints: [RouteWaypoint] = []
+    var savedRoutes: [SimulatedRoute] = []
+    var isRouteBuilderActive: Bool = false
     var routePlaybackState: RoutePlaybackState = .idle
     var routePlaybackTimingMode: RoutePlaybackTimingMode = .recorded
     var routePlaybackSpeedMultiplier: Double = 8.0
@@ -64,6 +70,7 @@ final class AppViewModel {
         self.routePlaybackSpeedMultiplier = Self.defaultRoutePlaybackSpeedMultiplier
         self.routePlaybackFixedIntervalSeconds = Self.defaultMovementTickIntervalSeconds
         self.routePlaybackTravelSpeedMetersPerSecond = Self.defaultRoutePlaybackTravelSpeedMetersPerSecond
+        self.savedRoutes = Self.loadSavedRoutes(from: defaults)
     }
 
     var movementControlAvailable: Bool {
@@ -110,6 +117,66 @@ final class AppViewModel {
         loadedRoute != nil
     }
 
+    var hasSavedRoutes: Bool {
+        !savedRoutes.isEmpty
+    }
+
+    var loadedSavedRouteIndex: Int? {
+        guard let loadedRoute else {
+            return nil
+        }
+
+        return savedRoutes.firstIndex { $0.id == loadedRoute.id }
+    }
+
+    var loadedRouteIsSavedInApp: Bool {
+        loadedSavedRouteIndex != nil
+    }
+
+    var currentRouteCanBeSavedToApp: Bool {
+        loadedRoute != nil
+    }
+
+    var currentRouteCanUpdateSavedRoute: Bool {
+        loadedSavedRouteIndex != nil
+    }
+
+    var currentRouteCanSaveAsNew: Bool {
+        loadedRoute != nil
+    }
+
+    var currentRouteCanBeExportedAsGPX: Bool {
+        guard let loadedRoute else {
+            return false
+        }
+
+        return loadedRoute.source != .gpx
+    }
+
+    var hasDraftRoute: Bool {
+        !draftRouteWaypoints.isEmpty
+    }
+
+    var routeBuilderCanFinalize: Bool {
+        draftRouteWaypoints.count > 1
+    }
+
+    var routeBuilderWaypointCount: Int {
+        draftRouteWaypoints.count
+    }
+
+    var routeBuilderDistanceMeters: Double {
+        routeDistanceMeters(for: draftRouteWaypoints)
+    }
+
+    var routePreviewPointCount: Int {
+        if isRouteBuilderActive {
+            return draftRouteWaypoints.count
+        }
+
+        return loadedRouteWaypointCount
+    }
+
     var loadedRouteWaypointCount: Int {
         loadedRoute?.pointCount ?? 0
     }
@@ -119,17 +186,21 @@ final class AppViewModel {
     }
 
     var loadedRoutePreviewCoordinates: [LocationCoordinate] {
-        loadedRoute?.waypoints.map {
+        let waypoints = isRouteBuilderActive ? draftRouteWaypoints : (loadedRoute?.waypoints ?? [])
+
+        return waypoints.map {
             ChinaCoordinateTransform.displayCoordinate(for: $0.coordinate)
-        } ?? []
+        }
     }
 
     var loadedRouteStartDisplayCoordinate: LocationCoordinate? {
-        loadedRoute?.startCoordinate.map(ChinaCoordinateTransform.displayCoordinate(for:))
+        let coordinate = isRouteBuilderActive ? draftRouteWaypoints.first?.coordinate : loadedRoute?.startCoordinate
+        return coordinate.map(ChinaCoordinateTransform.displayCoordinate(for:))
     }
 
     var loadedRouteEndDisplayCoordinate: LocationCoordinate? {
-        loadedRoute?.endCoordinate.map(ChinaCoordinateTransform.displayCoordinate(for:))
+        let coordinate = isRouteBuilderActive ? draftRouteWaypoints.last?.coordinate : loadedRoute?.endCoordinate
+        return coordinate.map(ChinaCoordinateTransform.displayCoordinate(for:))
     }
 
     var routePlaybackAvailable: Bool {
@@ -316,6 +387,38 @@ final class AppViewModel {
             }
 
             return distanceMeters / routePlaybackTravelSpeedMetersPerSecond
+        }
+    }
+
+    private func routeDistanceMeters(for waypoints: [RouteWaypoint]) -> Double {
+        guard waypoints.count > 1 else {
+            return 0
+        }
+
+        return zip(waypoints, waypoints.dropFirst()).reduce(0) { total, pair in
+            total + pair.0.coordinate.distance(to: pair.1.coordinate)
+        }
+    }
+
+    private static func loadSavedRoutes(from defaults: UserDefaults) -> [SimulatedRoute] {
+        guard let data = defaults.data(forKey: AppViewModelPreferences.savedRoutes) else {
+            return []
+        }
+
+        do {
+            return try JSONDecoder().decode([SimulatedRoute].self, from: data)
+        } catch {
+            return []
+        }
+    }
+
+    func persistSavedRoutes() {
+        do {
+            let data = try JSONEncoder().encode(savedRoutes)
+            defaults.set(data, forKey: AppViewModelPreferences.savedRoutes)
+        } catch {
+            TeleportLog.simulation.error(
+                "Failed to persist saved routes: \(error.localizedDescription, privacy: .public)")
         }
     }
 }

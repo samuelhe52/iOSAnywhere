@@ -14,6 +14,61 @@ struct GPXRouteParser {
     }
 }
 
+struct GPXRouteExporter {
+    private let dateFormatter = ISO8601DateFormatter()
+
+    init() {
+        dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+    }
+
+    func export(route: SimulatedRoute) -> Data {
+        var lines: [String] = [
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+            "<gpx version=\"1.1\" creator=\"Teleport\" xmlns=\"http://www.topografix.com/GPX/1/1\">",
+            "  <metadata>",
+            "    <name>\(xmlEscaped(route.name))</name>",
+            "  </metadata>",
+            "  <trk>",
+            "    <name>\(xmlEscaped(route.name))</name>",
+            "    <trkseg>"
+        ]
+
+        for waypoint in route.waypoints {
+            lines.append(
+                String(
+                    format: "      <trkpt lat=\"%.8f\" lon=\"%.8f\">",
+                    waypoint.coordinate.latitude,
+                    waypoint.coordinate.longitude
+                )
+            )
+
+            if let timestamp = waypoint.timestamp {
+                lines.append("        <time>\(dateFormatter.string(from: timestamp))</time>")
+            }
+
+            lines.append("      </trkpt>")
+        }
+
+        lines.append(contentsOf: [
+            "    </trkseg>",
+            "  </trk>",
+            "</gpx>",
+            ""
+        ])
+
+        return lines.joined(separator: "\n").data(using: .utf8) ?? Data()
+    }
+
+    private func xmlEscaped(_ value: String) -> String {
+        value
+            .replacingOccurrences(of: "&", with: "&amp;")
+            .replacingOccurrences(of: "<", with: "&lt;")
+            .replacingOccurrences(of: ">", with: "&gt;")
+            .replacingOccurrences(of: "\"", with: "&quot;")
+            .replacingOccurrences(of: "'", with: "&apos;")
+    }
+}
+
 enum GPXRouteParserError: LocalizedError {
     case invalidDocument
     case noUsablePoints
@@ -28,7 +83,7 @@ enum GPXRouteParserError: LocalizedError {
     }
 }
 
-private final class GPXDocumentParser: NSObject, XMLParserDelegate {
+fileprivate final class GPXDocumentParser: NSObject, XMLParserDelegate {
     struct RouteCandidate {
         var name: String?
         var points: [ParsedPoint]

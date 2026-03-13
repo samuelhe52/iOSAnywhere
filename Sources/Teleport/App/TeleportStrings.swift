@@ -31,12 +31,29 @@ enum TeleportStrings {
     static let stateStopping: LocalizedStringResource = "Stopping"
     static let routeSectionTitle: LocalizedStringResource = "Route"
     static let routeImportGPX: LocalizedStringResource = "Import GPX"
+    static let routeCreate: LocalizedStringResource = "Create Route"
+    static let routeSaveInApp: LocalizedStringResource = "Save in App"
+    static let routeUpdateSaved: LocalizedStringResource = "Update Saved"
+    static let routeSaveAsNew: LocalizedStringResource = "Save As New"
+    static let routeExportGPX: LocalizedStringResource = "Export GPX"
     static let routeClear: LocalizedStringResource = "Clear Route"
+    static let savedRoutesTitle: LocalizedStringResource = "Saved Routes"
+    static let savedRouteLoad: LocalizedStringResource = "Load"
+    static let savedRouteRename: LocalizedStringResource = "Rename"
+    static let savedRouteDelete: LocalizedStringResource = "Delete"
     static let routePlaybackLabel: LocalizedStringResource = "Playback"
     static let routePointsLabel: LocalizedStringResource = "Points"
     static let routeDistanceLabel: LocalizedStringResource = "Distance"
     static let routeSourceLabel: LocalizedStringResource = "Source"
-    static let routeEmptyHint: LocalizedStringResource = "Import a GPX route to preview it on the map and prepare playback."
+    static let routeEmptyHint: LocalizedStringResource =
+        "Import a GPX route or create one by adding waypoints on the map."
+    static let routeBuilderTitle: LocalizedStringResource = "Waypoint Route"
+    static let routeBuilderHint: LocalizedStringResource =
+        "Tap the map to add waypoints. Then replay the route with a fixed interval or travel speed."
+    static let routeBuilderUndo: LocalizedStringResource = "Undo"
+    static let routeBuilderSave: LocalizedStringResource = "Save"
+    static let routeBuilderCancel: LocalizedStringResource = "Cancel"
+    static let routeBuilderDefaultName: LocalizedStringResource = "Waypoint Route"
     static let routeSourceGPX: LocalizedStringResource = "GPX"
     static let routeSourceDrawn: LocalizedStringResource = "Drawn"
     static let routeSourceNavigation: LocalizedStringResource = "Navigation"
@@ -88,7 +105,7 @@ enum TeleportStrings {
     static let searchUnavailable: LocalizedStringResource = "Apple location search is temporarily unavailable."
     static let searchNoResult: LocalizedStringResource = "No map result was returned for that place."
     static let searchUnableToLoad: LocalizedStringResource = "Unable to load that location from Apple Maps right now."
-    static let pickedLocation: LocalizedStringResource = "Picked Location"
+    static let pickedLocation: LocalizedStringResource = "Candidate Location"
     static let selectedPlace: LocalizedStringResource = "Selected Place"
     static let manualCoordinates: LocalizedStringResource = "Manual Coordinates"
     static let currentLocation: LocalizedStringResource = "Current Location"
@@ -133,8 +150,19 @@ enum TeleportStrings {
     static let authorize: LocalizedStringResource = "Authorize"
     static let administratorPassword: LocalizedStringResource = "Administrator Password"
     static let noRouteLoaded: LocalizedStringResource = "Load a route before starting playback."
-    static let routeRequiresAtLeastTwoPoints: LocalizedStringResource = "The loaded route needs at least two points for playback."
-    static let routePlaybackRequiresConnection: LocalizedStringResource = "Connect to an available device before starting route playback."
+    static let routeRequiresAtLeastTwoPoints: LocalizedStringResource =
+        "The loaded route needs at least two points for playback."
+    static let routePlaybackRequiresConnection: LocalizedStringResource =
+        "Connect to an available device before starting route playback."
+    static let routeBuilderStarted: LocalizedStringResource = "Route builder is active. Tap the map to add waypoints."
+    static let routeBuilderCanceled: LocalizedStringResource = "Canceled route builder."
+    static let routeBuilderNeedsTwoPoints: LocalizedStringResource =
+        "Add at least two waypoints before saving the route."
+    static let routeBuilderEmpty: LocalizedStringResource = "The route builder is empty."
+    static let saveRoutePromptTitle: LocalizedStringResource = "Save Route in App"
+    static let saveRoutePromptMessage: LocalizedStringResource = "Choose a name for the saved route."
+    static let renameRoutePromptTitle: LocalizedStringResource = "Rename Saved Route"
+    static let renameRoutePromptMessage: LocalizedStringResource = "Enter a new name for this saved route."
 
     static func foundDevices(_ count: Int) -> LocalizedStringResource {
         "Found \(count) device(s)."
@@ -182,6 +210,46 @@ enum TeleportStrings {
 
     static func completedRoute(_ name: String) -> LocalizedStringResource {
         "Completed route \(name)."
+    }
+
+    static func savedRouteInApp(_ name: String) -> LocalizedStringResource {
+        "Saved \(name) in the app."
+    }
+
+    static func updatedSavedRouteInApp(_ name: String) -> LocalizedStringResource {
+        "Updated saved route \(name)."
+    }
+
+    static func savedRouteAsNewCopy(_ name: String) -> LocalizedStringResource {
+        "Saved \(name) as a new route."
+    }
+
+    static func loadedSavedRoute(_ name: String) -> LocalizedStringResource {
+        "Loaded saved route \(name)."
+    }
+
+    static func renamedSavedRoute(_ name: String) -> LocalizedStringResource {
+        "Renamed saved route to \(name)."
+    }
+
+    static func deletedSavedRoute(_ name: String) -> LocalizedStringResource {
+        "Deleted saved route \(name)."
+    }
+
+    static func exportedRouteAsGPX(_ name: String) -> LocalizedStringResource {
+        "Exported \(name) as GPX."
+    }
+
+    static func failedToExportGPX(_ details: String) -> LocalizedStringResource {
+        "Failed to export GPX: \(details)"
+    }
+
+    static func routeBuilderAddedPoint(_ pointCount: Int) -> LocalizedStringResource {
+        "Added waypoint \(pointCount)."
+    }
+
+    static func routeBuilderUpdated(_ pointCount: Int) -> LocalizedStringResource {
+        "Route builder now has \(pointCount) waypoint(s)."
     }
 
     static let clearedLoadedRoute: LocalizedStringResource = "Cleared the loaded route preview."

@@ -42,25 +42,15 @@ struct InspectorRouteSectionView: View {
     var body: some View {
         InspectorPanelSection(TeleportStrings.routeSectionTitle, isExpanded: $isExpanded) {
             VStack(alignment: .leading, spacing: 12) {
-                HStack(spacing: 10) {
-                    Button(action: importGPXAction) {
-                        Label(TeleportStrings.routeImportGPX, systemImage: "square.and.arrow.down")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
-
-                    Button {
-                        viewModel.clearLoadedRoute()
-                    } label: {
-                        Label(TeleportStrings.routeClear, systemImage: "trash")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.bordered)
-                    .disabled(!viewModel.hasLoadedRoute)
+                if viewModel.isRouteBuilderActive {
+                    routeBuilderControls
+                } else {
+                    routeLibraryControls
                 }
-                .controlSize(.large)
 
-                if let route = viewModel.loadedRoute {
+                if viewModel.isRouteBuilderActive {
+                    routeBuilderContent
+                } else if let route = viewModel.loadedRoute {
                     VStack(alignment: .leading, spacing: 10) {
                         Text(route.name)
                             .font(.headline)
@@ -84,8 +74,10 @@ struct InspectorRouteSectionView: View {
                                     viewModel.stopRoutePlayback()
                                 }
                             } label: {
-                                Label(secondaryRoutePlaybackActionTitle, systemImage: secondaryRoutePlaybackActionSymbol)
-                                    .frame(maxWidth: .infinity)
+                                Label(
+                                    secondaryRoutePlaybackActionTitle, systemImage: secondaryRoutePlaybackActionSymbol
+                                )
+                                .frame(maxWidth: .infinity)
                             }
                             .buttonStyle(.bordered)
                             .disabled(!secondaryRoutePlaybackEnabled)
@@ -168,12 +160,232 @@ struct InspectorRouteSectionView: View {
                             }
                         }
                     }
+
+                    if viewModel.hasSavedRoutes {
+                        savedRoutesContent
+                    }
                 } else {
-                    Text(TeleportStrings.routeEmptyHint)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text(TeleportStrings.routeEmptyHint)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        if viewModel.hasSavedRoutes {
+                            savedRoutesContent
+                        }
+                    }
                 }
+            }
+        }
+    }
+
+    private var routeLibraryControls: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+                Button(action: importGPXAction) {
+                    Label(TeleportStrings.routeImportGPX, systemImage: "square.and.arrow.down")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+
+                Button {
+                    viewModel.startRouteBuilder()
+                } label: {
+                    Label(TeleportStrings.routeCreate, systemImage: "point.3.connected.trianglepath.dotted")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+            }
+
+            if viewModel.hasLoadedRoute {
+                if viewModel.loadedRouteIsSavedInApp {
+                    HStack(spacing: 10) {
+                        Button {
+                            viewModel.updateCurrentSavedRouteInApp()
+                        } label: {
+                            Label(TeleportStrings.routeUpdateSaved, systemImage: "arrow.triangle.2.circlepath")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .disabled(!viewModel.currentRouteCanUpdateSavedRoute)
+
+                        Button {
+                            viewModel.saveCurrentRouteToAppAsNew()
+                        } label: {
+                            Label(TeleportStrings.routeSaveAsNew, systemImage: "plus.square.on.square")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .disabled(!viewModel.currentRouteCanSaveAsNew)
+                    }
+                } else {
+                    HStack(spacing: 10) {
+                        Button {
+                            viewModel.saveCurrentRouteToApp()
+                        } label: {
+                            Label(TeleportStrings.routeSaveInApp, systemImage: "tray.and.arrow.down")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .disabled(!viewModel.currentRouteCanBeSavedToApp)
+
+                        Button {
+                            viewModel.exportCurrentRouteAsGPX()
+                        } label: {
+                            Label(TeleportStrings.routeExportGPX, systemImage: "square.and.arrow.up")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .disabled(!viewModel.currentRouteCanBeExportedAsGPX)
+                    }
+                }
+
+                HStack(spacing: 10) {
+                    if viewModel.loadedRouteIsSavedInApp {
+                        Button {
+                            viewModel.exportCurrentRouteAsGPX()
+                        } label: {
+                            Label(TeleportStrings.routeExportGPX, systemImage: "square.and.arrow.up")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .disabled(!viewModel.currentRouteCanBeExportedAsGPX)
+                    }
+
+                    Button {
+                        viewModel.clearLoadedRoute()
+                    } label: {
+                        Label(TeleportStrings.routeClear, systemImage: "trash")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
+                }
+            }
+        }
+        .controlSize(.large)
+    }
+
+    private var routeBuilderControls: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+                Button {
+                    viewModel.removeLastRouteBuilderWaypoint()
+                } label: {
+                    Label(TeleportStrings.routeBuilderUndo, systemImage: "arrow.uturn.backward")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(!viewModel.hasDraftRoute)
+
+                Button {
+                    viewModel.finalizeRouteBuilder()
+                } label: {
+                    Label(TeleportStrings.routeBuilderSave, systemImage: "checkmark")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(!viewModel.routeBuilderCanFinalize)
+            }
+
+            Button {
+                viewModel.cancelRouteBuilder()
+            } label: {
+                Label(TeleportStrings.routeBuilderCancel, systemImage: "xmark")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+        }
+        .controlSize(.large)
+    }
+
+    private var routeBuilderContent: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(TeleportStrings.routeBuilderTitle)
+                .font(.headline)
+
+            Text(TeleportStrings.routeBuilderHint)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            LabeledContent {
+                Text("\(viewModel.routeBuilderWaypointCount)")
+                    .monospacedDigit()
+                    .foregroundStyle(.secondary)
+            } label: {
+                Text(TeleportStrings.routePointsLabel)
+                    .font(.caption.weight(.medium))
+            }
+
+            LabeledContent {
+                Text(formattedDistance(viewModel.routeBuilderDistanceMeters))
+                    .monospacedDigit()
+                    .foregroundStyle(.secondary)
+            } label: {
+                Text(TeleportStrings.routeDistanceLabel)
+                    .font(.caption.weight(.medium))
+            }
+        }
+    }
+
+    private var savedRoutesContent: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(TeleportStrings.savedRoutesTitle)
+                .font(.subheadline.weight(.semibold))
+
+            ForEach(viewModel.savedRoutes) { route in
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Text(route.name)
+                            .font(.subheadline.weight(.medium))
+                            .lineLimit(1)
+
+                        Spacer(minLength: 8)
+
+                        Text(route.source.inspectorName)
+                            .font(.caption)
+                            .foregroundStyle(.tertiary)
+                    }
+
+                    HStack(spacing: 12) {
+                        Text("\(route.pointCount) pts")
+                        Text(formattedDistance(route.totalDistanceMeters))
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                    HStack(spacing: 10) {
+                        Button {
+                            viewModel.loadSavedRoute(route)
+                        } label: {
+                            Label(TeleportStrings.savedRouteLoad, systemImage: "arrow.down.circle")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+
+                        Button {
+                            viewModel.renameSavedRoute(route)
+                        } label: {
+                            Label(TeleportStrings.savedRouteRename, systemImage: "pencil")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                    }
+
+                    Button(role: .destructive) {
+                        viewModel.deleteSavedRoute(route)
+                    } label: {
+                        Label(TeleportStrings.savedRouteDelete, systemImage: "trash")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
+                }
+                .padding(12)
+                .background(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(Color.primary.opacity(0.03))
+                )
             }
         }
     }
@@ -345,9 +557,9 @@ struct InspectorRouteSectionView: View {
 
     private var secondaryRoutePlaybackEnabled: Bool {
         switch viewModel.routePlaybackState {
-        case .playing, .paused, .completed, .failed:
+        case .playing, .paused, .failed:
             return true
-        case .idle, .ready:
+        case .idle, .ready, .completed:
             return false
         }
     }

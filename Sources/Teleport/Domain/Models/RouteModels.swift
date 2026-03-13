@@ -149,7 +149,8 @@ extension LocationCoordinate {
         let latitudeDelta = (other.latitude - latitude) * .pi / 180.0
         let longitudeDelta = (other.longitude - longitude) * .pi / 180.0
 
-        let haversine = sin(latitudeDelta / 2) * sin(latitudeDelta / 2)
+        let haversine =
+            sin(latitudeDelta / 2) * sin(latitudeDelta / 2)
             + cos(latitude1) * cos(latitude2)
             * sin(longitudeDelta / 2) * sin(longitudeDelta / 2)
         let arc = 2 * atan2(sqrt(haversine), sqrt(max(0, 1 - haversine)))

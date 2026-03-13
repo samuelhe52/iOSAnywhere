@@ -40,11 +40,17 @@ struct MapWorkspaceView: View {
                     routeStartCoordinate: viewModel.loadedRouteStartDisplayCoordinate,
                     routeEndCoordinate: viewModel.loadedRouteEndDisplayCoordinate,
                     onTapCoordinate: { coordinate in
+                        let pickedLocation = LocationCoordinate(
+                            latitude: coordinate.latitude,
+                            longitude: coordinate.longitude
+                        )
+
+                        if viewModel.isRouteBuilderActive {
+                            viewModel.addRouteBuilderWaypoint(pickedLocation)
+                        }
+
                         setPickedLocation(
-                            LocationCoordinate(
-                                latitude: coordinate.latitude,
-                                longitude: coordinate.longitude
-                            ),
+                            pickedLocation,
                             source: .appleMapDisplay,
                             recenterMap: true,
                             debounceNanoseconds: 140_000_000,
@@ -101,6 +107,13 @@ struct MapWorkspaceView: View {
             applyStartupLocationIfNeeded(coordinate)
         }
         .onChange(of: viewModel.loadedRoute?.id) { _, _ in
+            focusLoadedRoutePreviewIfNeeded()
+        }
+        .onChange(of: viewModel.routePreviewPointCount) { _, pointCount in
+            guard pointCount > 1 else {
+                return
+            }
+
             focusLoadedRoutePreviewIfNeeded()
         }
     }

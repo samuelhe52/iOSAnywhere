@@ -133,8 +133,8 @@ struct MapWorkspaceMapCanvasView: View {
     }
 }
 
-private extension LocationCoordinate {
-    var clLocationCoordinate: CLLocationCoordinate2D {
+extension LocationCoordinate {
+    fileprivate var clLocationCoordinate: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
 }

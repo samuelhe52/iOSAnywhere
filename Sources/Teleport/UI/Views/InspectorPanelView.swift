@@ -76,6 +76,6 @@ struct InspectorPanelView: View {
     }
 }
 
-private extension UTType {
-    static let gpx = UTType(filenameExtension: "gpx") ?? .xml
+extension UTType {
+    fileprivate static let gpx = UTType(filenameExtension: "gpx") ?? .xml
 }
