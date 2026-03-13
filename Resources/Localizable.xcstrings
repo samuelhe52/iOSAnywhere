@@ -1,9 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "" : {
-
-    },
     "%@ · iOS %@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -31,12 +28,22 @@
             "state" : "new",
             "value" : "%1$lld / %2$lld"
           }
-          },
-          "zh-Hans" : {
-            "stringUnit" : {
-              "state" : "translated",
-              "value" : "%1$lld / %2$lld"
-            }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld / %2$lld"
+          }
+        }
+      }
+    },
+    "%lld pts" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个点"
+          }
         }
       }
     },
@@ -96,6 +103,42 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "操作"
+          }
+        }
+      }
+    },
+    "Add at least two waypoints before saving the route." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存路线前至少添加两个航点。"
+          }
+        }
+      }
+    },
+    "Added stop %lld. The suggested route now has %lld point(s)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Added stop %1$lld. The suggested route now has %2$lld point(s)."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已添加第 %1$lld 个停靠点。建议路线现有 %2$lld 个点。"
+          }
+        }
+      }
+    },
+    "Added waypoint %lld." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已添加第 %lld 个航点。"
           }
         }
       }
@@ -196,6 +239,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "取消"
+          }
+        }
+      }
+    },
+    "Canceled route builder." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已取消路线构建。"
+          }
+        }
+      }
+    },
+    "Candidate Location" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "候选位置"
+          }
+        }
+      }
+    },
+    "Choose a name for the saved route." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为已保存路线选择一个名称。"
           }
         }
       }
@@ -430,6 +503,16 @@
         }
       }
     },
+    "Create Route" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建路线"
+          }
+        }
+      }
+    },
     "Current Location" : {
       "localizations" : {
         "zh-Hans" : {
@@ -446,6 +529,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "当前点"
+          }
+        }
+      }
+    },
+    "Cycling" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "骑行"
+          }
+        }
+      }
+    },
+    "Delete" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除"
+          }
+        }
+      }
+    },
+    "Deleted saved route %@." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已删除已保存路线 %@。"
           }
         }
       }
@@ -476,6 +589,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "设备"
+          }
+        }
+      }
+    },
+    "Discard Edit" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "放弃编辑"
           }
         }
       }
@@ -590,12 +713,62 @@
         }
       }
     },
+    "Driving" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "驾车"
+          }
+        }
+      }
+    },
+    "Edit" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "编辑"
+          }
+        }
+      }
+    },
+    "Editing is only available for user-created routes." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅用户创建的路线可编辑。"
+          }
+        }
+      }
+    },
+    "Editing saved route %@." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在编辑已保存路线 %@。"
+          }
+        }
+      }
+    },
     "Enable Developer Mode on the iPhone in Settings > Privacy & Security > Developer Mode." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "请在 iPhone 的“设置 > 隐私与安全性 > 开发者模式”中启用开发者模式。"
+          }
+        }
+      }
+    },
+    "Enter a new name for this saved route." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为这条已保存路线输入新名称。"
           }
         }
       }
@@ -620,6 +793,26 @@
         }
       }
     },
+    "Export GPX" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导出 GPX"
+          }
+        }
+      }
+    },
+    "Exported %@ as GPX." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已将 %@ 导出为 GPX。"
+          }
+        }
+      }
+    },
     "Failed" : {
       "localizations" : {
         "zh-Hans" : {
@@ -636,6 +829,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法清除真机的模拟位置。"
+          }
+        }
+      }
+    },
+    "Failed to export GPX: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导出 GPX 失败：%@"
+          }
+        }
+      }
+    },
+    "Failed to get a navigation route: %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "获取导航路线失败：%@"
           }
         }
       }
@@ -666,6 +879,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法启动真机辅助程序：%@"
+          }
+        }
+      }
+    },
+    "Finding a navigation route between the selected stops." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在查找所选停靠点之间的导航路线。"
           }
         }
       }
@@ -740,12 +963,12 @@
         }
       }
     },
-    "Import a GPX route to preview it on the map and prepare playback." : {
+    "Import a GPX route or create one by adding waypoints on the map." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "导入 GPX 路线以在地图上预览并为回放做好准备。"
+            "value" : "导入 GPX 路线，或通过在地图上添加航点来创建路线。"
           }
         }
       }
@@ -820,12 +1043,32 @@
         }
       }
     },
+    "Latest Leg" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最新路段"
+          }
+        }
+      }
+    },
     "Latitude" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "纬度"
+          }
+        }
+      }
+    },
+    "Load" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "加载"
           }
         }
       }
@@ -852,6 +1095,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已加载路线 %1$@，共 %2$lld 个点。"
+          }
+        }
+      }
+    },
+    "Loaded saved route %@." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已加载已保存路线 %@。"
           }
         }
       }
@@ -942,6 +1195,16 @@
         }
       }
     },
+    "Navigation mode asks Apple Maps for a suggested road route between each tapped stop." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导航模式会向 Apple 地图请求每两个已点按停靠点之间的推荐道路路线。"
+          }
+        }
+      }
+    },
     "No device selected" : {
       "localizations" : {
         "zh-Hans" : {
@@ -978,6 +1241,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "没有适用于 %@ 的服务。"
+          }
+        }
+      }
+    },
+    "Only the latest leg shows alternate routes to keep the builder compact. Undo to revise earlier legs." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅最新路段显示备选路线，以保持构建器简洁。若要修改较早的路段，请使用撤销。"
+          }
+        }
+      }
+    },
+    "Path Style" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "路径样式"
           }
         }
       }
@@ -1048,16 +1331,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "真机位置模拟需要在辅助程序所选的确切 Python 解释器中安装 pymobiledevice3。"
-          }
-        }
-      }
-    },
-    "Picked Location" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "选取的位置"
           }
         }
       }
@@ -1218,6 +1491,36 @@
         }
       }
     },
+    "Rename" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重命名"
+          }
+        }
+      }
+    },
+    "Rename Saved Route" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重命名已保存路线"
+          }
+        }
+      }
+    },
+    "Renamed saved route to %@." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已将已保存路线重命名为 %@。"
+          }
+        }
+      }
+    },
     "Replay" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1308,6 +1611,26 @@
         }
       }
     },
+    "Route builder is active. Tap the map to add waypoints." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "路线构建器已启用。点按地图以添加航点。"
+          }
+        }
+      }
+    },
+    "Route builder now has %lld waypoint(s)." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "路线构建器现有 %lld 个航点。"
+          }
+        }
+      }
+    },
     "Route End" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1354,6 +1677,76 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "运行：%@"
+          }
+        }
+      }
+    },
+    "Save" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存"
+          }
+        }
+      }
+    },
+    "Save As New" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "另存为新路线"
+          }
+        }
+      }
+    },
+    "Save in App" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存在应用中"
+          }
+        }
+      }
+    },
+    "Save Route in App" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在应用中保存路线"
+          }
+        }
+      }
+    },
+    "Saved %@ as a new route." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已将 %@ 保存为新路线。"
+          }
+        }
+      }
+    },
+    "Saved %@ in the app." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已将 %@ 保存在应用中。"
+          }
+        }
+      }
+    },
+    "Saved Routes" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已保存路线"
           }
         }
       }
@@ -1418,6 +1811,22 @@
         }
       }
     },
+    "Selected route option %lld of %lld for the latest leg." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Selected route option %1$lld of %2$lld for the latest leg."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已为最新路段选择第 %1$lld 个路线选项，共 %2$lld 个。"
+          }
+        }
+      }
+    },
     "Session" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1434,6 +1843,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "会话日志"
+          }
+        }
+      }
+    },
+    "Show All" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部显示"
+          }
+        }
+      }
+    },
+    "Show Less" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "收起"
           }
         }
       }
@@ -1598,6 +2027,46 @@
         }
       }
     },
+    "Stops" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停靠点"
+          }
+        }
+      }
+    },
+    "Straight" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直线"
+          }
+        }
+      }
+    },
+    "Tap the map to add waypoints. Then replay the route with a fixed interval or travel speed." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "点按地图以添加航点。随后可按固定间隔或行进速度回放路线。"
+          }
+        }
+      }
+    },
+    "Tap the map to append waypoints to this saved route. Update to overwrite, or Save As New to branch it." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "点按地图以向这条已保存路线追加航点。选择“更新已保存路线”以覆盖，或选择“另存为新路线”以创建分支。"
+          }
+        }
+      }
+    },
     "Teleport is connecting to the device and preparing the helper." : {
       "localizations" : {
         "zh-Hans" : {
@@ -1658,6 +2127,16 @@
         }
       }
     },
+    "The route builder is empty." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "路线构建器为空。"
+          }
+        }
+      }
+    },
     "The selected physical device is not currently reachable." : {
       "localizations" : {
         "zh-Hans" : {
@@ -1698,6 +2177,16 @@
         }
       }
     },
+    "Travel Mode" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "出行方式"
+          }
+        }
+      }
+    },
     "Travel Speed" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1728,12 +2217,42 @@
         }
       }
     },
+    "Undo" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "撤销"
+          }
+        }
+      }
+    },
     "Update Interval" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "更新间隔"
+          }
+        }
+      }
+    },
+    "Update Saved" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新已保存路线"
+          }
+        }
+      }
+    },
+    "Updated saved route %@." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已更新已保存路线 %@。"
           }
         }
       }
@@ -1768,12 +2287,32 @@
         }
       }
     },
+    "Wait for the current navigation segment to finish loading." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请等待当前导航路段加载完成。"
+          }
+        }
+      }
+    },
     "Walking" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "步行"
+          }
+        }
+      }
+    },
+    "Waypoint Route" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "航点路线"
           }
         }
       }
