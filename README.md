@@ -6,10 +6,9 @@ Teleport is a native macOS app for faking iOS device location — on simulators 
 
 It's built with SwiftUI and MapKit. Click somewhere on the map, hit Simulate, and your device thinks it's there.
 
-<p align="center">
-  <img src="Resources/screenshot-main.jpg" width="49%" alt="Teleport – location simulation" />
-  <img src="Resources/screenshot-route.jpg" width="49%" alt="Teleport – route builder" />
-</p>
+![Teleport – location simulation](Resources/screenshot-main.jpg)
+
+![Teleport – route builder](Resources/screenshot-route.jpg)
 
 ## What It Does
 
