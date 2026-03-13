@@ -41,6 +41,8 @@ enum TeleportStrings {
     static let savedRouteLoad: LocalizedStringResource = "Load"
     static let savedRouteRename: LocalizedStringResource = "Rename"
     static let savedRouteDelete: LocalizedStringResource = "Delete"
+    static let savedRoutesShowAll: LocalizedStringResource = "Show All"
+    static let savedRoutesShowLess: LocalizedStringResource = "Show Less"
     static let routePlaybackLabel: LocalizedStringResource = "Playback"
     static let routePointsLabel: LocalizedStringResource = "Points"
     static let routeDistanceLabel: LocalizedStringResource = "Distance"

@@ -37,6 +37,10 @@
 		D1E2F3222F7000010025CED2 /* AppViewModel+RoutePlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E2F3212F7000010025CED2 /* AppViewModel+RoutePlayback.swift */; };
 		D1E2F3322F7000010025CED2 /* InspectorActionsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E2F3312F7000010025CED2 /* InspectorActionsSectionView.swift */; };
 		D1E2F3422F7000010025CED2 /* InspectorRouteSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E2F3412F7000010025CED2 /* InspectorRouteSectionView.swift */; };
+		F1A100012F7100010025CED2 /* AppViewModel+RouteBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A100002F7100010025CED2 /* AppViewModel+RouteBuilder.swift */; };
+		F1A100032F7100010025CED2 /* AppViewModel+SavedRoutes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A100022F7100010025CED2 /* AppViewModel+SavedRoutes.swift */; };
+		F1A100052F7100010025CED2 /* InspectorRouteSectionControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A100042F7100010025CED2 /* InspectorRouteSectionControls.swift */; };
+		F1A100072F7100010025CED2 /* InspectorRouteSectionContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A100062F7100010025CED2 /* InspectorRouteSectionContent.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +75,10 @@
 		D1E2F3212F7000010025CED2 /* AppViewModel+RoutePlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppViewModel+RoutePlayback.swift"; sourceTree = "<group>"; };
 		D1E2F3312F7000010025CED2 /* InspectorActionsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorActionsSectionView.swift; sourceTree = "<group>"; };
 		D1E2F3412F7000010025CED2 /* InspectorRouteSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorRouteSectionView.swift; sourceTree = "<group>"; };
+		F1A100002F7100010025CED2 /* AppViewModel+RouteBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppViewModel+RouteBuilder.swift"; sourceTree = "<group>"; };
+		F1A100022F7100010025CED2 /* AppViewModel+SavedRoutes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppViewModel+SavedRoutes.swift"; sourceTree = "<group>"; };
+		F1A100042F7100010025CED2 /* InspectorRouteSectionControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorRouteSectionControls.swift; sourceTree = "<group>"; };
+		F1A100062F7100010025CED2 /* InspectorRouteSectionContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorRouteSectionContent.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -199,6 +207,8 @@
 				9FF152022F5D80350025CED2 /* InspectorPanelSections.swift */,
 				9FF151E92F5D80350025CED2 /* InspectorPanelView.swift */,
 				9FF152032F5D80350025CED2 /* InspectorPanelSupportViews.swift */,
+				F1A100042F7100010025CED2 /* InspectorRouteSectionControls.swift */,
+				F1A100062F7100010025CED2 /* InspectorRouteSectionContent.swift */,
 				D1E2F3412F7000010025CED2 /* InspectorRouteSectionView.swift */,
 				9FF151FE2F5D80350025CED2 /* MapWorkspaceComponents.swift */,
 				9FF151FF2F5D80350025CED2 /* MapWorkspaceSearchSupport.swift */,
@@ -222,7 +232,9 @@
 				D1E2F3112F7000010025CED2 /* AppViewModel+Movement.swift */,
 				B2C3D4E32F5EA0010025CED2 /* AppViewModelSupport.swift */,
 				B2C3D4E42F5EA0010025CED2 /* AppViewModel+Operations.swift */,
+				F1A100002F7100010025CED2 /* AppViewModel+RouteBuilder.swift */,
 				D1E2F3212F7000010025CED2 /* AppViewModel+RoutePlayback.swift */,
+				F1A100022F7100010025CED2 /* AppViewModel+SavedRoutes.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -343,10 +355,14 @@
 				D1E2F3122F7000010025CED2 /* AppViewModel+Movement.swift in Sources */,
 				B2C3D4E52F5EA0010025CED2 /* AppViewModelSupport.swift in Sources */,
 				B2C3D4E62F5EA0010025CED2 /* AppViewModel+Operations.swift in Sources */,
+				F1A100012F7100010025CED2 /* AppViewModel+RouteBuilder.swift in Sources */,
 				D1E2F3222F7000010025CED2 /* AppViewModel+RoutePlayback.swift in Sources */,
+				F1A100032F7100010025CED2 /* AppViewModel+SavedRoutes.swift in Sources */,
 				C4D5E6F82F6A20010025CED2 /* GPXRouteParser.swift in Sources */,
 				9FF151FD2F5D80350025CED2 /* LocationSimulationService.swift in Sources */,
 				D1E2F3322F7000010025CED2 /* InspectorActionsSectionView.swift in Sources */,
+				F1A100052F7100010025CED2 /* InspectorRouteSectionControls.swift in Sources */,
+				F1A100072F7100010025CED2 /* InspectorRouteSectionContent.swift in Sources */,
 				9FF152002F5D80350025CED2 /* MapWorkspaceComponents.swift in Sources */,
 				9FF152012F5D80350025CED2 /* MapWorkspaceSearchSupport.swift in Sources */,
 				D1E2F3422F7000010025CED2 /* InspectorRouteSectionView.swift in Sources */,
