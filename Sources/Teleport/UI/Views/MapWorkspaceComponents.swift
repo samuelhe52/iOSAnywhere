@@ -327,3 +327,28 @@ fileprivate struct MapWorkspaceOverlayCardBackground: View {
             .shadow(color: .black.opacity(shadowOpacity), radius: shadowRadius, y: shadowYOffset)
     }
 }
+
+struct MapWorkspaceCurrentLocationButton: View {
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: "location.fill")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(Color.accentColor)
+                .frame(width: 34, height: 34)
+                .background(
+                    Circle()
+                        .fill(Color(NSColor.controlBackgroundColor))
+                )
+                .overlay(
+                    Circle()
+                        .strokeBorder(Color.white.opacity(0.06))
+                )
+                .shadow(color: .black.opacity(0.14), radius: 10, y: 6)
+        }
+        .buttonStyle(.plain)
+        .help(String(localized: TeleportStrings.currentLocation))
+        .accessibilityLabel(Text(TeleportStrings.currentLocation))
+    }
+}

@@ -68,6 +68,15 @@ struct MapWorkspaceView: View {
                         }
                     }
                 )
+                .overlay(alignment: .topTrailing) {
+                    if let currentLocationCoordinate = startupLocationModel.startupCoordinate {
+                        MapWorkspaceCurrentLocationButton {
+                            recenterToCurrentLocation(currentLocationCoordinate)
+                        }
+                        .padding(.top, 72)
+                        .padding(.trailing, 16)
+                    }
+                }
 
                 MapWorkspaceSearchOverlayView(
                     searchModel: searchModel,
@@ -297,6 +306,17 @@ struct MapWorkspaceView: View {
         }
 
         hasAppliedStartupLocation = true
+        setPickedLocation(
+            LocationCoordinate(latitude: coordinate.latitude, longitude: coordinate.longitude),
+            source: .coreLocation,
+            recenterMap: true,
+            debounceNanoseconds: 0,
+            preferredSpan: MKCoordinateSpan(latitudeDelta: 0.03, longitudeDelta: 0.03)
+        )
+    }
+
+    private func recenterToCurrentLocation(_ coordinate: CLLocationCoordinate2D) {
+        startupLocationModel.requestCurrentLocation()
         setPickedLocation(
             LocationCoordinate(latitude: coordinate.latitude, longitude: coordinate.longitude),
             source: .coreLocation,

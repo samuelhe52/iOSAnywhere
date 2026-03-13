@@ -42,6 +42,14 @@ final class StartupLocationModel: NSObject, ObservableObject, CLLocationManagerD
 
         hasRequestedLocation = true
 
+        requestCurrentLocation()
+    }
+
+    func requestCurrentLocation() {
+        guard CLLocationManager.locationServicesEnabled() else {
+            return
+        }
+
         switch locationManager.authorizationStatus {
         case .authorizedAlways, .authorizedWhenInUse:
             locationManager.requestLocation()
@@ -68,7 +76,7 @@ final class StartupLocationModel: NSObject, ObservableObject, CLLocationManagerD
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard startupCoordinate == nil, let location = locations.last else {
+        guard let location = locations.last else {
             return
         }
 
