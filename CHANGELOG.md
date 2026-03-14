@@ -4,6 +4,25 @@
 
 All notable changes to Teleport are documented in this file.
 
+## v0.3.0 - 2026-03-14
+
+### Added
+
+- Added a full route-building workflow with multi-stop editing, playback controls, and an in-app saved-route library.
+- Added Apple Maps navigation route building with transport selection and alternate route choices.
+- Added GPX route import support and route editing tools for revisiting, renaming, duplicating, and refining saved routes.
+- Added a return-to-current-location control to make it easier to jump the map back to the active simulated position.
+
+### Changed
+
+- Improved route playback pacing and smoothing so movement simulations follow routes more naturally.
+- Reworked the inspector and app view model structure to better separate route building, playback, movement, and operation flows.
+- Updated English and Simplified Chinese localization, README content, and screenshots to cover the expanded route tooling.
+
+### Fixed
+
+- Fixed physical-device USB simulation reset handling so stopping or resetting a session is more reliable.
+
 ## v0.2.2 - 2026-03-11
 
 ### Fixed
